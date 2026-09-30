@@ -9,12 +9,12 @@ const es: Content = {
     description:
       'Portafolio de Gyeonghun Jeong, desarrollador en Lightsoft. De la solicitud a la especificación, el desarrollo, la revisión, el lanzamiento y el feedback: KITS, el CRM/ERP de consultoría laboral FAIR y CLI Manager.',
   },
-  a11y: { skip: 'Ir al contenido', primaryNav: 'Menú principal', language: 'Elegir idioma', openImage: 'Ver imagen completa' },
-  nav: { work: 'Proyectos', process: 'Cómo trabajo', timeline: 'Trayectoria', contact: 'Contacto' },
+  a11y: { skip: 'Ir al contenido', primaryNav: 'Menú principal', language: 'Elegir idioma', openImage: 'Ver la imagen ampliada', closeImage: 'Cerrar', copied: 'Copiado' },
+  nav: { work: 'Proyectos', timeline: 'Trayectoria', contact: 'Contacto' },
   hero: {
     name: 'Gyeonghun Jeong',
     role: 'Desarrollador en Lightsoft · creador de CLI Manager',
-    lead: 'No me quedo solo en escribir código. Desde que llega una solicitud defino todo el recorrido —especificación, desarrollo, revisión, lanzamiento y feedback— y busco sin parar qué partes pueden funcionar mejor.',
+    lead: 'No me quedo solo en escribir código. Desde que llega una solicitud **defino todo el recorrido** —especificación, desarrollo, revisión, lanzamiento y feedback— y **busco sin parar qué partes pueden funcionar mejor**.',
     keywords: [
       { title: 'Todo el recorrido', body: 'Me encargo de cada paso, de la solicitud al feedback, para entender cómo fluye el trabajo de verdad.' },
       { title: 'Mejores procesos', body: 'Detecto dónde el feedback se pierde o se repite y lo convierto en una herramienta o una rutina.' },
@@ -29,33 +29,9 @@ const es: Content = {
     title: 'Dos años en cifras',
     items: [
       { value: '19', label: 'proyectos de empresa con diseñadores y clientes' },
-      { value: '6.583', label: 'commits en GitHub (2025–2026)' },
       { value: '#10', label: 'Product of the Day en Product Hunt — CLI Manager' },
-      { value: '851', label: 'usuarios de Ddingsroom · premio en un concurso universitario' },
+      { value: '1.200+ US$', label: 'ingresos iniciales de pago de CLI Manager, antes de pasar a código abierto' },
     ],
-  },
-  process: {
-    title: 'Cómo trabajo',
-    body: 'Documenté mi trabajo y cada proceso todo lo que pude, lo reuní en Lassorun —nuestra plataforma interna de documentación y QA— y seguí buscando qué partes podía mejorar la IA.',
-    stages: [
-      { name: 'Solicitud', who: 'Cliente' },
-      { name: 'Plan y docs', who: 'Especificación · casos de prueba' },
-      { name: 'Desarrollo', who: 'Agentes de IA' },
-      { name: 'Revisión', who: 'Diseñador' },
-      { name: 'Lanzamiento', who: 'Tiendas · web' },
-      { name: 'Feedback', who: 'Usuarios · clientes' },
-    ],
-    loopBack: 'De vuelta a la solicitud: la retrospectiva se convierte en la documentación de la siguiente vuelta',
-    toolsTitle: 'Herramientas que construí e integré en ese ciclo',
-    tools: [
-      'Lassorun — plataforma interna de docs y QA',
-      'Automatización del desarrollo a partir de docs',
-      'Páginas de revisión responsive · widget de feedback',
-      'OTA y automatización de lanzamientos',
-      'Bot de Slack · integración con Linear',
-      'Retrospectivas · procedimientos por escrito',
-    ],
-    note: 'El «desarrollo» del centro es donde la IA más aceleró. Por eso dedico mi tiempo a lo que lo rodea: documentación, revisión y feedback.',
   },
   work: {
     title: 'Proyectos',
@@ -68,7 +44,7 @@ const es: Content = {
         name: 'KITS',
         tagline: 'Un servicio educativo, de las pruebas de nivel al estudio diario, en móvil, tableta y web',
         summary:
-          'Cada pantalla se multiplica en la app, la web móvil, la web de escritorio, la web para docentes y la de administración. Ajustar las pantallas con la diseñadora y el cliente fue más trabajo que el propio código, así que rehicimos juntos un proceso de feedback que perdía puntos cuando las peticiones eran vagas o se acumulaban.',
+          'Cada pantalla se multiplica en la app, la web móvil, la web de escritorio, la web para docentes y la de administración. **Ajustar las pantallas con la diseñadora y el cliente** fue más trabajo que el propio código, así que **rehicimos juntos un proceso de feedback** que perdía puntos cuando las peticiones eran vagas o se acumulaban.',
         facts: [
           { label: 'Período', value: 'nov. 2025 – actualidad' },
           { label: 'Rol', value: 'Responsable de front-end y QA' },
@@ -80,19 +56,19 @@ const es: Content = {
           {
             title: 'Revisión responsive',
             before: 'Estirar y encoger la ventana de Chrome, una pantalla cada vez',
-            after: 'Un tablero de revisión con 55 pantallas y 39 modales en vertical y horizontal a la vez. Cada pantalla tiene su caja de comentarios, y el comentario de la diseñadora pasa a ser una instrucción de trabajo tal cual.',
+            after: '**Un tablero de revisión con 55 pantallas y 39 modales en vertical y horizontal a la vez**. Cada pantalla tiene su caja de comentarios, y el comentario de la diseñadora pasa a ser una instrucción de trabajo tal cual.',
             metric: { value: '55 / 55', label: 'pantallas de tableta revisadas · 0 errores' },
           },
           {
             title: 'Enviar feedback',
             before: 'Sesenta notas de texto en un solo mensaje de Slack',
-            after: 'Un widget para señalar el botón o el texto real en pantalla y reportarlo, añadido a las cuatro apps: app, web, docentes y admin.',
+            after: '**Un widget para señalar el botón o el texto real en pantalla y reportarlo**, añadido a las cuatro apps: app, web, docentes y admin.',
             metric: { value: '41', label: 'reportes de la diseñadora en un solo día' },
           },
           {
             title: 'Seguimiento',
             before: 'Un documento de revisión de 613 líneas actualizado a mano; había que preguntar para saber qué estaba corregido',
-            after: 'Reporte → sistema interno → issue en Linear → aviso en Slack, todo automático. Al publicar un arreglo, Slack recibe qué cambió y un enlace al tablero.',
+            after: '**Reporte → sistema interno → issue en Linear → aviso en Slack, todo automático**. Al publicar un arreglo, Slack recibe qué cambió y un enlace al tablero.',
             metric: { value: '301+', label: 'reportes con estado controlado' },
           },
         ],
@@ -106,7 +82,7 @@ const es: Content = {
         ],
         lesson: {
           title: 'El lugar pesa más que la herramienta',
-          body: 'Nadie abrió el tablero mientras era un HTML local; empezó a usarse cuando tuvo una URL publicada. Construir una herramienta y que se use son cosas distintas: tiene que resultar cómoda dentro del flujo de trabajo del otro para convencer.',
+          body: 'Nadie abrió el tablero mientras era un HTML local; empezó a usarse cuando tuvo una URL publicada. Construir una herramienta y que se use son cosas distintas: **tiene que resultar cómoda dentro del flujo de trabajo del otro** para convencer.',
         },
         gallery: [
           shot('kits_board_top', 'Parte superior del tablero de revisión', 'El tablero: capturas en vertical y horizontal y comentarios para cada pantalla'),
@@ -121,7 +97,7 @@ const es: Content = {
         name: 'CRM/ERP de consultoría laboral FAIR',
         tagline: 'Todo el proceso de consultoría de un despacho laboral —diagnóstico, diseño, ejecución, gestión del cambio y evaluación— en un solo lugar',
         summary:
-          'Trabajé con los abogados laboralistas como un solo equipo. Pasamos a software un trabajo manual basado en listas y documentos y llevamos el proceso de consultoría a la IA (AX). También contrasta con la ley vigente los artículos que cita la IA.',
+          'Trabajé con los abogados laboralistas como un solo equipo. **Pasamos a software un trabajo manual basado en listas y documentos** y **llevamos el proceso de consultoría a la IA (AX)**. También **contrasta con la ley vigente los artículos que cita la IA**.',
         facts: [
           { label: 'Período', value: 'feb. 2026 – actualidad' },
           { label: 'Rol', value: 'Planificación, desarrollo y operación' },
@@ -147,7 +123,7 @@ const es: Content = {
         ],
         lesson: {
           title: 'Trabajando solo, hay que forzar la mirada del usuario',
-          body: 'Escribir la guía de uso destapó huecos en las pantallas, y hacer el vídeo me obligó a resumir en una frase a quién le ahorra trabajo este producto y cómo.',
+          body: 'Escribir la guía de uso destapó huecos en las pantallas, y hacer el vídeo me obligó a **resumir en una frase a quién le ahorra trabajo este producto** y cómo.',
         },
         gallery: [
           shot('efm_stages_c', 'Pantalla de etapas', 'Etapas: contrato → diagnóstico → diseño → ejecución → gestión del cambio → evaluación'),
@@ -162,7 +138,7 @@ const es: Content = {
         name: 'CLI Manager',
         tagline: 'Una app de escritorio para gestionar varios agentes de programación con IA (CLI) desde una sola pantalla',
         summary:
-          'Nació de mi propio caos: diez terminales abiertas y sin saber cuál era cuál. Diez meses y 56 versiones después es un producto público. Hice solo la planificación, el desarrollo, los lanzamientos, la landing y el marketing; salió como app de pago, generó sus primeros ingresos y luego pasó a código abierto.',
+          'Nació de mi propio caos: diez terminales abiertas y sin saber cuál era cuál. **Diez meses y 57 versiones después es un producto público.** Hice solo la planificación, el desarrollo, los lanzamientos, la landing y el marketing; **salió como app de pago, generó sus primeros ingresos y luego pasó a código abierto**.',
         facts: [
           { label: 'Período', value: 'nov. 2025 – actualidad' },
           { label: 'Rol', value: 'Creador en solitario' },
@@ -172,21 +148,22 @@ const es: Content = {
         cover: shot('cli_main', 'Pantalla principal de CLI Manager'),
         improvements: [
           {
-            title: 'v1.9 · AI Control API',
+            badge: 'Última actualización · v1.10.0 · 29 sep. 2026',
+            title: 'AI Control API',
             before: 'En ejecuciones no interactivas, solo sabes que la IA se desvió cuando ya ha terminado',
-            after: 'Una API local permite que otra IA abra sesiones y trabaje dentro de CLI Manager. Las sesiones de IA aparecen en verde para que puedas revisarlas e intervenir cuando quieras.',
+            after: 'En la v1.9 (23 sep. 2026), **una API local permite que otra IA abra sesiones y trabaje dentro de CLI Manager**. Las sesiones de IA aparecen en verde para que puedas revisarlas e intervenir cuando quieras. Desde la v1.10 (29 sep. 2026) la IA también lee las notas de esas sesiones.',
           },
         ],
         metrics: [
           { value: '#10', label: 'Product of the Day en Product Hunt · 105 votos' },
-          { value: '56', label: 'versiones en 10 meses' },
+          { value: '57', label: 'versiones en 10 meses' },
           { value: '1.200+ US$', label: 'ingresos iniciales → luego código abierto' },
           { value: '23 mil', label: 'visitas en la publicación de Reddit más vista' },
         ],
         quotes: [{ text: 'I picked this up today and am obsessed!!', who: 'Un usuario de Product Hunt' }],
         lesson: {
           title: 'El QA más barato',
-          body: 'Los dos fallos de la última actualización tenían que ver con cómo se veía, no con lo que hacía. Usar mi propia herramienta a diario resultó ser el QA más barato que existe.',
+          body: 'Los dos fallos de la última actualización tenían que ver con cómo se veía, no con lo que hacía. **Usar mi propia herramienta a diario resultó ser el QA más barato que existe**.',
         },
         gallery: [
           shot('cli_green', 'Sesiones de IA en verde', 'Un agente de IA real trabajando dentro de CLI Manager: las sesiones de IA van en verde'),
@@ -205,7 +182,7 @@ const es: Content = {
         name: 'Automatización interna del desarrollo',
         tagline: 'Symphony, un daemon que desarrolla issues a partir de la documentación y avisa a una persona cuando se atasca, y Lassorun, nuestra plataforma de docs y QA',
         summary:
-          'Lo construí porque la gente vigilaba a mano los issues recurrentes: comprobar el avance, revisar, volver a pedir. Symphony toma un issue, los agentes de IA lo desarrollan a partir de la documentación y, si se atasca, avisa a una persona por Slack. Docs, casos de prueba y reportes fluyen por Lassorun.',
+          'Lo construí porque la gente vigilaba a mano los issues recurrentes: comprobar el avance, revisar, volver a pedir. Symphony toma un issue, **los agentes de IA lo desarrollan a partir de la documentación** y, **si se atasca, avisa a una persona por Slack**. Docs, casos de prueba y reportes fluyen por Lassorun.',
         facts: [
           { label: 'Período', value: 'may. 2026 – actualidad' },
           { label: 'Rol', value: 'Diseño, desarrollo y adopción en el equipo' },
@@ -232,7 +209,7 @@ const es: Content = {
         name: 'Purple',
         tagline: 'App de administración de un LMS para aprender inglés: currículo, cuestionarios, clases y un programa de lectura',
         summary:
-          'Un sistema de administración con 17 tipos de cuestionario × 16 tipos de pregunta sobre datos reales en producción. Las preguntas estaban atadas a cada cuestionario y no se podían reutilizar, así que lo rediseñé para que vivan por separado y se enlacen, y verifiqué paso a paso la migración de datos de producción, del diseño y el plan a la ejecución.',
+          'Un sistema de administración con 17 tipos de cuestionario × 16 tipos de pregunta sobre datos reales en producción. Las preguntas estaban atadas a cada cuestionario y no se podían reutilizar, así que **lo rediseñé para que vivan por separado y se enlacen**, y **verifiqué paso a paso la migración de datos de producción**, del diseño y el plan a la ejecución.',
         facts: [
           { label: 'Período', value: 'nov. 2025 – jun. 2026' },
           { label: 'Rol', value: 'Web de admin · modelo de datos · QA' },
@@ -254,7 +231,7 @@ const es: Content = {
         ],
         lesson: {
           title: 'Avisar cuando el alcance cambia',
-          body: 'Una tarea que estimé en 40 líneas acabó en 400 y no lo avisé a tiempo; el líder del equipo renegoció con el cliente por mí. Desde entonces anoto cada tarea como «estimación → medición».',
+          body: 'Una tarea que estimé en 40 líneas acabó en 400 y no lo avisé a tiempo; el líder del equipo renegoció con el cliente por mí. Desde entonces anoto cada tarea como **«estimación → medición»**.',
         },
         gallery: [
           shot('pur_matrix', 'Matriz CRUD de ida y vuelta', 'Matriz CRUD de ida y vuelta por tipo de cuestionario'),
@@ -266,7 +243,7 @@ const es: Content = {
         context: 'Lightsoft · cliente · en la App Store',
         name: 'PorterX',
         tagline: 'Una app que conecta las rutas de los viajeros con encargos de compra locales',
-        summary: 'El proyecto en el que más operación posterior al lanzamiento gestioné: pagos, reembolsos, revisión en tiendas y seguridad.',
+        summary: 'El proyecto en el que **más operación posterior al lanzamiento** gestioné: pagos, reembolsos, revisión en tiendas y seguridad.',
         facts: [
           { label: 'Período', value: 'ago. 2025 – abr. 2026' },
           { label: 'Rol', value: 'Funciones de la app · diseño · operación' },
@@ -291,7 +268,7 @@ const es: Content = {
         name: 'NC Digitec',
         tagline: 'Rediseño de una tienda online de suscripciones (alquiler) de Samsung AI',
         summary:
-          'Lideré el rediseño y llevé el ciclo de feedback de la diseñadora y el cliente. Preparé todo para que la diseñadora instalara la herramienta de feedback por su cuenta, agrupé los reportes y compartí lo publicado como lista: «6 reportes de ayer y hoy, resueltos». Continuaba el proceso de feedback pulido en KITS.',
+          'Lideré el rediseño y llevé el ciclo de feedback de la diseñadora y el cliente. Preparé todo para que **la diseñadora instalara la herramienta de feedback por su cuenta**, agrupé los reportes y compartí lo publicado como lista: «6 reportes de ayer y hoy, resueltos». Continuaba el proceso de feedback pulido en KITS.',
         facts: [
           { label: 'Período', value: 'abr. 2026 – actualidad' },
           { label: 'Rol', value: 'Líder del rediseño · operación' },
@@ -317,7 +294,7 @@ const es: Content = {
         name: 'Automatización de contenidos',
         tagline: 'Un pipeline que va de recoger ideas a planificar, producir y publicar',
         summary:
-          'Recoger publicaciones populares en X → dos agentes de IA debaten el tema (hasta 3 rondas) → investigación, verificación, texto, render y pie → publicación simultánea en Threads, X e Instagram. Cada día reunía datos de interacción y rehacía las mejores publicaciones desde otro ángulo. Lo publiqué como código abierto dejando vacías las claves de API.',
+          'Recoger publicaciones populares en X → dos agentes de IA debaten el tema (hasta 3 rondas) → investigación, verificación, texto, render y pie → **publicación simultánea en Threads, X e Instagram**. Cada día reunía datos de interacción y rehacía las mejores publicaciones desde otro ángulo. **Lo publiqué como código abierto** dejando vacías las claves de API.',
         facts: [
           { label: 'Período', value: 'mar. – abr. 2026' },
           { label: 'Rol', value: 'Diseño · desarrollo · operación' },
@@ -332,9 +309,10 @@ const es: Content = {
         ],
         lesson: {
           title: 'Una herramienta que usa el equipo',
-          body: 'Presenté los resultados internamente con la idea de «apúntalo, aunque sea breve, y la IA lo desarrollará». Después creció hasta una plataforma interna de contenidos con tarjetas automáticas, y ahora el equipo la usa en conjunto.',
+          body: 'Presenté los resultados internamente con la idea de «apúntalo, aunque sea breve, y la IA lo desarrollará». Después creció hasta una plataforma interna de contenidos con tarjetas automáticas, y **ahora el equipo la usa en conjunto**.',
         },
         gallery: [shot('cli_card', 'Tarjeta que presenta CLI Manager', 'Una tarjeta de presentación de CLI Manager hecha con el pipeline')],
+        links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
       },
     ],
   },
@@ -343,20 +321,132 @@ const es: Content = {
     intro: 'Participaciones más cortas y cosas que acaban de empezar.',
     items: [
       {
+        slug: 'design-atlas',
         name: 'Design Atlas',
-        period: 'sep. 2026 · personal',
-        body: 'Un diccionario de diseño con 893 términos de movimiento, efectos, componentes y UX en 34 áreas, cada uno con explicación en coreano e inglés, demo en vivo y código.',
+        period: 'sep. 2026 – actualidad · personal',
+        body: 'Un diccionario de diseño con **893 términos de movimiento, efectos, componentes y UX en 34 áreas**, cada uno con explicación en coreano e inglés, demo en vivo y código.',
         shot: shot('design_atlas', 'Portada de Design Atlas'),
-        href: 'https://design.solhun.com',
+        detail: {
+          facts: [
+            { label: 'Período', value: 'sep. 2026 – actualidad' },
+            { label: 'Rol', value: 'Creador en solitario' },
+            { label: 'Tamaño', value: '893 términos · 34 áreas' },
+            { label: 'Idiomas', value: 'Coreano · inglés' },
+          ],
+          paragraphs: ['Un diccionario de términos de diseño —movimiento, efectos, 3D, componentes y UX— que muestra cada uno con explicación en coreano e inglés, una demo en vivo y código.'],
+          links: [{ label: 'Sitio web', href: 'https://design.solhun.com' }],
+        },
       },
-      { name: 'ZZAN24', period: 'sep. 2026', body: 'Trabajo de diseño, incluido el responsive.', shot: shot('zzan_tab', 'ZZAN24 en una tableta') },
-      { name: 'Switch On', period: 'abr. 2026', body: 'Adaptación de un juego de mesa a BGA Studio · alfa y beta.', shot: shot('sw_board', 'Tablero de Switch On') },
-      { name: 'Dolphin CRM', period: 'abr. 2026', body: 'Pedidos, posventa y stock de un negocio de lavavajillas: QA de productos, arreglos y analítica web.', shot: shot('dp_stats', 'Estadísticas de Dolphin CRM') },
-      { name: 'Webzine Big Data Hub', period: 'abr. 2026', body: 'La revista web de un programa universitario y su admin de autores y puntos.', shot: shot('web_admin', 'Admin de la revista web') },
-      { name: 'light-archive', period: 'feb. 2026', body: 'Plataforma interna de conocimiento y blog, archive.lightsoft.dev.', shot: shot('la_home', 'Inicio de light-archive') },
-      { name: 'Motion Meme', period: 'mar. 2026 · 2.º en el hackatón interno', body: 'MVP de una red social basada en retos de memes.', shot: shot('lw_motion', 'Pantalla de Motion Meme') },
-      { name: 'YouTube Manager', period: 'mar. 2026', body: 'Me sumé en la fase de producción para construir el sistema de otra empresa.', shot: shot('yt_plan', 'Pantalla de planificación de YouTube Manager') },
-      { name: 'Web de Lightsoft', period: 'Interno', body: 'La web de la empresa y su escaparate de trabajos.', shot: shot('lw_work-1', 'Sección de trabajos de la web de Lightsoft') },
+      {
+        slug: 'switch-on',
+        name: 'Switch On',
+        period: 'abr. – sep. 2026',
+        body: 'Adaptación de un juego de mesa a BGA Studio · alfa y beta.',
+        shot: shot('sw_board', 'Tablero de Switch On'),
+        detail: {
+          facts: [
+            { label: 'Período', value: 'abr. – sep. 2026' },
+            { label: 'Rol', value: 'Desarrollo de la adaptación (en solitario)' },
+            { label: 'Formato', value: 'Prototipo en Next.js · adaptación a Board Game Arena' },
+            { label: 'Con', value: 'CEO' },
+          ],
+          paragraphs: ['Primero construí el juego de mesa Switch On como prototipo en Next.js; después lo adapté a Board Game Arena (BGA Studio) y lo publiqué en alfa y beta.'],
+        },
+      },
+      {
+        slug: 'dolphin-crm',
+        name: 'Dolphin CRM',
+        period: 'oct. 2025 – jul. 2026',
+        body: 'Pedidos, posventa y stock de un negocio de lavavajillas: **reorganicé la gestión de datos de producto (especificaciones y capacidades)**, simplifiqué los menús y añadí analítica web.',
+        shot: shot('dp_stats', 'Estadísticas de Dolphin CRM'),
+        detail: {
+          facts: [
+            { label: 'Período', value: 'oct. 2025 – jul. 2026' },
+            { label: 'Rol', value: 'Apoyo (el desarrollo principal lo llevaba un compañero)' },
+            { label: 'Alcance', value: 'Admin de pedidos · posventa · stock de lavavajillas' },
+          ],
+          paragraphs: [
+            'Oct. 2025: construí la página de gestión de datos de producto, con la gestión de especificaciones y capacidades, y simplifiqué la estructura del menú de pedidos.',
+            'Jul. 2026: integré la analítica web (PostHog), eliminé la búsqueda unificada y páginas de cobros sin uso, y corregí un error al crear productos de pedido.',
+          ],
+        },
+      },
+      {
+        slug: 'bigdatahub-webzine',
+        name: 'Webzine Big Data Hub',
+        period: 'abr. – jul. 2026',
+        body: 'La revista web de un programa universitario y su admin de autores y puntos.',
+        shot: shot('web_admin', 'Admin de la revista web'),
+        detail: {
+          facts: [
+            { label: 'Período', value: 'abr. – jul. 2026' },
+            { label: 'Alcance', value: 'Revista web · admin de autores y puntos' },
+            { label: 'Con', value: 'Un equipo de 4 del programa' },
+          ],
+          paragraphs: ['Hecho en equipo: la revista web de un programa universitario de big data y el admin que gestiona sus autores y puntos.'],
+        },
+      },
+      {
+        slug: 'light-archive',
+        name: 'light-archive',
+        period: 'feb. – sep. 2026',
+        body: 'Plataforma interna de conocimiento y blog, archive.lightsoft.dev.',
+        shot: shot('la_home', 'Inicio de light-archive'),
+        detail: {
+          facts: [
+            { label: 'Período', value: 'feb. – sep. 2026' },
+            { label: 'Rol', value: 'Desarrollo' },
+            { label: 'Con', value: 'CEO · diseñadora' },
+          ],
+          paragraphs: ['Nuestra plataforma interna para compartir conocimiento y publicar el blog. Me encargué del desarrollo y aquí hice el primer prototipo de tarjetas informativas.'],
+          links: [{ label: 'Sitio web', href: 'https://archive.lightsoft.dev' }],
+        },
+      },
+      {
+        slug: 'motion-meme',
+        name: 'Motion Meme',
+        period: 'mar. 2026 · 2.º en el hackatón interno',
+        body: 'MVP de una red social basada en retos de memes.',
+        shot: shot('lw_motion', 'Pantalla de Motion Meme'),
+        detail: {
+          facts: [
+            { label: 'Período', value: 'mar. 2026 (hackatón)' },
+            { label: 'Equipo', value: 'Lightsoft' },
+            { label: 'Resultado', value: '2.º en el hackatón interno' },
+          ],
+          paragraphs: ['MVP de una red social basada en vídeos de retos de memes. Incluye denuncias, bloqueos, admin, créditos y lógica de pagos: lo suficiente para operarla de verdad.'],
+          links: [{ label: 'Demo', href: 'https://motion-meme-mvp-j1rv.vercel.app' }],
+        },
+      },
+      {
+        slug: 'youtube-manager',
+        name: 'YouTube Manager',
+        period: 'mar. – ago. 2026',
+        body: 'Me sumé en la fase de producción para construir el sistema de otra empresa.',
+        shot: shot('yt_plan', 'Pantalla de planificación de YouTube Manager'),
+        detail: {
+          facts: [
+            { label: 'Período', value: 'mar. – ago. 2026' },
+            { label: 'Con', value: '2 desarrolladores' },
+            { label: 'Formato', value: 'pnpm · monorepo Turborepo · Cloudflare D1 · Better Auth' },
+          ],
+          paragraphs: ['AutoTube, un servicio para gestionar la producción de vídeos de YouTube, de la planificación a los Shorts. Me sumé en la fase de producción junto a dos compañeros.'],
+        },
+      },
+      {
+        slug: 'lightsoft-web',
+        name: 'Web de Lightsoft',
+        period: 'oct. 2025 – actualidad · interno',
+        body: 'La web de la empresa y su escaparate de trabajos.',
+        shot: shot('lw_work-1', 'Sección de trabajos de la web de Lightsoft'),
+        detail: {
+          facts: [
+            { label: 'Período', value: 'oct. 2025 – actualidad' },
+            { label: 'Rol', value: 'Apoyo en la puesta en marcha' },
+          ],
+          paragraphs: ['La web oficial de la empresa y su escaparate de trabajos. Ayudé en la puesta en marcha; desde entonces la llevan sobre todo mis compañeros.'],
+        },
+      },
     ],
     contestsTitle: 'Concursos',
     contests: 'AI TOP 100 (final y campus) · concurso de vibe coding Litmers · Kakao PlayMCP · hackatón DataHub · propuesta para un concurso del Ministerio de Legislación de Corea',
@@ -366,27 +456,56 @@ const es: Content = {
     intro: '2024–2025: cosas que empezaron por pequeñas molestias a mi alrededor.',
     items: [
       {
+        slug: 'debatetimer',
         name: 'DebateTimer.org',
         tag: 'Personal',
-        body: 'El primer servicio que construí, para mi club de debate. Al añadir el formato propio de cada universidad —el estilo «visual» de Myongji, el «Todallae» de Sungshin— se extendió a clubes de otras universidades.',
+        body: 'El primer servicio que construí, para mi club de debate. Al añadir el formato propio de cada universidad —el estilo «visual» de Myongji, el «Todallae» de Sungshin— **se extendió a clubes de otras universidades**.',
         shot: shot('dt_templates', 'Selector de plantillas por formato de debate'),
+        detail: {
+          facts: [
+            { label: 'Período', value: 'mar. – oct. 2025' },
+            { label: 'Rol', value: 'Desarrollo (con 1 colaborador)' },
+            { label: 'Stack', value: 'Next.js · Supabase' },
+            { label: 'Resultado', value: 'Publicado en dominio propio · tráfico de búsqueda' },
+          ],
+          paragraphs: ['Se publicó en debatetimer.org en marzo de 2025 y funcionó como un servicio real al que la gente llegaba desde los buscadores.'],
+        },
       },
       {
+        slug: 'praynie',
         name: 'PrayNie',
         tag: 'Personal',
-        body: 'Una plataforma con IA para recoger y compartir peticiones de oración en un grupo cristiano universitario. Nunca llegó a ser un servicio masivo: fue mi primera lección de que construir algo y lograr que se use son cosas distintas.',
+        body: 'Una plataforma con IA para recoger y compartir peticiones de oración en un grupo cristiano universitario. Nunca llegó a ser un servicio masivo: fue mi primera lección de que **construir algo y lograr que se use son cosas distintas**.',
         shot: shot('pray_mock', 'Página de inicio de PrayNie'),
+        detail: {
+          facts: [
+            { label: 'Período', value: 'abr. 2025' },
+            { label: 'Rol', value: 'Desarrollo en solitario' },
+            { label: 'Stack', value: 'React · Supabase' },
+          ],
+          paragraphs: ['La IA sugiere temas de oración y un muro de estilo red social permite responder a las peticiones de los demás.'],
+        },
       },
       {
+        slug: 'ddingsroom',
         name: 'Ddingsroom',
         tag: 'Universidad · concurso',
-        body: 'Un servicio de reserva de salas de estudio en el centro de estudiantes de la Universidad Myongji. Estuve en el equipo de back-end; tras ganar un premio en el concurso de SW creativo, pasó a ser un servicio oficial de la universidad.',
+        body: 'Un servicio de reserva de salas de estudio en el centro de estudiantes de la Universidad Myongji. Estuve en el equipo de back-end; **tras ganar un premio en el concurso de SW creativo, pasó a ser un servicio oficial de la universidad**.',
         shot: shot('dd_live', 'Pantalla de reservas de Ddingsroom, todavía en servicio'),
         metrics: [
           { value: '851', label: 'usuarios' },
           { value: '4.261', label: 'reservas' },
         ],
         note: 'Datos de abr. 2026',
+        detail: {
+          facts: [
+            { label: 'Período', value: 'may. – jul. 2025' },
+            { label: 'Rol', value: 'Back-end (módulo de administración)' },
+            { label: 'Con', value: 'Un equipo de 4' },
+            { label: 'Resultado', value: 'Mención de estímulo, 4.º Concurso de Programas de SW Creativo' },
+          ],
+          paragraphs: ['Me uní al equipo del proyecto de fin de carrera en el back-end y llevé el módulo de administración. El equipo fue ajustando juntos el diseño de pantallas y el ERD.'],
+        },
       },
     ],
     devhoon: {
@@ -419,7 +538,7 @@ const es: Content = {
       { date: '2026.04', text: 'Tienda de suscripciones Samsung de NC Digitec · Dolphin CRM · Switch On · webzine Big Data Hub' },
       { date: '2026.07', text: 'Demo interna de Symphony · participación en Kakao PlayMCP' },
       { date: '2026.08', text: 'Lassorun (plataforma de docs y QA) · widget de feedback · reporte → Linear → Slack' },
-      { date: '2026.09', text: 'ZZAN24 · plataforma de contenidos · CLI Manager v1.9 · Design Atlas' },
+      { date: '2026.09', text: 'Plataforma de contenidos · CLI Manager v1.10 · Design Atlas' },
     ],
   },
   awards: {
@@ -442,6 +561,7 @@ const es: Content = {
     ],
     closing: 'Quiero seguir explorando todo el proceso y arreglando lo que encuentre por el camino.',
   },
+  detail: { more: 'Ver detalles', back: 'Volver al portafolio completo' },
   footer: { note: 'Los datos personales de las capturas están difuminados; los datos de clientes son de demostración.' },
   feedback: {
     title: 'Modo feedback',
