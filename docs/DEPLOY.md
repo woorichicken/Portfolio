@@ -15,9 +15,9 @@
 | GitHub 저장소 | `woorichicken/Portfolio` (repoId 1034202255). 옛 `agi040922/Portfolio` 는 리다이렉트 | `gh api repos/woorichicken/Portfolio --jq .id` |
 | 로컬 `origin` | 아직 `https://github.com/agi040922/Portfolio.git` — 리다이렉트로 push 까지 동작 | `git remote -v` |
 | 옛 배포처 | 팀 **`jkh040922-gmailcoms-projects`**(다른 Vercel 계정)의 `portfolio`. 홈페이지 `portfolio-sage-five-xdfwq9lj38.vercel.app` | GitHub deployments status |
-| 옛 프로젝트 Git 연동 | ⚠️ **살아 있다** — 저장소 이전 뒤에도 PR #1 에 `Vercel – portfolio` 프리뷰가 SUCCESS 로 붙었다. 즉 `main` push 는 **두 프로젝트에 모두 배포된다**(삭제는 사람 결정 — 7절 4번) | PR #1 status checks |
-| 머지 뒤 옛 프로젝트 | PR #1 머지(`d9c72b3`)로 옛 `portfolio` 도 **프로덕션 재배포** — `portfolio-sage-five-xdfwq9lj38.vercel.app` 가 새 사이트(ko/en/es 200)를 서빙한다. 단 그 빌드엔 피드백 env 가 **없다**(동적 청크의 `dp-agentation-ingest` 0) → 그 주소에서 `?feedback` 은 관문까지만 되고 위젯은 안 뜬다. 피드백은 새 주소에서 받는다 | `gh api …/deployments` Production – portfolio `d9c72b3`, 5절 청크 세기 |
-| 옛 프로젝트 env | **미확인** (접근 불가). 저장소에 `.env*`·`vercel.json` 은 없다 | – |
+| 옛 프로젝트 Git 연동 | ✅ **정리됨(2026-09-30)** — Aside 로 옛 계정에 로그인해 Git 해제를 시도(Vercel `Not authorized`) → Ignored Build Step `exit 0` → 사용자 승인으로 **프로젝트 삭제**. 이제 `main` push 는 `solhun-portfolio` 에만 배포된다 | `portfolio-sage-five-xdfwq9lj38.vercel.app` 404 |
+| (기록) 머지 뒤 옛 프로젝트 | PR #1 머지(`d9c72b3`)로 옛 `portfolio` 도 **프로덕션 재배포** — `portfolio-sage-five-xdfwq9lj38.vercel.app` 가 새 사이트(ko/en/es 200)를 서빙한다. 단 그 빌드엔 피드백 env 가 **없다**(동적 청크의 `dp-agentation-ingest` 0) → 그 주소에서 `?feedback` 은 관문까지만 되고 위젯은 안 뜬다. 피드백은 새 주소에서 받는다 | `gh api …/deployments` Production – portfolio `d9c72b3`, 5절 청크 세기 |
+| (기록) 옛 프로젝트 env | **미확인** (접근 불가). 저장소에 `.env*`·`vercel.json` 은 없다 | – |
 | `solhun.com`·`www.solhun.com` | CLI 로그인 계정 **`gyeonghunjeong-7007s-projects`** 의 `solhun-web-page` 프로젝트(CLI Manager 사이트)에 연결. apex → www 307 | `vercel domains inspect solhun.com` |
 | DNS | 네임서버 Cloudflare. `*.solhun.com` 와일드카드 CNAME 이 Vercel 로 감 | `dig NS solhun.com` |
 | 도메인 등록 만료 | ⚠️ **2026-12-01** (Vercel 등록) | 같은 명령 |
