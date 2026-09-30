@@ -16,6 +16,7 @@
 | 로컬 `origin` | 아직 `https://github.com/agi040922/Portfolio.git` — 리다이렉트로 push 까지 동작 | `git remote -v` |
 | 옛 배포처 | 팀 **`jkh040922-gmailcoms-projects`**(다른 Vercel 계정)의 `portfolio`. 홈페이지 `portfolio-sage-five-xdfwq9lj38.vercel.app` | GitHub deployments status |
 | 옛 프로젝트 Git 연동 | ⚠️ **살아 있다** — 저장소 이전 뒤에도 PR #1 에 `Vercel – portfolio` 프리뷰가 SUCCESS 로 붙었다. 즉 `main` push 는 **두 프로젝트에 모두 배포된다**(삭제는 사람 결정 — 7절 4번) | PR #1 status checks |
+| 머지 뒤 옛 프로젝트 | PR #1 머지(`d9c72b3`)로 옛 `portfolio` 도 **프로덕션 재배포** — `portfolio-sage-five-xdfwq9lj38.vercel.app` 가 새 사이트(ko/en/es 200)를 서빙한다. 단 그 빌드엔 피드백 env 가 **없다**(동적 청크의 `dp-agentation-ingest` 0) → 그 주소에서 `?feedback` 은 관문까지만 되고 위젯은 안 뜬다. 피드백은 새 주소에서 받는다 | `gh api …/deployments` Production – portfolio `d9c72b3`, 5절 청크 세기 |
 | 옛 프로젝트 env | **미확인** (접근 불가). 저장소에 `.env*`·`vercel.json` 은 없다 | – |
 | `solhun.com`·`www.solhun.com` | CLI 로그인 계정 **`gyeonghunjeong-7007s-projects`** 의 `solhun-web-page` 프로젝트(CLI Manager 사이트)에 연결. apex → www 307 | `vercel domains inspect solhun.com` |
 | DNS | 네임서버 Cloudflare. `*.solhun.com` 와일드카드 CNAME 이 Vercel 로 감 | `dig NS solhun.com` |
@@ -97,12 +98,13 @@ dp update-source-hosts 93045b0c-03e3-4f8d-916e-9ed60b127f45 --add-host <새호�
 
 ## 5. 배포 뒤 검증
 
-### 2026-09-30 실측 (`https://solhun-portfolio.vercel.app`, 커밋 `d92eea7`)
+### 2026-09-30 실측 (`https://solhun-portfolio.vercel.app`, 커밋 `d92eea7` → 머지 `d9c72b3` 재확인)
 
 | 항목 | 결과 |
 |---|---|
 | `/`·`/en`·`/es`·`/sitemap.xml`·`/robots.txt`·`/?feedback` | 전부 200. `/en` 은 `lang="en"` + hreflang ko/en/es/x-default |
 | 번들의 env | 동적 청크 `216.951df721d3217408.js` 에 `dp-agentation-ingest` **1**, `dp_ingest_` **1** (다른 청크 0) |
+| 머지 뒤 프로덕션(`dpl_67DB2fL34u36JfLcQvtcvKQH7tzy`, `d9c72b3`) | `/`·`/en`·`/es` 200, 위젯 청크 해시 동일(`216.951df721d3217408`) · ingest 1 · key 1 — 머지 델타가 문서뿐이라 실전송은 재실행하지 않았다 |
 | 실전송 | `?feedback` → 비밀번호 → 「피드백 보내기」 → 화면 전체 → 「보냈습니다」 → 라쏘런 제보 `16a0358c-2ece-4af6-b3b7-874cd2d66b5d` 도착(page_url 이 새 주소). 근거 코멘트 후 resolved(`resolved_by` = PR #1) |
 
 ```bash
