@@ -108,7 +108,9 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .wordmark {
   font-family: var(--font-display-stack); font-weight: 800; font-size: 15px;
   letter-spacing: 0.04em; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px;
 }
+.wordmark img { width: 28px; height: 28px; border-radius: 50%; }
 .site-nav { display: flex; gap: 22px; margin-left: auto; font-size: 15px; }
 .site-nav a { text-decoration: none; color: var(--ink-soft); }
 .site-nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 5px; }
@@ -177,6 +179,22 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   border: 1.5px solid var(--on-signal); border-radius: 999px; padding: 8px 18px;
 }
 .hero-links a:hover { background: var(--on-signal); color: var(--signal-ink); }
+/* 이메일 버튼 위에 주소를 보여 주는 말풍선 — 올리거나 포커스하면 나온다 */
+.email-link { position: relative; }
+.email-tip {
+  position: absolute; left: 0; bottom: calc(100% + 10px); white-space: nowrap;
+  background: var(--ink); color: var(--paper); font-size: 14px; font-weight: 500;
+  padding: 7px 12px; border-radius: var(--radius-s);
+  opacity: 0; transform: translateY(4px); pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.email-tip em { font-style: normal; color: var(--glow); }
+.email-link:hover .email-tip, .email-link:focus-visible .email-tip, .email-tip[data-open] { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .email-tip { transition: none; } }
+
+/* 본문 안의 강조 — 콘텐츠의 **…** */
+.hl { font-weight: 700; color: var(--ink); }
+.hero .hl, .contact .hl { color: inherit; font-weight: 800; }
 @media (max-width: 760px) {
   .hero-keywords { grid-template-columns: 1fr; gap: 18px; }
   .hero-wire-a { opacity: 0.6; }
@@ -208,7 +226,8 @@ main > section { padding-block: clamp(64px, 9vw, 120px); }
 
 /* ── 숫자 ─────────────────────────────────────────────── */
 main > .stats {
-  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* 항목 수가 바뀌어도 한 줄에 고르게 나눈다 */
+  display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr);
   padding-block: 36px; border-bottom: 1px solid var(--line);
 }
 .stats p { margin: 0; padding: 4px 20px; border-left: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
@@ -216,51 +235,10 @@ main > .stats {
 .stats strong { font-family: var(--font-display-stack); font-weight: 700; font-size: clamp(24px, 2.8vw, 34px); letter-spacing: -0.02em; line-height: 1.2; }
 .stats span { color: var(--muted); font-size: 14px; line-height: 1.5; }
 @media (max-width: 760px) {
-  main > .stats { grid-template-columns: 1fr 1fr; row-gap: 22px; }
+  main > .stats { grid-auto-flow: row; grid-template-columns: 1fr 1fr; row-gap: 22px; }
   .stats p:nth-of-type(odd) { border-left: 0; padding-left: 0; }
-}
-
-/* ── 일하는 방식 ───────────────────────────────────────── */
-.loop {
-  list-style: none; padding: 0; margin: 0;
-  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
-  position: relative;
-}
-.loop::before {
-  content: ''; position: absolute; left: 0; right: 0; top: 19px; height: 2px; background: var(--line);
-}
-.loop li { position: relative; padding-right: 12px; display: flex; flex-direction: column; gap: 2px; }
-.loop-step {
-  width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--paper); border: 2px solid var(--ink); font-family: var(--font-display-stack);
-  font-weight: 700; font-size: 15px; margin-bottom: 14px; position: relative;
-}
-.loop li:nth-child(3) .loop-step { background: var(--signal); border-color: var(--signal); color: var(--on-signal); }
-.loop strong { font-size: 18px; }
-.loop li > span:last-child { color: var(--muted); font-size: 14px; }
-.loop-back {
-  margin: 26px 0 0; padding: 12px 18px; border: 1.5px dashed var(--line); border-radius: var(--radius-l);
-  color: var(--ink-soft); font-size: 15px;
-}
-.process-tools {
-  margin-top: clamp(40px, 5vw, 64px); display: grid; grid-template-columns: 1fr 1.4fr; gap: 16px 48px; align-items: start;
-}
-.process-tools h3 { font-size: 20px; margin: 0; letter-spacing: -0.01em; }
-.process-tools ul { list-style: none; padding: 0; margin: 0; }
-.process-tools li { padding: 10px 0 10px 22px; border-bottom: 1px solid var(--line); position: relative; }
-.process-tools li::before {
-  content: ''; position: absolute; left: 0; top: 50%; width: 9px; height: 9px; margin-top: -4.5px;
-  border-radius: 50%; background: var(--mark);
-}
-.process-note { grid-column: 2; color: var(--muted); margin: 8px 0 0; }
-@media (max-width: 900px) {
-  .loop { grid-template-columns: 1fr; gap: 18px; }
-  .loop::before { left: 19px; right: auto; top: 0; bottom: 0; width: 2px; height: auto; }
-  .loop li { flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 14px; padding-right: 0; }
-  .loop-step { margin-bottom: 0; }
-  .loop li > span:last-child { flex-basis: 100%; padding-left: 54px; margin-top: -6px; }
-  .process-tools { grid-template-columns: 1fr; }
-  .process-note { grid-column: 1; }
+  /* 홀수 개면 마지막 하나가 한 줄을 다 쓴다 */
+  .stats p:last-of-type:nth-of-type(odd) { grid-column: 1 / -1; }
 }
 
 /* ── 프로젝트 ──────────────────────────────────────────── */
@@ -281,6 +259,7 @@ main > .stats {
 .project-links { display: flex; gap: 16px; margin: 18px 0 0; font-weight: 600; font-size: 15px; }
 .project-links a { text-underline-offset: 4px; }
 
+a.frame { display: block; cursor: zoom-in; }
 .frame { border-radius: var(--radius-l); overflow: hidden; background: var(--paper-raised); border: 1px solid var(--line); }
 .frame img { display: block; width: 100%; height: auto; }
 figure { margin: 0; }
@@ -291,6 +270,7 @@ figcaption { color: var(--muted); font-size: 14px; line-height: 1.5; margin-top:
 .improvements { list-style: none; padding: 0; margin: 36px 0 0; display: grid; gap: 14px; }
 .improvements li { background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius-l); padding: 20px 22px; }
 .improvements h4 { font-size: 17px; margin: 0 0 12px; }
+.improvement-badge { margin: 0 0 6px; font-size: 13px; font-weight: 700; color: var(--signal-ink); }
 .before-after { margin: 0; display: grid; gap: 8px; }
 .before-after div { display: grid; grid-template-columns: 3.6em 1fr; gap: 10px; font-size: 15px; line-height: 1.6; }
 .before-after dt { font-size: 13px; font-weight: 700; padding-top: 2px; color: var(--muted); }
@@ -325,11 +305,12 @@ blockquote footer { margin-top: 6px; color: var(--muted); font-size: 14px; }
 
 /* ── 그 외 · 이전 ─────────────────────────────────────── */
 .others-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 28px; }
-.others-grid .thumb { aspect-ratio: 4 / 3; border-radius: var(--radius-l); overflow: hidden; border: 1px solid var(--line); background: var(--paper-raised); }
+.others-grid .thumb { display: block; aspect-ratio: 4 / 3; border-radius: var(--radius-l); overflow: hidden; border: 1px solid var(--line); background: var(--paper-raised); }
 .others-grid .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 .others-grid h3 { font-size: 19px; margin: 16px 0 2px; }
 .others-grid h3 a { text-underline-offset: 4px; }
-.others-grid p:last-child { margin: 8px 0 0; font-size: 15px; color: var(--ink-soft); }
+.others-grid .meta + p { margin: 8px 0 0; font-size: 15px; color: var(--ink-soft); }
+.more-link { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--signal-ink); text-underline-offset: 4px; }
 .others-grid li:first-child .thumb { border-color: var(--signal); }
 .contests { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 2.4fr; gap: 8px 32px; }
 .contests h3 { margin: 0; font-size: 17px; }
@@ -341,6 +322,7 @@ blockquote footer { margin-top: 6px; color: var(--muted); font-size: 14px; }
 .early-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
 .early-item figure { margin-bottom: 18px; }
 .early-item h3, .devhoon h3 { font-size: 22px; margin: 0 0 8px; letter-spacing: -0.02em; }
+.early-item h3 a { text-underline-offset: 4px; }
 .early-item > p:not(.pill) { font-size: 15px; color: var(--ink-soft); margin: 0; }
 .early-metrics { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; margin-top: 14px !important; }
 .early-metrics strong { font-family: var(--font-display-stack); font-size: 22px; color: var(--ink); }
@@ -352,6 +334,30 @@ blockquote footer { margin-top: 6px; color: var(--muted); font-size: 14px; }
 .mini-timeline li { display: grid; grid-template-columns: 5em 1fr; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 15px; }
 .mini-timeline time { color: var(--muted); font-variant-numeric: tabular-nums; }
 @media (max-width: 900px) { .early-grid, .devhoon { grid-template-columns: 1fr; } }
+
+/* ── 프로젝트 상세 페이지 ─────────────────────────────── */
+.detail { padding-block: clamp(32px, 5vw, 64px) clamp(64px, 9vw, 120px); }
+.detail-back { display: block; width: fit-content; margin-bottom: 28px; font-size: 15px; font-weight: 600; text-underline-offset: 4px; }
+.detail .project-summary { margin-top: 0; }
+.detail-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr); gap: clamp(28px, 4vw, 64px); margin-top: clamp(28px, 4vw, 48px); align-items: start; }
+.detail-paragraph { font-size: 17px; margin: 24px 0 0; max-width: 38em; }
+.contact-compact { padding-block: 40px; }
+.contact-compact .detail-back { margin-bottom: 0; }
+.contact-compact .footer-note { margin-top: 16px; }
+@media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } }
+
+/* ── 사진 크게 보기 ───────────────────────────────────── */
+/* 가운데 정렬을 직접 준다 — 기본 스타일 초기화가 dialog 의 margin:auto 를 지운다 */
+.lightbox { position: fixed; inset: 0; margin: auto; border: 0; padding: 0; background: transparent; width: fit-content; height: fit-content; max-width: none; max-height: none; overflow: visible; }
+.lightbox::backdrop { background: rgba(18, 20, 42, 0.82); }
+.lightbox figure { margin: 0; }
+.lightbox img { display: block; max-width: min(94vw, 1400px); max-height: 82vh; width: auto; height: auto; margin-inline: auto; border-radius: var(--radius-s); background: var(--paper-raised); }
+.lightbox figcaption { color: #fff8f4; text-align: center; margin-top: 12px; max-width: min(94vw, 1400px); }
+.lightbox-close {
+  position: fixed; top: 16px; right: 16px; font: inherit; font-weight: 600; font-size: 15px;
+  padding: 8px 16px; border-radius: 999px; border: 1.5px solid #fff8f4; background: transparent; color: #fff8f4; cursor: pointer;
+}
+.lightbox-close:hover { background: #fff8f4; color: #262a3b; }
 
 /* ── 연표 · 수상 ──────────────────────────────────────── */
 .timeline { border-top: 1px solid var(--line); }

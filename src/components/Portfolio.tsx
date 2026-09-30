@@ -1,24 +1,16 @@
 import Image from 'next/image';
 import { getContent } from '@/content';
-import type { Shot } from '@/content/images';
 import type { Project } from '@/content/types';
-import type { Locale } from '@/i18n/config';
+import { projectPath, type Locale } from '@/i18n/config';
+import EmailLink from './EmailLink';
 import FeedbackGate from './feedback/FeedbackGate';
+import Figure from './Figure';
 import Header from './Header';
+import Lightbox from './Lightbox';
+import Rich from './Rich';
 import { Icosahedron, RingSphere } from './Wireframes';
 
 // 페이지 전체. 서버 컴포넌트라 언어별 HTML 이 빌드 때 완성된다 — 클라이언트 JS 는 피드백 관문뿐이다.
-
-function Figure({ shot, sizes, className, priority }: { shot: Shot; sizes: string; className?: string; priority?: boolean }) {
-  return (
-    <figure className={className}>
-      <div className="frame">
-        <Image src={shot.src} alt={shot.alt} width={shot.width} height={shot.height} sizes={sizes} priority={priority} />
-      </div>
-      {shot.caption && <figcaption>{shot.caption}</figcaption>}
-    </figure>
-  );
-}
 
 function FactTable({ facts }: { facts: Project['facts'] }) {
   return (
@@ -33,7 +25,7 @@ function FactTable({ facts }: { facts: Project['facts'] }) {
   );
 }
 
-function ProjectArticle({ project, labels, index }: { project: Project; labels: { before: string; after: string; lesson: string; results: string }; index: number }) {
+function ProjectArticle({ project, labels, index, openLabel }: { project: Project; labels: { before: string; after: string; lesson: string; results: string }; index: number; openLabel: string }) {
   const tallCover = project.cover.height > project.cover.width;
   return (
     <article className="project" id={project.id} aria-labelledby={`${project.id}-title`}>
@@ -57,17 +49,19 @@ function ProjectArticle({ project, labels, index }: { project: Project; labels: 
           className={tallCover ? 'cover cover-tall' : 'cover'}
           sizes="(max-width: 900px) 100vw, 62vw"
           priority={index === 0}
+          openLabel={openLabel}
         />
-        <p className="project-summary">{project.summary}</p>
+        <p className="project-summary"><Rich text={project.summary} /></p>
 
         {project.improvements && (
           <ol className="improvements">
             {project.improvements.map((item) => (
               <li key={item.title}>
+                {item.badge && <p className="improvement-badge">{item.badge}</p>}
                 <h4>{item.title}</h4>
                 <dl className="before-after">
                   <div><dt>{labels.before}</dt><dd>{item.before}</dd></div>
-                  <div><dt>{labels.after}</dt><dd>{item.after}</dd></div>
+                  <div><dt>{labels.after}</dt><dd><Rich text={item.after} /></dd></div>
                 </dl>
                 {item.metric && (
                   <p className="inline-metric"><strong>{item.metric.value}</strong> {item.metric.label}</p>
@@ -99,7 +93,7 @@ function ProjectArticle({ project, labels, index }: { project: Project; labels: 
         {project.gallery && (
           <div className="gallery">
             {project.gallery.map((s) => (
-              <Figure key={s.src} shot={s} className={s.height > s.width ? 'tall' : undefined} sizes="(max-width: 700px) 100vw, 31vw" />
+              <Figure key={s.src} shot={s} className={s.height > s.width ? 'tall' : undefined} sizes="(max-width: 700px) 100vw, 31vw" openLabel={openLabel} />
             ))}
           </div>
         )}
@@ -107,7 +101,7 @@ function ProjectArticle({ project, labels, index }: { project: Project; labels: 
         {project.lesson && (
           <aside className="lesson">
             <h4>{labels.lesson} — {project.lesson.title}</h4>
-            <p>{project.lesson.body}</p>
+            <p><Rich text={project.lesson.body} /></p>
           </aside>
         )}
       </div>
@@ -137,7 +131,7 @@ export default function Portfolio({ locale }: { locale: Locale }) {
               <span aria-hidden="true" className="hero-sep" />
               {t.hero.role}
             </p>
-            <p className="hero-lead">{t.hero.lead}</p>
+            <p className="hero-lead"><Rich text={t.hero.lead} /></p>
             <ul className="hero-keywords">
               {t.hero.keywords.map((k) => (
                 <li key={k.title}>
@@ -147,9 +141,13 @@ export default function Portfolio({ locale }: { locale: Locale }) {
               ))}
             </ul>
             <p className="hero-links">
-              {t.hero.links.map((l) => (
-                <a key={l.href} href={l.href} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">{l.label}</a>
-              ))}
+              {t.hero.links.map((l) =>
+                l.href.startsWith('mailto:') ? (
+                  <EmailLink key={l.href} href={l.href} label={l.label} copiedLabel={t.a11y.copied} />
+                ) : (
+                  <a key={l.href} href={l.href} target="_blank" rel="noreferrer">{l.label}</a>
+                ),
+              )}
             </p>
           </div>
         </section>
@@ -161,33 +159,11 @@ export default function Portfolio({ locale }: { locale: Locale }) {
           ))}
         </section>
 
-        <section className="process wrap" id="process" aria-labelledby="process-title">
-          <h2 id="process-title" className="section-title">{t.process.title}</h2>
-          <p className="section-intro">{t.process.body}</p>
-          <ol className="loop">
-            {t.process.stages.map((s, i) => (
-              <li key={s.name}>
-                <span className="loop-step" aria-hidden="true">{i + 1}</span>
-                <strong>{s.name}</strong>
-                <span>{s.who}</span>
-              </li>
-            ))}
-          </ol>
-          <p className="loop-back">{t.process.loopBack}</p>
-          <div className="process-tools">
-            <h3>{t.process.toolsTitle}</h3>
-            <ul>
-              {t.process.tools.map((tool) => <li key={tool}>{tool}</li>)}
-            </ul>
-            <p className="process-note">{t.process.note}</p>
-          </div>
-        </section>
-
         <section className="work wrap" id="work" aria-labelledby="work-title">
           <h2 id="work-title" className="section-title">{t.work.title}</h2>
           <p className="section-intro">{t.work.intro}</p>
           {t.work.projects.map((p, i) => (
-            <ProjectArticle key={p.id} project={p} labels={t.work.labels} index={i} />
+            <ProjectArticle key={p.id} project={p} labels={t.work.labels} index={i} openLabel={t.a11y.openImage} />
           ))}
         </section>
 
@@ -196,13 +172,15 @@ export default function Portfolio({ locale }: { locale: Locale }) {
           <p className="section-intro">{t.others.intro}</p>
           <ul className="others-grid">
             {t.others.items.map((o) => (
-              <li key={o.name}>
-                <div className="thumb">
-                  <Image src={o.shot.src} alt={o.shot.alt} width={o.shot.width} height={o.shot.height} sizes="(max-width: 700px) 100vw, 30vw" />
-                </div>
-                <h3>{o.href ? <a href={o.href} target="_blank" rel="noreferrer">{o.name}</a> : o.name}</h3>
+              <li key={o.slug}>
+                {/* 사진은 상세로 가는 같은 링크의 반복이라 읽어 주지 않는다 */}
+                <a className="thumb" href={projectPath(locale, o.slug)} tabIndex={-1} aria-hidden="true">
+                  <Image src={o.shot.src} alt="" width={o.shot.width} height={o.shot.height} sizes="(max-width: 700px) 100vw, 30vw" />
+                </a>
+                <h3><a href={projectPath(locale, o.slug)}>{o.name}</a></h3>
                 <p className="meta">{o.period}</p>
-                <p>{o.body}</p>
+                <p><Rich text={o.body} /></p>
+                <a className="more-link" href={projectPath(locale, o.slug)} aria-label={`${o.name} — ${t.detail.more}`}>{t.detail.more} →</a>
               </li>
             ))}
           </ul>
@@ -217,17 +195,18 @@ export default function Portfolio({ locale }: { locale: Locale }) {
           <p className="section-intro">{t.early.intro}</p>
           <div className="early-grid">
             {t.early.items.map((e) => (
-              <article key={e.name} className="early-item">
-                <Figure shot={e.shot} sizes="(max-width: 900px) 100vw, 32vw" />
+              <article key={e.slug} className="early-item">
+                <Figure shot={e.shot} sizes="(max-width: 900px) 100vw, 32vw" openLabel={t.a11y.openImage} />
                 <p className="pill pill-quiet">{e.tag}</p>
-                <h3>{e.name}</h3>
-                <p>{e.body}</p>
+                <h3><a href={projectPath(locale, e.slug)}>{e.name}</a></h3>
+                <p><Rich text={e.body} /></p>
                 {e.metrics && (
                   <p className="early-metrics">
                     {e.metrics.map((m) => <span key={m.label}><strong>{m.value}</strong> {m.label}</span>)}
                     {e.note && <small>{e.note}</small>}
                   </p>
                 )}
+                <a className="more-link" href={projectPath(locale, e.slug)} aria-label={`${e.name} — ${t.detail.more}`}>{t.detail.more} →</a>
               </article>
             ))}
           </div>
@@ -243,7 +222,7 @@ export default function Portfolio({ locale }: { locale: Locale }) {
               </ol>
             </div>
             <div className="devhoon-shots">
-              {t.early.devhoon.shots.map((s) => <Figure key={s.src} shot={s} sizes="(max-width: 900px) 100vw, 30vw" />)}
+              {t.early.devhoon.shots.map((s) => <Figure key={s.src} shot={s} sizes="(max-width: 900px) 100vw, 30vw" openLabel={t.a11y.openImage} />)}
             </div>
           </article>
         </section>
@@ -289,6 +268,7 @@ export default function Portfolio({ locale }: { locale: Locale }) {
         </div>
       </footer>
 
+      <Lightbox closeLabel={t.a11y.closeImage} />
       <FeedbackGate copy={t.feedback} />
     </>
   );

@@ -9,12 +9,12 @@ const en: Content = {
     description:
       'Portfolio of Gyeonghun Jeong, developer at Lightsoft. From request to spec, build, review, release and feedback — including KITS, the FAIR HR consulting CRM/ERP and CLI Manager.',
   },
-  a11y: { skip: 'Skip to content', primaryNav: 'Main menu', language: 'Choose language', openImage: 'Open full image' },
-  nav: { work: 'Work', process: 'How I work', timeline: 'Timeline', contact: 'Contact' },
+  a11y: { skip: 'Skip to content', primaryNav: 'Main menu', language: 'Choose language', openImage: 'View image larger', closeImage: 'Close', copied: 'Copied' },
+  nav: { work: 'Work', timeline: 'Timeline', contact: 'Contact' },
   hero: {
     name: 'Gyeonghun Jeong',
     role: 'Developer at Lightsoft · maker of CLI Manager',
-    lead: "I don't stay inside the \"write the code\" box. From the moment a request comes in, I define the whole path — spec, build, review, release and feedback — and keep looking for the parts of it that can work better.",
+    lead: "I don't stay inside the \"write the code\" box. From the moment a request comes in, **I define the whole path** — spec, build, review, release and feedback — and **keep looking for the parts of it that can work better**.",
     keywords: [
       { title: 'The whole path', body: 'I take on every step from request to feedback, so I understand how the work actually flows.' },
       { title: 'Better process', body: 'I find where feedback gets lost or repeated, and turn that spot into a tool or a routine.' },
@@ -29,33 +29,9 @@ const en: Content = {
     title: 'Two years in numbers',
     items: [
       { value: '19', label: 'company projects with designers and clients' },
-      { value: '6,583', label: 'GitHub commits (2025–2026)' },
       { value: '#10', label: 'Product of the Day on Product Hunt — CLI Manager' },
-      { value: '851', label: 'Ddingsroom sign-ups · university SW contest award' },
+      { value: '$1,200+', label: 'early paid revenue from CLI Manager — before it went open source' },
     ],
-  },
-  process: {
-    title: 'How I work',
-    body: 'I documented my own work and each process as far as I could, brought it all into Lassorun — our internal docs and QA platform — and kept finding the parts that AI could improve.',
-    stages: [
-      { name: 'Request', who: 'Client' },
-      { name: 'Plan & docs', who: 'Specs · test cases' },
-      { name: 'Build', who: 'AI agents' },
-      { name: 'Review', who: 'Designer' },
-      { name: 'Release', who: 'Stores · web' },
-      { name: 'Feedback', who: 'Users · clients' },
-    ],
-    loopBack: 'Back to request — the retrospective becomes the next round’s docs',
-    toolsTitle: 'Tools I built and put into that loop',
-    tools: [
-      'Lassorun — internal docs & QA platform',
-      'Dev automation — issues built from docs',
-      'Responsive review pages · feedback widget',
-      'OTA & release automation',
-      'Slack bot · Linear integration',
-      'Retrospectives · written work procedures',
-    ],
-    note: '“Build” in the middle is where AI got fastest. So I spend my time on either side of it — docs, review and feedback.',
   },
   work: {
     title: 'Work',
@@ -68,7 +44,7 @@ const en: Content = {
         name: 'KITS',
         tagline: 'An education service from placement tests to daily study, across phone, tablet and web',
         summary:
-          'Every screen fans out into the app, mobile web, desktop web, teacher web and admin web. Matching screens with the designer and the client was a bigger job than the code itself, so together with the designer I rebuilt the feedback process that kept losing items when requests were vague or piled up.',
+          'Every screen fans out into the app, mobile web, desktop web, teacher web and admin web. **Matching screens with the designer and the client** was a bigger job than the code itself, so together with the designer I **rebuilt the feedback process** that kept losing items when requests were vague or piled up.',
         facts: [
           { label: 'When', value: 'Nov 2025 – present' },
           { label: 'Role', value: 'Front end & QA lead' },
@@ -80,19 +56,19 @@ const en: Content = {
           {
             title: 'Responsive review',
             before: 'Dragging the Chrome window wider and narrower, one screen at a time',
-            after: 'A review board showing 55 screens and 39 modals in portrait and landscape at once. Each screen has a comment box, so a designer’s comment becomes a work instruction as is.',
+            after: '**A review board showing 55 screens and 39 modals in portrait and landscape at once**. Each screen has a comment box, so a designer’s comment becomes a work instruction as is.',
             metric: { value: '55 / 55', label: 'tablet screens checked · 0 errors' },
           },
           {
             title: 'Sending feedback',
             before: 'Sixty text notes in a single Slack message',
-            after: 'A widget that lets you point at the actual button or text on screen and report it, added to all four apps: app, web, teacher and admin.',
+            after: '**A widget that lets you point at the actual button or text on screen and report it**, added to all four apps: app, web, teacher and admin.',
             metric: { value: '41', label: 'reports the designer filed in a single day' },
           },
           {
             title: 'Tracking progress',
             before: 'A 613-line review doc updated by hand; you had to ask to know what was fixed',
-            after: 'Report → internal system → Linear issue → Slack notice, all automatic. When a fix ships, Slack gets what changed plus a link to the review board.',
+            after: '**Report → internal system → Linear issue → Slack notice, all automatic**. When a fix ships, Slack gets what changed plus a link to the review board.',
             metric: { value: '301+', label: 'reports with a tracked status' },
           },
         ],
@@ -106,7 +82,7 @@ const en: Content = {
         ],
         lesson: {
           title: 'Placement beats the tool',
-          body: 'Nobody opened the review board while it was a local HTML file. People only started using it once it lived at a deployed URL. Building a tool and having it used are different jobs — it has to feel easy inside the other person’s workflow before it convinces anyone.',
+          body: 'Nobody opened the review board while it was a local HTML file. People only started using it once it lived at a deployed URL. Building a tool and having it used are different jobs — **it has to feel easy inside the other person’s workflow** before it convinces anyone.',
         },
         gallery: [
           shot('kits_board_top', 'Top of the review board', 'The review board — portrait and landscape captures plus a comment box for every screen'),
@@ -121,7 +97,7 @@ const en: Content = {
         name: 'FAIR HR consulting CRM/ERP',
         tagline: 'A labor law firm’s whole consulting process — diagnose, design, execute, manage change, evaluate — in one place',
         summary:
-          'I worked with the labor attorneys as if we were one team. We moved checklist-and-document manual work into software and shifted the consulting process to AI (AX). It also checks the statutes an AI cites against the actual law.',
+          'I worked with the labor attorneys as if we were one team. We **moved checklist-and-document manual work into software** and **shifted the consulting process to AI (AX)**. It also **checks the statutes an AI cites against the actual law**.',
         facts: [
           { label: 'When', value: 'Feb 2026 – present' },
           { label: 'Role', value: 'Planning, development and operations' },
@@ -147,7 +123,7 @@ const en: Content = {
         ],
         lesson: {
           title: 'Working solo means building in the user’s view',
-          body: 'Writing the user guide exposed gaps in the screens, and making the product video forced me to say in one sentence whose work this product reduces, and how.',
+          body: 'Writing the user guide exposed gaps in the screens, and making the product video forced me to **say in one sentence whose work this product reduces**, and how.',
         },
         gallery: [
           shot('efm_stages_c', 'Project stage screen', 'Stages — contract → diagnosis → design → execution → change management → evaluation'),
@@ -162,7 +138,7 @@ const en: Content = {
         name: 'CLI Manager',
         tagline: 'A desktop app to run and organize multiple AI coding agents (CLIs) from one screen',
         summary:
-          'It started with my own mess: ten terminals open and no idea which was which. Ten months and 56 releases later it’s a public product. I did the planning, development, releases, landing page and marketing alone — it launched as a paid app, earned its first revenue, then went open source.',
+          'It started with my own mess: ten terminals open and no idea which was which. **Ten months and 57 releases later it’s a public product.** I did the planning, development, releases, landing page and marketing alone — **it launched as a paid app, earned its first revenue, then went open source**.',
         facts: [
           { label: 'When', value: 'Nov 2025 – present' },
           { label: 'Role', value: 'Solo maker' },
@@ -172,21 +148,22 @@ const en: Content = {
         cover: shot('cli_main', 'CLI Manager main screen'),
         improvements: [
           {
-            title: 'v1.9 · AI Control API',
+            badge: 'Latest update · v1.10.0 · Sep 29, 2026',
+            title: 'AI Control API',
             before: 'With non-interactive runs, you only find out an AI went off track once it’s done',
-            after: 'A local API lets another AI open sessions and work inside CLI Manager. AI sessions show up in green, so you can check in and step in at any time.',
+            after: 'In v1.9 (Sep 23, 2026), **a local API lets another AI open sessions and work inside CLI Manager**. AI sessions show up in green, so you can check in and step in at any time. Since v1.10 (Sep 29, 2026) the AI also reads the notes on those sessions.',
           },
         ],
         metrics: [
           { value: '#10', label: 'Product of the Day on Product Hunt · 105 upvotes' },
-          { value: '56', label: 'releases in 10 months' },
+          { value: '57', label: 'releases in 10 months' },
           { value: '$1,200+', label: 'early paid revenue → then open source' },
           { value: '23K', label: 'views on the top Reddit post' },
         ],
         quotes: [{ text: 'I picked this up today and am obsessed!!', who: 'A Product Hunt user' }],
         lesson: {
           title: 'The cheapest QA',
-          body: 'Both bugs caught in the latest update were about how things looked, not what they did. Using my own tool every day turned out to be the cheapest QA there is.',
+          body: 'Both bugs caught in the latest update were about how things looked, not what they did. **Using my own tool every day turned out to be the cheapest QA there is**.',
         },
         gallery: [
           shot('cli_green', 'AI sessions shown in green', 'A real AI agent working inside CLI Manager — AI sessions are green'),
@@ -205,7 +182,7 @@ const en: Content = {
         name: 'Internal dev automation',
         tagline: 'Symphony, a daemon that builds issues from docs and calls a person when it gets stuck — plus Lassorun, our docs and QA platform',
         summary:
-          'I built it because people were babysitting recurring issues by hand — checking progress, reviewing, asking again. Symphony picks up an issue, has AI agents build it from the docs, and pings a human on Slack when it’s stuck. Docs, test cases and reports all flow through Lassorun.',
+          'I built it because people were babysitting recurring issues by hand — checking progress, reviewing, asking again. Symphony picks up an issue, **has AI agents build it from the docs**, and **pings a human on Slack when it’s stuck**. Docs, test cases and reports all flow through Lassorun.',
         facts: [
           { label: 'When', value: 'May 2026 – present' },
           { label: 'Role', value: 'Design, build, rollout across the team' },
@@ -232,7 +209,7 @@ const en: Content = {
         name: 'Purple',
         tagline: 'Admin app for an English-learning LMS — curriculum, quizzes, classes and a reading program',
         summary:
-          'An admin system handling 17 quiz types × 16 question types on live production data. Questions were locked inside quizzes and couldn’t be reused, so I redesigned it so questions live on their own and link to quizzes — then verified the production data migration step by step, from design and plan to execution.',
+          'An admin system handling 17 quiz types × 16 question types on live production data. Questions were locked inside quizzes and couldn’t be reused, so I redesigned it so **questions live on their own and link to quizzes** — then **verified the production data migration step by step**, from design and plan to execution.',
         facts: [
           { label: 'When', value: 'Nov 2025 – Jun 2026' },
           { label: 'Role', value: 'Admin web · data model · QA' },
@@ -254,7 +231,7 @@ const en: Content = {
         ],
         lesson: {
           title: 'Speak up when scope moves',
-          body: 'A task I estimated at 40 lines became 400, and I didn’t flag it early — the team lead renegotiated with the client for me. Since then I write every task as “estimate → measured”.',
+          body: 'A task I estimated at 40 lines became 400, and I didn’t flag it early — the team lead renegotiated with the client for me. Since then I write every task as **“estimate → measured”**.',
         },
         gallery: [
           shot('pur_matrix', 'CRUD round-trip matrix', 'CRUD round-trip matrix by quiz type'),
@@ -266,7 +243,7 @@ const en: Content = {
         context: 'Lightsoft · client · on the App Store',
         name: 'PorterX',
         tagline: 'A mission-matching app that connects travelers’ routes with local shopping requests',
-        summary: 'The project where I handled the most post-launch operations — payments, refunds, store review and security.',
+        summary: 'The project where I handled **the most post-launch operations** — payments, refunds, store review and security.',
         facts: [
           { label: 'When', value: 'Aug 2025 – Apr 2026' },
           { label: 'Role', value: 'App features · design · operations' },
@@ -291,7 +268,7 @@ const en: Content = {
         name: 'NC Digitec',
         tagline: 'Redesign of an online store for Samsung AI subscriptions (rentals)',
         summary:
-          'I led the redesign and ran the loop for designer and client feedback. I set things up so the designer could install the feedback tool on their own, batched incoming reports, and shared what shipped as a list — “6 reports from yesterday and today, fixed”. It carried over the feedback process refined on KITS.',
+          'I led the redesign and ran the loop for designer and client feedback. I set things up so **the designer could install the feedback tool on their own**, batched incoming reports, and shared what shipped as a list — “6 reports from yesterday and today, fixed”. It carried over the feedback process refined on KITS.',
         facts: [
           { label: 'When', value: 'Apr 2026 – present' },
           { label: 'Role', value: 'Redesign lead · operations' },
@@ -317,7 +294,7 @@ const en: Content = {
         name: 'Content automation',
         tagline: 'A pipeline from collecting ideas to planning, producing and publishing',
         summary:
-          'Collect popular posts on X → two AI agents debate the topic (up to 3 rounds) → research, fact-check, copy, render and caption → publish to Threads, X and Instagram at once. Every day it gathered engagement data and remade the best posts from a new angle. I open-sourced it with the API keys left blank.',
+          'Collect popular posts on X → two AI agents debate the topic (up to 3 rounds) → research, fact-check, copy, render and caption → **publish to Threads, X and Instagram at once**. Every day it gathered engagement data and remade the best posts from a new angle. **I open-sourced it** with the API keys left blank.',
         facts: [
           { label: 'When', value: 'Mar – Apr 2026' },
           { label: 'Role', value: 'Design · build · operations' },
@@ -332,9 +309,10 @@ const en: Content = {
         ],
         lesson: {
           title: 'A tool the team uses',
-          body: 'I presented the results in-house as “write it down, even briefly, and AI will develop it for you”. It later grew into an internal content platform with automatic card news, and the team now uses it together.',
+          body: 'I presented the results in-house as “write it down, even briefly, and AI will develop it for you”. It later grew into an internal content platform with automatic card news, and **the team now uses it together**.',
         },
         gallery: [shot('cli_card', 'Card introducing CLI Manager', 'A CLI Manager intro card made with the pipeline')],
+        links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
       },
     ],
   },
@@ -343,20 +321,132 @@ const en: Content = {
     intro: 'Shorter stints, and things that have only just started.',
     items: [
       {
+        slug: 'design-atlas',
         name: 'Design Atlas',
-        period: 'Sep 2026 · personal',
-        body: 'A design dictionary of 893 motion, effect, component and UX terms across 34 fields — each with Korean and English explanations, a live demo and code.',
+        period: 'Sep 2026 – present · personal',
+        body: 'A design dictionary of **893 motion, effect, component and UX terms across 34 fields** — each with Korean and English explanations, a live demo and code.',
         shot: shot('design_atlas', 'Design Atlas home'),
-        href: 'https://design.solhun.com',
+        detail: {
+          facts: [
+            { label: 'When', value: 'Sep 2026 – present' },
+            { label: 'Role', value: 'Solo maker' },
+            { label: 'Size', value: '893 terms · 34 fields' },
+            { label: 'Languages', value: 'Korean · English' },
+          ],
+          paragraphs: ['A dictionary of design terms — motion, effects, 3D, components and UX — that shows each one with Korean and English explanations, a live demo and code.'],
+          links: [{ label: 'Website', href: 'https://design.solhun.com' }],
+        },
       },
-      { name: 'ZZAN24', period: 'Sep 2026', body: 'Design work including responsive layouts.', shot: shot('zzan_tab', 'ZZAN24 on a tablet') },
-      { name: 'Switch On', period: 'Apr 2026', body: 'Porting a board game to BGA Studio · alpha and beta.', shot: shot('sw_board', 'Switch On game board') },
-      { name: 'Dolphin CRM', period: 'Apr 2026', body: 'Orders, after-sales service and stock for a dishwasher business — product QA, fixes and web analytics.', shot: shot('dp_stats', 'Dolphin CRM statistics') },
-      { name: 'Big Data Hub webzine', period: 'Apr 2026', body: 'A university program’s webzine and its admin for writers and points.', shot: shot('web_admin', 'Webzine admin') },
-      { name: 'light-archive', period: 'Feb 2026', body: 'Internal knowledge and blog platform, archive.lightsoft.dev.', shot: shot('la_home', 'light-archive home') },
-      { name: 'Motion Meme', period: 'Mar 2026 · 2nd at internal hackathon', body: 'MVP of a social platform built around meme challenges.', shot: shot('lw_motion', 'Motion Meme screen') },
-      { name: 'YouTube Manager', period: 'Mar 2026', body: 'Joined during production to help build another company’s system.', shot: shot('yt_plan', 'YouTube Manager planning screen') },
-      { name: 'Lightsoft website', period: 'In-house', body: 'The company site and work showcase.', shot: shot('lw_work-1', 'Work section of the Lightsoft site') },
+      {
+        slug: 'switch-on',
+        name: 'Switch On',
+        period: 'Apr – Sep 2026',
+        body: 'Porting a board game to BGA Studio · alpha and beta.',
+        shot: shot('sw_board', 'Switch On game board'),
+        detail: {
+          facts: [
+            { label: 'When', value: 'Apr – Sep 2026' },
+            { label: 'Role', value: 'Port development (solo)' },
+            { label: 'Built as', value: 'Next.js prototype · Board Game Arena port' },
+            { label: 'With', value: 'CEO' },
+          ],
+          paragraphs: ['I first built the board game Switch On as a Next.js prototype, then ported it to Board Game Arena (BGA Studio) and shipped it through alpha and beta.'],
+        },
+      },
+      {
+        slug: 'dolphin-crm',
+        name: 'Dolphin CRM',
+        period: 'Oct 2025 – Jul 2026',
+        body: 'Orders, after-sales service and stock for a dishwasher business — **restructured product data management (specs and capacities)**, simplified menus, added web analytics.',
+        shot: shot('dp_stats', 'Dolphin CRM statistics'),
+        detail: {
+          facts: [
+            { label: 'When', value: 'Oct 2025 – Jul 2026' },
+            { label: 'Role', value: 'Support (a teammate was the main developer)' },
+            { label: 'Scope', value: 'Admin for dishwasher orders · after-sales · stock' },
+          ],
+          paragraphs: [
+            'Oct 2025 — built the product data management page with spec and capacity management, and simplified the product-order menu structure.',
+            'Jul 2026 — added web analytics (PostHog), removed the unified search and unused collection pages, and fixed a bug in creating order products.',
+          ],
+        },
+      },
+      {
+        slug: 'bigdatahub-webzine',
+        name: 'Big Data Hub webzine',
+        period: 'Apr – Jul 2026',
+        body: 'A university program’s webzine and its admin for writers and points.',
+        shot: shot('web_admin', 'Webzine admin'),
+        detail: {
+          facts: [
+            { label: 'When', value: 'Apr – Jul 2026' },
+            { label: 'Scope', value: 'Webzine · admin for writers and points' },
+            { label: 'With', value: 'A program team of 4' },
+          ],
+          paragraphs: ['Built as a team: the webzine of a university big-data program and the admin that manages its writers and points.'],
+        },
+      },
+      {
+        slug: 'light-archive',
+        name: 'light-archive',
+        period: 'Feb – Sep 2026',
+        body: 'Internal knowledge and blog platform, archive.lightsoft.dev.',
+        shot: shot('la_home', 'light-archive home'),
+        detail: {
+          facts: [
+            { label: 'When', value: 'Feb – Sep 2026' },
+            { label: 'Role', value: 'Development' },
+            { label: 'With', value: 'CEO · designer' },
+          ],
+          paragraphs: ['Our internal knowledge-sharing and blog platform. I handled development, and built the first card-news prototype here.'],
+          links: [{ label: 'Website', href: 'https://archive.lightsoft.dev' }],
+        },
+      },
+      {
+        slug: 'motion-meme',
+        name: 'Motion Meme',
+        period: 'Mar 2026 · 2nd at internal hackathon',
+        body: 'MVP of a social platform built around meme challenges.',
+        shot: shot('lw_motion', 'Motion Meme screen'),
+        detail: {
+          facts: [
+            { label: 'When', value: 'Mar 2026 (hackathon)' },
+            { label: 'Team', value: 'Lightsoft' },
+            { label: 'Result', value: '2nd at internal hackathon' },
+          ],
+          paragraphs: ['An MVP of a social platform built around meme challenge videos. It includes reporting, blocking, an admin, credits and payment logic — enough to actually operate.'],
+          links: [{ label: 'Demo', href: 'https://motion-meme-mvp-j1rv.vercel.app' }],
+        },
+      },
+      {
+        slug: 'youtube-manager',
+        name: 'YouTube Manager',
+        period: 'Mar – Aug 2026',
+        body: 'Joined during production to help build another company’s system.',
+        shot: shot('yt_plan', 'YouTube Manager planning screen'),
+        detail: {
+          facts: [
+            { label: 'When', value: 'Mar – Aug 2026' },
+            { label: 'With', value: '2 developers' },
+            { label: 'Built as', value: 'pnpm · Turborepo monorepo · Cloudflare D1 · Better Auth' },
+          ],
+          paragraphs: ['AutoTube, a service for managing YouTube video production from planning to Shorts. I joined during production, working with two teammates.'],
+        },
+      },
+      {
+        slug: 'lightsoft-web',
+        name: 'Lightsoft website',
+        period: 'Oct 2025 – present · in-house',
+        body: 'The company site and work showcase.',
+        shot: shot('lw_work-1', 'Work section of the Lightsoft site'),
+        detail: {
+          facts: [
+            { label: 'When', value: 'Oct 2025 – present' },
+            { label: 'Role', value: 'Initial setup support' },
+          ],
+          paragraphs: ['The official company site and work showcase. I helped with the initial setup; teammates have mostly looked after it since.'],
+        },
+      },
     ],
     contestsTitle: 'Competitions',
     contests: 'AI TOP 100 (finals and campus) · Litmers vibe-coding contest · Kakao PlayMCP · DataHub hackathon · a Ministry of Government Legislation contest proposal',
@@ -366,27 +456,56 @@ const en: Content = {
     intro: '2024–2025: things that started from small frustrations around me.',
     items: [
       {
+        slug: 'debatetimer',
         name: 'DebateTimer.org',
         tag: 'Personal',
-        body: 'The first service I built, for my debate club. Once I added each school’s own debate format — Myongji’s “visual” style, Sungshin’s “Todallae” style — it spread to clubs at other universities.',
+        body: 'The first service I built, for my debate club. Once I added each school’s own debate format — Myongji’s “visual” style, Sungshin’s “Todallae” style — **it spread to clubs at other universities**.',
         shot: shot('dt_templates', 'Template picker for each school’s debate format'),
+        detail: {
+          facts: [
+            { label: 'When', value: 'Mar – Oct 2025' },
+            { label: 'Role', value: 'Development (with 1 collaborator)' },
+            { label: 'Stack', value: 'Next.js · Supabase' },
+            { label: 'Result', value: 'Live on its own domain · search traffic' },
+          ],
+          paragraphs: ['It went public on debatetimer.org in March 2025 and ran as a live service that people found through search.'],
+        },
       },
       {
+        slug: 'praynie',
         name: 'PrayNie',
         tag: 'Personal',
-        body: 'An AI prayer-topic platform to make collecting and sharing prayer requests easier for a campus ministry. It never became a mainstream service — my first lesson that building something and getting it used are different things.',
+        body: 'An AI prayer-topic platform to make collecting and sharing prayer requests easier for a campus ministry. It never became a mainstream service — my first lesson that **building something and getting it used are different things**.',
         shot: shot('pray_mock', 'PrayNie landing page'),
+        detail: {
+          facts: [
+            { label: 'When', value: 'Apr 2025' },
+            { label: 'Role', value: 'Solo developer' },
+            { label: 'Stack', value: 'React · Supabase' },
+          ],
+          paragraphs: ['AI suggests prayer topics, and a social-style feed lets people respond to each other’s requests.'],
+        },
       },
       {
+        slug: 'ddingsroom',
         name: 'Ddingsroom',
         tag: 'University · contest',
-        body: 'A study-room booking service for Myongji University’s student center. I was on the back-end team; after it won an award at the Creative SW contest, it became an official university service.',
+        body: 'A study-room booking service for Myongji University’s student center. I was on the back-end team; after it won an award at the Creative SW contest, **it became an official university service**.',
         shot: shot('dd_live', 'Ddingsroom booking screen, still in service'),
         metrics: [
           { value: '851', label: 'sign-ups' },
           { value: '4,261', label: 'bookings' },
         ],
         note: 'As of Apr 2026',
+        detail: {
+          facts: [
+            { label: 'When', value: 'May – Jul 2025' },
+            { label: 'Role', value: 'Back end (admin module)' },
+            { label: 'With', value: 'A team of 4' },
+            { label: 'Result', value: 'Encouragement Award, 4th Creative SW Program Contest' },
+          ],
+          paragraphs: ['I joined the capstone team on the back end and owned the admin module. The team aligned on screen designs and the ERD together as we went.'],
+        },
       },
     ],
     devhoon: {
@@ -419,7 +538,7 @@ const en: Content = {
       { date: '2026.04', text: 'NC Digitec Samsung subscription store · Dolphin CRM · Switch On · Big Data Hub webzine' },
       { date: '2026.07', text: 'Symphony internal demo · Kakao PlayMCP entry' },
       { date: '2026.08', text: 'Lassorun (docs & QA platform) · feedback widget · report → Linear → Slack' },
-      { date: '2026.09', text: 'ZZAN24 · content platform · CLI Manager v1.9 · Design Atlas' },
+      { date: '2026.09', text: 'Content platform · CLI Manager v1.10 · Design Atlas' },
     ],
   },
   awards: {
@@ -442,6 +561,7 @@ const en: Content = {
     ],
     closing: 'I want to keep exploring the whole process — and keep fixing what I find along the way.',
   },
+  detail: { more: 'View details', back: 'Back to the full portfolio' },
   footer: { note: 'Personal details in screenshots are blurred; client data shown is demo data.' },
   feedback: {
     title: 'Feedback mode',

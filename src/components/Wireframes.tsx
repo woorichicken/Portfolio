@@ -45,7 +45,8 @@ export function Icosahedron({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 200 200" aria-hidden="true" focusable="false">
       {EDGES.map((e, i) => (
-        <line key={i} {...e} className={e.back ? 'wire wire-back' : 'wire'} style={{ ['--i' as string]: i }} pathLength={1} />
+        // back 은 그리는 순서용 값이라 DOM 속성으로 내보내지 않는다
+        <line key={i} x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} className={e.back ? 'wire wire-back' : 'wire'} style={{ ['--i' as string]: i }} pathLength={1} />
       ))}
     </svg>
   );

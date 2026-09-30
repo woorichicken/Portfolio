@@ -13,7 +13,12 @@ export type Improvement = {
   before: string;
   after: string;
   metric?: Metric;
+  /** 제목 위에 작게 붙는 표시(예: 최신 업데이트 · 날짜) */
+  badge?: string;
 };
+
+/** 상세 페이지(/work/<slug>)에만 나오는 정보. 홈 카드에는 한 줄 요약만 둔다. */
+export type Detail = { facts: Fact[]; paragraphs: string[]; links?: Link[] };
 
 export type Project = {
   id: string;
@@ -33,26 +38,30 @@ export type Project = {
 };
 
 export type OtherWork = {
+  /** 상세 페이지 주소에 쓰는 이름 — 세 언어가 같아야 한다 */
+  slug: string;
   name: string;
   period: string;
   body: string;
   shot: Shot;
-  href?: string;
+  detail: Detail;
 };
 
 export type EarlyWork = {
+  slug: string;
   name: string;
   tag: string;
   body: string;
   shot: Shot;
   metrics?: Metric[];
   note?: string;
+  detail: Detail;
 };
 
 export type Content = {
   meta: { title: string; description: string };
-  a11y: { skip: string; primaryNav: string; language: string; openImage: string };
-  nav: { work: string; process: string; timeline: string; contact: string };
+  a11y: { skip: string; primaryNav: string; language: string; openImage: string; closeImage: string; copied: string };
+  nav: { work: string; timeline: string; contact: string };
   hero: {
     name: string;
     role: string;
@@ -61,15 +70,6 @@ export type Content = {
     links: Link[];
   };
   stats: { title: string; items: Metric[] };
-  process: {
-    title: string;
-    body: string;
-    stages: { name: string; who: string }[];
-    loopBack: string;
-    toolsTitle: string;
-    tools: string[];
-    note: string;
-  };
   work: { title: string; intro: string; labels: { before: string; after: string; lesson: string; results: string }; projects: Project[] };
   others: { title: string; intro: string; items: OtherWork[]; contestsTitle: string; contests: string };
   early: {
@@ -81,6 +81,7 @@ export type Content = {
   timeline: { title: string; items: { date: string; text: string }[] };
   awards: { title: string; items: { date: string; title: string; org: string; body: string }[] };
   contact: { title: string; body: string; email: string; links: Link[]; closing: string };
+  detail: { more: string; back: string };
   footer: { note: string };
   feedback: { title: string; hint: string; placeholder: string; submit: string; cancel: string; wrong: string };
 };
