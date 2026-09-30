@@ -1,18 +1,22 @@
 # 배포 · CI/CD · 도메인 (2026-09-30 실측)
 
-이 문서는 **사람이 결정할 것과 그 절차**를 담는다. 이 브랜치에서는 커밋까지만 했고,
-push · Vercel 프로젝트 생성 · Git 연결 · 프로덕션 배포 · 도메인 연결은 하지 않았다.
+이 문서는 **사람이 결정할 것과 그 절차**를 담는다. 2026-09-30 에 2절 추천안(새 프로젝트)으로 배포했다 —
+도메인(`solhun.com`) 이전과 `CLI_MANAGER_ROUTES` 는 아직 하지 않았다(전환 날짜 미정).
 
 ## 1. 지금 상태 (실측)
 
 | 항목 | 상태 | 근거 |
 |---|---|---|
+| **새 배포처** | 팀 `gyeonghunjeong-7007s-projects` 의 **`solhun-portfolio`** (`prj_6L8ZpedYsO8XUD4wV8MvEBkFn6HR`). 프로덕션 **https://solhun-portfolio.vercel.app** | `GET /v9/projects/<id>/domains` |
+| 새 프로젝트 Git 연결 | `woorichicken/Portfolio`, production branch `main`. REST `POST /v11/projects` 에 `gitRepository` 를 넣어 만들었고 조직 권한 문제 없이 붙었다 | PR #1 체크 `Vercel – solhun-portfolio` |
+| 새 프로젝트 env | `NEXT_PUBLIC_DP_FEEDBACK_URL`·`NEXT_PUBLIC_DP_FEEDBACK_KEY` (Production+Preview) | `GET /v9/projects/<id>/env` |
+| 첫 배포 주의 | 프로덕션 배포가 없는 새 프로젝트라 **첫 브랜치 push(`d92eea7`)가 프로덕션으로 올라갔다**(Vercel 동작). 머지 뒤부터는 `main` 만 프로덕션 | `dpl_3FGUB761cVQUPN3KmVK8Wmm2N9hs` target=production |
+| Deployment Protection | Standard(`all_except_custom_domains`) — 프로덕션 주소 `solhun-portfolio.vercel.app` 는 공개, 해시 붙은 배포 주소·프리뷰는 Vercel 로그인 필요 | 프로젝트 `ssoProtection` |
 | GitHub 저장소 | `woorichicken/Portfolio` (repoId 1034202255). 옛 `agi040922/Portfolio` 는 리다이렉트 | `gh api repos/woorichicken/Portfolio --jq .id` |
-| 로컬 `origin` | 아직 `https://github.com/agi040922/Portfolio.git` — 리다이렉트로 동작은 함 | `git remote -v` |
-| 현재 배포처 | 팀 **`jkh040922-gmailcoms-projects`**(다른 Vercel 계정). 홈페이지 `portfolio-sage-five-xdfwq9lj38.vercel.app` | GitHub deployments status 의 URL `portfolio-6bsyv2uaq-jkh040922-gmailcoms-projects.vercel.app` |
-| 마지막 배포 | 2025-08-08, 커밋 `4542da0`, 생성자 `vercel[bot]`(= Git 연동 배포) | `gh api repos/woorichicken/Portfolio/deployments` |
-| 저장소 이전 뒤 Git 연동 | **미확인** — 이전 뒤 push 가 없어 판단 근거가 없다. 그 계정은 지금 CLI 로그인으로 접근 불가 | `vercel project ls --scope jkh040922-gmailcoms-projects` → scope 없음 |
-| 그 프로젝트의 env | **미확인** (접근 불가). 저장소에 `.env*`·`vercel.json` 은 없다 | – |
+| 로컬 `origin` | 아직 `https://github.com/agi040922/Portfolio.git` — 리다이렉트로 push 까지 동작 | `git remote -v` |
+| 옛 배포처 | 팀 **`jkh040922-gmailcoms-projects`**(다른 Vercel 계정)의 `portfolio`. 홈페이지 `portfolio-sage-five-xdfwq9lj38.vercel.app` | GitHub deployments status |
+| 옛 프로젝트 Git 연동 | ⚠️ **살아 있다** — 저장소 이전 뒤에도 PR #1 에 `Vercel – portfolio` 프리뷰가 SUCCESS 로 붙었다. 즉 `main` push 는 **두 프로젝트에 모두 배포된다**(삭제는 사람 결정 — 7절 4번) | PR #1 status checks |
+| 옛 프로젝트 env | **미확인** (접근 불가). 저장소에 `.env*`·`vercel.json` 은 없다 | – |
 | `solhun.com`·`www.solhun.com` | CLI 로그인 계정 **`gyeonghunjeong-7007s-projects`** 의 `solhun-web-page` 프로젝트(CLI Manager 사이트)에 연결. apex → www 307 | `vercel domains inspect solhun.com` |
 | DNS | 네임서버 Cloudflare. `*.solhun.com` 와일드카드 CNAME 이 Vercel 로 감 | `dig NS solhun.com` |
 | 도메인 등록 만료 | ⚠️ **2026-12-01** (Vercel 등록) | 같은 명령 |
@@ -75,7 +79,7 @@ vercel env add NEXT_PUBLIC_DP_FEEDBACK_KEY production --scope gyeonghunjeong-700
 | 성격 | **보안 장치가 아니라 가림막.** 키는 원래 publishable 이고, 실제로 막는 건 수집 소스의 허용 호스트 |
 | 라쏘런 프로젝트 | `포트폴리오 (solhun.com)` — `6a0cb795-f52c-47bd-bb61-ada9749afbde` |
 | 수집 소스 | `portfolio-web` — `93045b0c-03e3-4f8d-916e-9ed60b127f45` |
-| 소스 허용 호스트 | `solhun.com`, `www.solhun.com`, `portfolio-sage-five-xdfwq9lj38.vercel.app`, `localhost:3427` |
+| 소스 허용 호스트 | `solhun.com`, `www.solhun.com`, `portfolio-sage-five-xdfwq9lj38.vercel.app`, `localhost:3427`, `solhun-portfolio.vercel.app`(2026-09-30 추가) |
 | 관문 허용 호스트 | `src/lib/feedback-gate.ts` 의 `FEEDBACK_HOSTS` — **소스와 같게 둔다** |
 | 비밀번호 원문 | `~/.config/portfolio/feedback-password.txt` (0600, 저장소에 없음). 번들엔 솔트+SHA-256 해시만 |
 | 키·소스 원본 | `~/.config/portfolio/source.json` (0600) |
@@ -93,6 +97,14 @@ dp update-source-hosts 93045b0c-03e3-4f8d-916e-9ed60b127f45 --add-host <새호�
 
 ## 5. 배포 뒤 검증
 
+### 2026-09-30 실측 (`https://solhun-portfolio.vercel.app`, 커밋 `d92eea7`)
+
+| 항목 | 결과 |
+|---|---|
+| `/`·`/en`·`/es`·`/sitemap.xml`·`/robots.txt`·`/?feedback` | 전부 200. `/en` 은 `lang="en"` + hreflang ko/en/es/x-default |
+| 번들의 env | 동적 청크 `216.951df721d3217408.js` 에 `dp-agentation-ingest` **1**, `dp_ingest_` **1** (다른 청크 0) |
+| 실전송 | `?feedback` → 비밀번호 → 「피드백 보내기」 → 화면 전체 → 「보냈습니다」 → 라쏘런 제보 `16a0358c-2ece-4af6-b3b7-874cd2d66b5d` 도착(page_url 이 새 주소). 근거 코멘트 후 resolved(`resolved_by` = PR #1) |
+
 ```bash
 P=https://<배포주소>
 for p in / /en /es /sitemap.xml /robots.txt; do curl -s -o /dev/null -w "$p %{http_code}\n" "$P$p"; done   # 전부 200
@@ -101,6 +113,9 @@ curl -s "$P/en" | grep -oE '<html lang="[a-z]+"|hrefLang="[^"]+"'               
 # 피드백 env 가 번들에 들어갔나 — 위젯 청크는 관문 뒤에만 로드되므로, 빌드 산출물 전체에서 센다
 # (로컬: 빌드 직후) grep -rl "dp-agentation-ingest" .next/static/chunks | wc -l   → 1 이상이어야 한다
 # (배포본) 브라우저로 $P/?feedback → 비밀번호 → 오른쪽 아래 "피드백" 버튼이 떠야 한다. 안 뜨면 1순위 용의자는 env
+# (배포본, 브라우저 없이) 위젯은 동적 청크라 HTML 의 <script> 에 없다. webpack-*.js 의 청크 맵에서 이름을 뽑아 받는다:
+#   curl -s $P/ | grep -oE '/_next/static/chunks/webpack-[^"]+\.js' → 그 파일의 {id:"hash"} 맵 → /_next/static/chunks/<id>.<hash>.js
+#   각 파일에서 grep -c dp-agentation-ingest / dp_ingest_  → 합계 1 이상
 ```
 
 실전송 검증을 했으면 시험 제보는 근거 코멘트를 달고 닫는다(`dp add-annotation-comment` → `dp set-annotation --status resolved --resolved-by <PR/커밋 링크>`).
@@ -155,9 +170,9 @@ curl -s "$P/en" | grep -oE '<html lang="[a-z]+"|hrefLang="[^"]+"'               
 
 | # | 결정 | 추천 |
 |---|---|---|
-| 1 | Vercel 계정: 새 프로젝트(7007) vs 옛 계정 유지 | 새 프로젝트(2절) |
-| 2 | 이 브랜치 머지·push 시점 | – |
+| 1 | ~~Vercel 계정~~ | ✅ 새 프로젝트 `solhun-portfolio` 로 결정·배포(2026-09-30) |
+| 2 | ~~이 브랜치 머지·push~~ | ✅ PR #1 로 머지(2026-09-30) |
 | 3 | 도메인 이전 실행 날짜, apex/www 정본 | 정본 문서 순서대로 |
-| 4 | 옛 계정 프로젝트 정리(삭제/Git 해제) | 도메인 이전 확인 뒤 |
+| 4 | 옛 계정 프로젝트 정리(삭제/Git 해제) — **Git 연동이 살아 있어 main push 마다 옛 주소에도 배포된다** | 도메인 이전 확인 뒤 |
 | 5 | 로컬 `origin` 을 `woorichicken/Portfolio` 로 바꿀지 | 바꾸는 편이 명확 |
 | 6 | solhun.com 도메인 갱신(2026-12-01 만료) | 자동 갱신 확인 |
