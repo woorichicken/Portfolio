@@ -14,7 +14,7 @@ export const UNLOCK_STORAGE_KEY = 'solhun-portfolio:feedback-unlocked';
  * 여기만 넓히면 버튼은 떠도 보내는 순간 403 이다. 호스트를 늘릴 때는 소스부터 넓힌다(docs/DEPLOY.md).
  * 수집 소스가 와일드카드를 받지 않아서 Vercel 프리뷰 주소(*.vercel.app)는 넣지 않았다.
  */
-export const FEEDBACK_HOSTS = ['solhun.com', 'www.solhun.com', 'localhost', 'portfolio-sage-five-xdfwq9lj38.vercel.app'] as const;
+export const FEEDBACK_HOSTS = ['solhun.com', 'www.solhun.com', 'localhost', 'portfolio-sage-five-xdfwq9lj38.vercel.app', 'solhun-portfolio.vercel.app'] as const;
 
 export function isFeedbackHost(hostname: string): boolean {
   return (FEEDBACK_HOSTS as readonly string[]).includes(hostname);

@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 
 const gate = await import('../src/lib/feedback-gate.ts');
 
-const mustAllow = ['solhun.com', 'www.solhun.com', 'localhost', 'portfolio-sage-five-xdfwq9lj38.vercel.app'];
+const mustAllow = ['solhun.com', 'www.solhun.com', 'localhost', 'portfolio-sage-five-xdfwq9lj38.vercel.app', 'solhun-portfolio.vercel.app'];
 const mustBlock = ['evil.com', 'solhun.com.evil.com', 'xsolhun.com', 'other-project.vercel.app', '127.0.0.1', ''];
 
 const failures = [];
