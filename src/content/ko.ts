@@ -10,7 +10,7 @@ const ko: Content = {
     description:
       '라이트소프트 개발자 정경훈의 포트폴리오. 요청·기획·구현·검수·배포·피드백 전 과정을 맡으며 KITS, FAIR 인사노무 CRM/ERP, CLI Manager 등을 만들었습니다.',
   },
-  a11y: { skip: '본문으로 건너뛰기', primaryNav: '주 메뉴', language: '언어 선택', openImage: '이미지 크게 보기', closeImage: '닫기', copied: '복사됨' },
+  a11y: { skip: '본문으로 건너뛰기', primaryNav: '주 메뉴', language: '언어 선택', openImage: '이미지 크게 보기', closeImage: '닫기', prevImage: '이전 이미지', nextImage: '다음 이미지', copied: '복사됨' },
   nav: { work: '프로젝트', timeline: '연표', contact: '연락' },
   hero: {
     name: '정경훈',
@@ -78,8 +78,8 @@ const ko: Content = {
           { value: '94+', label: '리뷰 보드 한 페이지에서 동시에 확인하는 화면' },
         ],
         quotes: [
-          { text: '지난 1차 피드백 이후 많은 부분이 개선된 것을 확인할 수 있었습니다. 이번에는 1차 피드백에 비해 분량도 많이 줄었고…', who: '클라이언트 — 2차 검수 완료, 2026.07' },
-          { text: '이런 외주사는 처음이다.', who: '클라이언트 — 검수 회의 중' },
+          { text: '지난 1차 피드백 이후 많은 부분이 개선된 것을 확인할 수 있었습니다. 이번에는 1차 피드백에 비해 분량도 많이 줄었고, 덕분에 추적도 용이하게 진행할 수 있었습니다.', who: '클라이언트 — 2차 검수 완료, 2026.07' },
+          { text: '이런 외주사는 처음입니다.', who: '클라이언트 — 검수 회의 중' },
         ],
         lesson: {
           title: '도구보다 자리',
@@ -96,7 +96,7 @@ const ko: Content = {
         id: 'fair',
         context: '개인 도급 · AX',
         name: 'FAIR 인사노무 CRM/ERP',
-        tagline: '노무법인의 컨설팅 전 과정(진단 → 설계 → 실행 → 변화관리 → 평가)을 한 곳에',
+        tagline: '노무법인의 컨설팅 전 과정(진단 → 설계 → 실행 → 변화관리 → 평가)을 ERP화',
         summary:
           '노무사와 한 팀처럼 붙어서 진행한 프로젝트입니다. 체크리스트와 문서 중심이던 **수작업을 전산화**하고, **컨설팅 과정을 AI로 전환(AX)**했습니다. AI가 인용한 법조문을 실제 법령과 대조하는 **법률 검증 기능**도 넣었습니다.',
         facts: [

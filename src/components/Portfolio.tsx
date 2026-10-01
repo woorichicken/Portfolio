@@ -268,7 +268,7 @@ export default function Portfolio({ locale }: { locale: Locale }) {
         </div>
       </footer>
 
-      <Lightbox closeLabel={t.a11y.closeImage} />
+      <Lightbox closeLabel={t.a11y.closeImage} prevLabel={t.a11y.prevImage} nextLabel={t.a11y.nextImage} />
       <FeedbackGate copy={t.feedback} />
     </>
   );
