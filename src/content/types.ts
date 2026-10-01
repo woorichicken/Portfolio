@@ -60,7 +60,7 @@ export type EarlyWork = {
 
 export type Content = {
   meta: { title: string; description: string };
-  a11y: { skip: string; primaryNav: string; language: string; openImage: string; closeImage: string; copied: string };
+  a11y: { skip: string; primaryNav: string; language: string; openImage: string; closeImage: string; prevImage: string; nextImage: string; copied: string };
   nav: { work: string; timeline: string; contact: string };
   hero: {
     name: string;

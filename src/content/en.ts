@@ -9,7 +9,7 @@ const en: Content = {
     description:
       'Portfolio of Gyeonghun Jeong, developer at Lightsoft. From request to spec, build, review, release and feedback — including KITS, the FAIR HR consulting CRM/ERP and CLI Manager.',
   },
-  a11y: { skip: 'Skip to content', primaryNav: 'Main menu', language: 'Choose language', openImage: 'View image larger', closeImage: 'Close', copied: 'Copied' },
+  a11y: { skip: 'Skip to content', primaryNav: 'Main menu', language: 'Choose language', openImage: 'View image larger', closeImage: 'Close', prevImage: 'Previous image', nextImage: 'Next image', copied: 'Copied' },
   nav: { work: 'Work', timeline: 'Timeline', contact: 'Contact' },
   hero: {
     name: 'Gyeonghun Jeong',
@@ -77,7 +77,7 @@ const en: Content = {
           { value: '94+', label: 'screens reviewed together on one board' },
         ],
         quotes: [
-          { text: 'We could see that a lot has improved since the first round of feedback. This time there was much less to point out…', who: 'Client — second review signed off, Jul 2026' },
+          { text: 'We could see that a lot has improved since the first round of feedback. This time there was much less to point out, and it was easy to keep track of everything.', who: 'Client — second review signed off, Jul 2026' },
           { text: 'We’ve never worked with a vendor like this.', who: 'Client — during a review meeting' },
         ],
         lesson: {
@@ -95,7 +95,7 @@ const en: Content = {
         id: 'fair',
         context: 'Freelance contract · AX',
         name: 'FAIR HR consulting CRM/ERP',
-        tagline: 'A labor law firm’s whole consulting process — diagnose, design, execute, manage change, evaluate — in one place',
+        tagline: 'A labor law firm’s whole consulting process — diagnose, design, execute, manage change, evaluate — turned into an ERP',
         summary:
           'I worked with the labor attorneys as if we were one team. We **moved checklist-and-document manual work into software** and **shifted the consulting process to AI (AX)**. It also **checks the statutes an AI cites against the actual law**.',
         facts: [

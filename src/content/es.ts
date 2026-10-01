@@ -9,7 +9,7 @@ const es: Content = {
     description:
       'Portafolio de Gyeonghun Jeong, desarrollador en Lightsoft. De la solicitud a la especificación, el desarrollo, la revisión, el lanzamiento y el feedback: KITS, el CRM/ERP de consultoría laboral FAIR y CLI Manager.',
   },
-  a11y: { skip: 'Ir al contenido', primaryNav: 'Menú principal', language: 'Elegir idioma', openImage: 'Ver la imagen ampliada', closeImage: 'Cerrar', copied: 'Copiado' },
+  a11y: { skip: 'Ir al contenido', primaryNav: 'Menú principal', language: 'Elegir idioma', openImage: 'Ver la imagen ampliada', closeImage: 'Cerrar', prevImage: 'Imagen anterior', nextImage: 'Imagen siguiente', copied: 'Copiado' },
   nav: { work: 'Proyectos', timeline: 'Trayectoria', contact: 'Contacto' },
   hero: {
     name: 'Gyeonghun Jeong',
@@ -77,7 +77,7 @@ const es: Content = {
           { value: '94+', label: 'pantallas revisadas juntas en un solo tablero' },
         ],
         quotes: [
-          { text: 'Pudimos comprobar que mucho ha mejorado desde la primera ronda de feedback. Esta vez hubo mucho menos que señalar…', who: 'Cliente — segunda revisión aprobada, jul. 2026' },
+          { text: 'Pudimos comprobar que mucho ha mejorado desde la primera ronda de feedback. Esta vez hubo mucho menos que señalar y fue fácil hacer el seguimiento de todo.', who: 'Cliente — segunda revisión aprobada, jul. 2026' },
           { text: 'Nunca habíamos trabajado con un proveedor así.', who: 'Cliente — durante una reunión de revisión' },
         ],
         lesson: {
@@ -95,7 +95,7 @@ const es: Content = {
         id: 'fair',
         context: 'Contrato freelance · AX',
         name: 'CRM/ERP de consultoría laboral FAIR',
-        tagline: 'Todo el proceso de consultoría de un despacho laboral —diagnóstico, diseño, ejecución, gestión del cambio y evaluación— en un solo lugar',
+        tagline: 'Todo el proceso de consultoría de un despacho laboral —diagnóstico, diseño, ejecución, gestión del cambio y evaluación— convertido en un ERP',
         summary:
           'Trabajé con los abogados laboralistas como un solo equipo. **Pasamos a software un trabajo manual basado en listas y documentos** y **llevamos el proceso de consultoría a la IA (AX)**. También **contrasta con la ley vigente los artículos que cita la IA**.',
         facts: [
