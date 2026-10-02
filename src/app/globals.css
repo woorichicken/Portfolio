@@ -377,6 +377,33 @@ blockquote footer { margin-top: 6px; color: var(--muted); font-size: 14px; }
   .lightbox-next { right: 8px; }
 }
 
+/* 「그 외 프로젝트」 미리보기 — 라이트박스와 같은 어두운 배경·< > 버튼을 쓰고, 카드 안에 사진과 요약을 나란히 둔다 */
+.others-modal { position: fixed; inset: 0; margin: auto; border: 0; padding: 0; background: transparent; width: min(calc(100vw - 160px), 1040px); max-width: none; max-height: none; overflow: visible; color: var(--ink); }
+.others-modal::backdrop { background: rgba(18, 20, 42, 0.82); }
+.others-modal-card { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); background: var(--paper-raised); border-radius: var(--radius-l); overflow: hidden; }
+.others-modal-shot { background: var(--paper); display: grid; place-items: center; min-height: 320px; }
+.others-modal-shot img { display: block; width: 100%; max-height: 72vh; object-fit: contain; }
+.others-modal-body { padding: 28px 28px 32px; display: flex; flex-direction: column; gap: 6px; }
+.others-modal-body h3 { font-size: 24px; margin: 0; }
+.others-modal-body .meta { margin: 0; }
+.others-modal-text { margin: 10px 0 0; font-size: 16px; line-height: 1.7; color: var(--ink-soft); }
+.others-modal-count { margin: 0 0 4px; font-size: 13px; color: var(--ink-soft); }
+.others-modal-more {
+  align-self: flex-start; margin-top: auto; padding: 10px 18px; border-radius: 999px; background: var(--signal); color: #fff;
+  font-weight: 600; font-size: 15px; text-decoration: none;
+}
+.others-modal-more:hover { filter: brightness(1.08); }
+@media (max-width: 700px) {
+  .others-modal { width: calc(100vw - 24px); }
+  .others-modal-card { grid-template-columns: 1fr; max-height: calc(100vh - 140px); overflow-y: auto; }
+  .others-modal-shot { min-height: 0; }
+  .others-modal-shot img { max-height: 42vh; }
+  .others-modal-body { padding: 20px 20px 24px; }
+  .others-modal-more { margin-top: 14px; }
+  /* 모바일에서는 < > 를 카드 아래로 내려 글을 가리지 않게 한다 */
+  .others-modal .lightbox-nav { top: auto; bottom: 16px; transform: none; }
+}
+
 /* ── 연표 · 수상 ──────────────────────────────────────── */
 .timeline { border-top: 1px solid var(--line); }
 .timeline ol { list-style: none; padding: 0; margin: 0; position: relative; }
