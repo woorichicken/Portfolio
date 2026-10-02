@@ -7,6 +7,7 @@ import FeedbackGate from './feedback/FeedbackGate';
 import Figure from './Figure';
 import Header from './Header';
 import Lightbox from './Lightbox';
+import OthersModal from './OthersModal';
 import Rich from './Rich';
 import { Icosahedron, RingSphere } from './Wireframes';
 
@@ -171,13 +172,13 @@ export default function Portfolio({ locale }: { locale: Locale }) {
           <h2 id="others-title" className="section-title">{t.others.title}</h2>
           <p className="section-intro">{t.others.intro}</p>
           <ul className="others-grid">
-            {t.others.items.map((o) => (
+            {t.others.items.map((o, i) => (
               <li key={o.slug}>
-                {/* 사진은 상세로 가는 같은 링크의 반복이라 읽어 주지 않는다 */}
-                <a className="thumb" href={projectPath(locale, o.slug)} tabIndex={-1} aria-hidden="true">
+                {/* 사진은 이름 링크의 반복이라 읽어 주지 않는다. 둘 다 누르면 미리보기(OthersModal)가 먼저 뜬다 */}
+                <a className="thumb" href={projectPath(locale, o.slug)} data-others-index={i} tabIndex={-1} aria-hidden="true">
                   <Image src={o.shot.src} alt="" width={o.shot.width} height={o.shot.height} sizes="(max-width: 700px) 100vw, 30vw" />
                 </a>
-                <h3><a href={projectPath(locale, o.slug)}>{o.name}</a></h3>
+                <h3><a href={projectPath(locale, o.slug)} data-others-index={i}>{o.name}</a></h3>
                 <p className="meta">{o.period}</p>
                 <p><Rich text={o.body} /></p>
                 <a className="more-link" href={projectPath(locale, o.slug)} aria-label={`${o.name} — ${t.detail.more}`}>{t.detail.more} →</a>
@@ -269,6 +270,10 @@ export default function Portfolio({ locale }: { locale: Locale }) {
       </footer>
 
       <Lightbox closeLabel={t.a11y.closeImage} prevLabel={t.a11y.prevImage} nextLabel={t.a11y.nextImage} />
+      <OthersModal
+        items={t.others.items.map((o) => ({ name: o.name, period: o.period, body: o.body, shot: o.shot, href: projectPath(locale, o.slug) }))}
+        labels={{ more: t.detail.more, close: t.a11y.closeImage, prev: t.a11y.prevImage, next: t.a11y.nextImage }}
+      />
       <FeedbackGate copy={t.feedback} />
     </>
   );
