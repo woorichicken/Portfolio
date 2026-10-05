@@ -1,7 +1,7 @@
 # 배포 · CI/CD · 도메인 (2026-09-30 실측)
 
 이 문서는 **사람이 결정할 것과 그 절차**를 담는다. 2026-09-30 에 2절 추천안(새 프로젝트)으로 배포했다 —
-도메인(`solhun.com`) 이전과 `CLI_MANAGER_ROUTES` 는 아직 하지 않았다(전환 날짜 미정).
+도메인(`solhun.com`) 이전과 `CLI_MANAGER_ROUTES` 도 **끝났다**(2026-10-04 실측 — 아래 표 `solhun.com` 행).
 
 ## 1. 지금 상태 (실측)
 
@@ -18,7 +18,7 @@
 | 옛 프로젝트 Git 연동 | ✅ **정리됨(2026-09-30)** — Aside 로 옛 계정에 로그인해 Git 해제를 시도(Vercel `Not authorized`) → Ignored Build Step `exit 0` → 사용자 승인으로 **프로젝트 삭제**. 이제 `main` push 는 `solhun-portfolio` 에만 배포된다 | `portfolio-sage-five-xdfwq9lj38.vercel.app` 404 |
 | (기록) 머지 뒤 옛 프로젝트 | PR #1 머지(`d9c72b3`)로 옛 `portfolio` 도 **프로덕션 재배포** — `portfolio-sage-five-xdfwq9lj38.vercel.app` 가 새 사이트(ko/en/es 200)를 서빙한다. 단 그 빌드엔 피드백 env 가 **없다**(동적 청크의 `dp-agentation-ingest` 0) → 그 주소에서 `?feedback` 은 관문까지만 되고 위젯은 안 뜬다. 피드백은 새 주소에서 받는다 | `gh api …/deployments` Production – portfolio `d9c72b3`, 5절 청크 세기 |
 | (기록) 옛 프로젝트 env | **미확인** (접근 불가). 저장소에 `.env*`·`vercel.json` 은 없다 | – |
-| `solhun.com`·`www.solhun.com` | CLI 로그인 계정 **`gyeonghunjeong-7007s-projects`** 의 `solhun-web-page` 프로젝트(CLI Manager 사이트)에 연결. apex → www 307 | `vercel domains inspect solhun.com` |
+| `solhun.com`·`www.solhun.com` | **`solhun-portfolio`**(이 저장소)에 연결 — 이전 완료. apex → www 307. `climanager.solhun.com` 은 `solhun-web-page`. `CLI_MANAGER_ROUTES` 켜짐(`/changelog` 301 → climanager, `/privacy` 200) | `vercel domains inspect solhun.com --scope gyeonghunjeong-7007s-projects` (2026-10-04) · `curl -sI https://www.solhun.com/changelog` |
 | DNS | 네임서버 Cloudflare. `*.solhun.com` 와일드카드 CNAME 이 Vercel 로 감 | `dig NS solhun.com` |
 | 도메인 등록 만료 | ⚠️ **2026-12-01** (Vercel 등록) | 같은 명령 |
 | GitHub Actions | 없음(워크플로 0) · `main` 브랜치 보호 없음 | `gh api …/actions/workflows`, `…/branches/main/protection` → 404 |
@@ -174,7 +174,7 @@ curl -s "$P/en" | grep -oE '<html lang="[a-z]+"|hrefLang="[^"]+"'               
 |---|---|---|
 | 1 | ~~Vercel 계정~~ | ✅ 새 프로젝트 `solhun-portfolio` 로 결정·배포(2026-09-30) |
 | 2 | ~~이 브랜치 머지·push~~ | ✅ PR #1 로 머지(2026-09-30) |
-| 3 | 도메인 이전 실행 날짜, apex/www 정본 | 정본 문서 순서대로 |
+| 3 | ~~도메인 이전 실행~~ | ✅ 이전 완료(2026-10-04 실측). apex → www 307 이라 지금 정본은 사실상 www — `NEXT_PUBLIC_SITE_URL` 기본값(`https://solhun.com`)과 맞출지는 남은 결정 |
 | 4 | 옛 계정 프로젝트 정리(삭제/Git 해제) — **Git 연동이 살아 있어 main push 마다 옛 주소에도 배포된다** | 도메인 이전 확인 뒤 |
 | 5 | 로컬 `origin` 을 `woorichicken/Portfolio` 로 바꿀지 | 바꾸는 편이 명확 |
 | 6 | solhun.com 도메인 갱신(2026-12-01 만료) | 자동 갱신 확인 |
