@@ -19,13 +19,14 @@ function usePrefersReducedMotion(): boolean {
 
 /* ───────── A: 썸네일 전환 (추상 그림 ↔ 실제 화면) ───────── */
 
+// 기본은 지금 사이트처럼 실제 화면. 「회사 화면 가리기」를 누르면 첫 화면 말투의 파란 커버로 바뀐다(제보 89dab0ee)
 export function ThumbSwitch({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<'art' | 'photo'>('art');
+  const [mode, setMode] = useState<'art' | 'photo'>('photo');
   return (
     <div className="thumb-switch" data-thumb={mode}>
       <div className="seg" role="group" aria-label="카드 썸네일">
-        <button type="button" aria-pressed={mode === 'art'} onClick={() => setMode('art')}>추상 커버</button>
         <button type="button" aria-pressed={mode === 'photo'} onClick={() => setMode('photo')}>실제 화면</button>
+        <button type="button" aria-pressed={mode === 'art'} onClick={() => setMode('art')}>회사 화면 가리기</button>
       </div>
       {children}
     </div>
