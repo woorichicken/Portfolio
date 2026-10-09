@@ -34,6 +34,8 @@ export function getLabProjects(): LabProject[] {
   const t = getContent('ko');
   return t.work.projects.map((p, index) => ({
     ...p,
+    // 5회차 X2 — 콘텐츠 자동화 커버의 주토피아 캐릭터를 직접 만든 CLI Manager 카드로(운영용 커밋은 fix/content-cover-261009)
+    ...(p.id === 'content' && p.gallery?.[0] ? { cover: p.gallery[0], gallery: [] } : {}),
     index,
     role: factValue(p, '역할'),
     period: factValue(p, '기간'),

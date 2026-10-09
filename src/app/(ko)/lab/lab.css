@@ -453,3 +453,95 @@ main > section.lab4-sec, .lab4-sec { padding-block: clamp(40px, 5vw, 64px); bord
 .lab4-cover .cover-tall .frame img { max-height: none; }
 .board-grid li > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lab4-sys-card.lab-ex { border: 0; }
+
+/* ═════════ A 5회차 ═════════
+ * H3 「모두 같은 앨범형보다 비대칭」 → 6칸 격자에 크고(4×2)·작고(2)·넓고(3·4)·긴(2×2) 카드를 섞는다.
+ * H2·D2 「결과물만」 → 그림 + 짧은 이름만 있는 결과물 칸(.lab-art).
+ * D1·D3 「변화했다는 느낌이 안 든다」 → 가는 → 대신 굵은 원형 화살표(.lab-change).
+ */
+.lab5-bento { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-flow: dense; gap: 22px; }
+.lab5-bento > li { grid-column: span 2; min-width: 0; }
+.lab5-bento > li.is-big { grid-column: span 4; grid-row: span 2; }
+.lab5-bento > li.is-wide { grid-column: span 3; }
+.lab5-bento > li.is-wide-l { grid-column: span 4; }
+.lab5-bento > li.is-tall { grid-column: span 2; grid-row: span 2; }
+.lab5-card { display: flex; flex-direction: column; height: 100%; text-decoration: none; color: inherit; }
+.lab5-card .lab-cover { margin-bottom: 12px; }
+.lab5-card:hover .lab-cover > * { transform: scale(1.025); }
+.lab5-card:hover h3 span { transform: translateX(4px); }
+.lab5-text { display: flex; flex-direction: column; flex: none; }
+.lab5-card h3 { display: flex; gap: 8px; align-items: baseline; margin: 2px 0 4px; font-size: 21px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.25; }
+.lab5-card h3 span { font-size: 15px; color: var(--signal-ink); transition: transform .3s; }
+.lab5-card .lab4-meta { margin-top: 10px; padding-top: 0; }
+/* 큰 카드·긴 카드 — 사진이 남는 높이를 다 채운다 */
+.lab5-bento .is-big .lab-cover, .lab5-bento .is-tall .lab-cover { aspect-ratio: auto; flex: 1 1 auto; min-height: 300px; }
+.lab5-bento .is-big h3 { font-size: clamp(28px, 3vw, 38px); }
+.lab5-bento .is-big .lab4-tag { font-size: 16px; -webkit-line-clamp: 3; }
+.lab5-bento .is-tall .lab-cover { min-height: 420px; }
+/* 넓은 카드 — 사진 왼쪽, 글 오른쪽 */
+.lab5-bento .is-wide .lab5-card, .lab5-bento .is-wide-l .lab5-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: stretch; }
+.lab5-bento .is-wide-l .lab5-card { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+.lab5-bento .is-wide .lab-cover, .lab5-bento .is-wide-l .lab-cover { aspect-ratio: auto; min-height: 210px; margin: 0; }
+.lab5-bento .is-wide .lab5-text, .lab5-bento .is-wide-l .lab5-text { justify-content: center; }
+
+/* 결과물 칸 */
+.lab-art { margin: 0; display: flex; flex-direction: column; min-width: 0; }
+.lab-art-media { position: relative; display: block; aspect-ratio: 16 / 10; border-radius: var(--radius-l); overflow: hidden; border: 1px solid var(--line); background: var(--paper-raised); cursor: zoom-in; }
+.lab-art-media img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; transition: transform .5s cubic-bezier(.2, .7, .2, 1); }
+.lab-art-media:hover img { transform: scale(1.03); }
+.lab-art figcaption { margin-top: 8px; display: flex; flex-direction: column; line-height: 1.4; }
+.lab-art figcaption b { font-size: 14.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab-art figcaption span { font-size: 12.5px; color: var(--muted); }
+.lab-art-ex .lab-art-media { display: grid; place-items: center; cursor: default; border: 1.5px dashed color-mix(in srgb, var(--muted) 55%, transparent); background: repeating-linear-gradient(135deg, transparent 0 10px, color-mix(in srgb, var(--line) 45%, transparent) 10px 11px); }
+.lab-art-ex .lab-art-media span { font-size: 13px; font-weight: 700; color: var(--mark); background: var(--paper); padding: 3px 10px; border-radius: 999px; }
+.lab-art-ex figcaption b { color: var(--muted); }
+
+/* 홈 「디자인 엔지니어로서」 미리보기 — 쇼릴 크게 + 네 칸 */
+.lab5-more { font-weight: 700; font-size: 15px; color: var(--signal-ink); text-underline-offset: 4px; }
+.lab5-preview { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.lab5-preview > .lab-art:first-child { grid-column: span 2; grid-row: span 2; }
+.lab5-preview > .lab-art:first-child .lab-art-media { aspect-ratio: auto; flex: 1 1 auto; min-height: 280px; }
+.lab5-preview > .lab-art:first-child figcaption b { font-size: 17px; }
+
+/* 상세의 결과물 · 별도 화면의 결과물 벽 */
+.lab5-arts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.lab5-design { padding-block: 28px 56px; }
+.lab-filter > .seg { margin-bottom: 20px; }
+.lab5-wall { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px 16px; }
+.lab5-note { margin: 28px 0 0; font-size: 13px; color: var(--muted); }
+
+/* 이전 → 이후 — 굵은 원형 화살표 */
+.lab-ba { grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1.4fr); }
+.lab-change { display: grid; place-items: center; padding-top: 16px; }
+.lab-change svg { width: 32px; height: 32px; }
+.lab-change circle { fill: var(--signal); }
+.lab-change path { fill: none; stroke: var(--on-signal); stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+
+@media (max-width: 1100px) {
+  .lab5-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lab5-bento > li, .lab5-bento > li.is-wide, .lab5-bento > li.is-tall { grid-column: span 1; grid-row: auto; }
+  .lab5-bento > li.is-big, .lab5-bento > li.is-wide-l { grid-column: span 2; grid-row: auto; }
+  .lab5-bento .is-tall .lab-cover { min-height: 0; aspect-ratio: 16 / 10; }
+  .lab5-bento .is-wide .lab5-card { display: flex; }
+  .lab5-bento .is-wide .lab-cover { aspect-ratio: 16 / 10; margin-bottom: 12px; }
+  .lab5-wall { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .lab-ba { grid-template-columns: minmax(0, 1fr); }
+  /* 좁은 화면에서는 아래 방향 — 위아래로 쌓인 이전/이후 사이 */
+  .lab-change { padding: 2px 0; justify-items: start; }
+  .lab-change svg { transform: rotate(90deg); width: 30px; height: 30px; }
+  .lab5-preview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lab5-arts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .lab5-bento { grid-template-columns: minmax(0, 1fr); }
+  .lab5-bento > li, .lab5-bento > li.is-big, .lab5-bento > li.is-wide-l { grid-column: auto; }
+  .lab5-bento .is-big .lab-cover { min-height: 0; aspect-ratio: 16 / 10; flex: none; }
+  .lab5-bento .is-wide-l .lab5-card { display: flex; }
+  .lab5-bento .is-wide-l .lab-cover { aspect-ratio: 16 / 10; margin-bottom: 12px; }
+  .lab5-preview > .lab-art:first-child { grid-column: span 2; grid-row: auto; }
+  .lab5-preview > .lab-art:first-child .lab-art-media { aspect-ratio: 16 / 10; min-height: 0; }
+  .lab5-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.lab-cover.is-portrait .photo { object-fit: contain; object-position: center; background: color-mix(in srgb, var(--signal) 5%, var(--paper-raised)); }

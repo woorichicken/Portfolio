@@ -8,7 +8,8 @@ import Rich from '@/components/Rich';
 import LabArt from '@/components/lab/LabArt';
 import { CaseToc } from '@/components/lab/LabClient';
 import { LAB_IDS, getLabProject, getLabProjects, type LabQuote } from '@/components/lab/labData';
-import { DE_POINTS, VIDEOS } from '@/components/lab/labExtras';
+import { ArtifactTile, ChangeArrow } from '@/components/lab/LabArtifact';
+import { ARTIFACTS, usedShotSrcs } from '@/components/lab/labExtras';
 import { getContent } from '@/content';
 
 // 시안 A 4회차 상세 = 조밀해진 「프로젝트 블록」.
@@ -43,16 +44,18 @@ export default async function LabACase({ params }: Props) {
   const all = getLabProjects();
   const next = all[(p.index + 1) % all.length];
   const prev = all[(p.index - 1 + all.length) % all.length];
-  const points = DE_POINTS[p.id] ?? [];
-  const videos = VIDEOS.filter((v) => v.project === p.id);
+  const artifacts = ARTIFACTS[p.id] ?? [];
+  // 「디자인 엔지니어링」에 나온 사진은 「화면」에서 빼서 같은 사진이 두 번 나오지 않게 한다
+  const used = usedShotSrcs(p.id);
+  const screens = (p.gallery ?? []).filter((s) => !used.has(s.src));
 
   const toc = [
     { id: 'overview', label: '개요' },
-    ...(points.length ? [{ id: 'de', label: '디자인 엔지니어링' }] : []),
+    ...(artifacts.length ? [{ id: 'de', label: '디자인 엔지니어링' }] : []),
     ...(p.improvements?.length ? [{ id: 'changes', label: '바꾼 것' }] : []),
     ...(p.metrics?.length ? [{ id: 'results', label: t.work.labels.results }] : []),
     ...(p.labQuotes.length ? [{ id: 'voices', label: '함께 일한 사람들의 말' }] : []),
-    ...(p.gallery?.length ? [{ id: 'screens', label: '화면' }] : []),
+    ...(screens.length ? [{ id: 'screens', label: '화면' }] : []),
     ...(p.lesson ? [{ id: 'lesson', label: t.work.labels.lesson }] : []),
   ];
 
@@ -90,28 +93,12 @@ export default async function LabACase({ params }: Props) {
               <p className="lab4-summary"><Rich text={p.summary} /></p>
             </section>
 
-            {points.length > 0 && (
+            {artifacts.length > 0 && (
               <section id="de" className="lab4-block" aria-labelledby="de-h">
                 <h2 id="de-h" className="lab4-label">디자인 엔지니어링</h2>
-                <ul className="lab4-points">
-                  {points.map((d) => (
-                    <li key={d.title} className={d.example ? 'lab-ex' : undefined}>
-                      <span className="lab4-kind">{d.example ? `예시 · ${d.kind}` : d.kind}</span>
-                      <b>{d.title}</b>
-                      <p>{d.body}</p>
-                    </li>
-                  ))}
-                </ul>
-                {videos.length > 0 && (
-                  <div className="lab4-case-videos">
-                    {videos.map((v) => (
-                      <figure key={v.id} className="lab4-video">
-                        <div className="lab4-poster"><Image src={v.poster} alt="" width={1280} height={720} sizes="(max-width: 900px) 50vw, 280px" /><span className="lab4-dur">{v.duration}</span></div>
-                        <figcaption><b>{v.title}</b><span>{v.role}{v.note ? ` · ${v.note}` : ''} · <em>공개 전 권리 확인</em></span></figcaption>
-                      </figure>
-                    ))}
-                  </div>
-                )}
+                <div className="lab5-arts">
+                  {artifacts.map((a) => <ArtifactTile key={a.title} a={a} sizes="(max-width: 700px) 100vw, 300px" />)}
+                </div>
               </section>
             )}
 
@@ -128,7 +115,7 @@ export default async function LabACase({ params }: Props) {
                       </div>
                       <div className="lab-ba">
                         <div className="lab-ba-before"><span>{t.work.labels.before}</span><p>{item.before}</p></div>
-                        <span className="lab-ba-arrow" aria-hidden="true">→</span>
+                        <ChangeArrow />
                         <div className="lab-ba-after"><span>{t.work.labels.after}</span><p><Rich text={item.after} /></p></div>
                       </div>
                       {item.metric && <p className="inline-metric"><strong>{item.metric.value}</strong>{item.metric.label}</p>}
@@ -154,11 +141,11 @@ export default async function LabACase({ params }: Props) {
               </section>
             )}
 
-            {p.gallery && p.gallery.length > 0 && (
+            {screens.length > 0 && (
               <section id="screens" className="lab4-block" aria-labelledby="gl-h">
                 <h2 id="gl-h" className="lab4-label">화면</h2>
                 <div className="lab4-gallery">
-                  {p.gallery.map((s) => <Figure key={s.src} shot={s} className={s.height > s.width ? 'tall' : undefined} sizes="(max-width: 700px) 100vw, 280px" openLabel={t.a11y.openImage} />)}
+                  {screens.map((s) => <Figure key={s.src} shot={s} className={s.height > s.width ? 'tall' : undefined} sizes="(max-width: 700px) 100vw, 280px" openLabel={t.a11y.openImage} />)}
                 </div>
               </section>
             )}
@@ -189,7 +176,7 @@ export default async function LabACase({ params }: Props) {
       <footer className="contact contact-compact">
         <div className="wrap">
           <a className="contact-email" href={`mailto:${t.contact.email}`}>{t.contact.email}</a>
-          <p className="footer-note">© 2026 {t.hero.name} · 시안 A 4회차</p>
+          <p className="footer-note">© 2026 {t.hero.name} · 시안 A 5회차</p>
         </div>
       </footer>
       <Lightbox closeLabel={t.a11y.closeImage} prevLabel={t.a11y.prevImage} nextLabel={t.a11y.nextImage} />

@@ -249,3 +249,21 @@ export function CaseToc({ items }: { items: { id: string; label: string }[] }) {
     </nav>
   );
 }
+
+/* ───────── 디자인 엔지니어로서: 종류로 거르기 ───────── */
+
+// 결과물이 30개 가까이 되면 한 번에 보기 어렵다 — 종류(영상·도구·시스템·화면)로 거르는 칩
+export function KindFilter({ kinds, children }: { kinds: string[]; children: ReactNode }) {
+  const [kind, setKind] = useState('전체');
+  return (
+    <div className="lab-filter" data-filter={kind}>
+      <div className="seg" role="group" aria-label="결과물 종류">
+        {['전체', ...kinds].map((k) => (
+          <button key={k} type="button" aria-pressed={kind === k} onClick={() => setKind(k)}>{k}</button>
+        ))}
+      </div>
+      {children}
+      <style>{kind === '전체' ? '' : `.lab-filter [data-kind]:not([data-kind="${kind}"]) { display: none; }`}</style>
+    </div>
+  );
+}
