@@ -6,19 +6,21 @@ import Header from '@/components/Header';
 import Lightbox from '@/components/Lightbox';
 import Rich from '@/components/Rich';
 import LabArt from '@/components/lab/LabArt';
+import { CaseToc } from '@/components/lab/LabClient';
 import { LAB_IDS, getLabProject, getLabProjects, type LabQuote } from '@/components/lab/labData';
+import { DE_POINTS, VIDEOS } from '@/components/lab/labExtras';
 import { getContent } from '@/content';
 
-// 시안 A 의 케이스 상세 = 새 「프로젝트 블록」. 색·서체·배지·카드는 지금 사이트 것을 그대로 쓰고 배치만 바꾼다.
-// 지금 블록: 왼쪽 표 + 오른쪽에 사진·글·카드·숫자·인용이 한 줄로 쌓여 위계가 하나뿐이다.
-// 여기서는 레퍼런스(Karl Koch 케이스)처럼 「머리 → 대표 화면 → 개요 → 바꾼 것 → 결과 → 말 → 화면 → 배운 점」 장으로 나눈다.
+// 시안 A 4회차 상세 = 조밀해진 「프로젝트 블록」.
+// 머리(배지·이름·한 줄·메타 띠)를 한 띠로 줄이고, 본문은 왼쪽 목차 + 오른쪽 내용 두 단으로 둔다.
+// 장 사이 여백을 3회차의 절반으로 줄였고, 「디자인 엔지니어링」 장을 새로 넣었다(근거 없는 칸은 예시).
 
 export const dynamicParams = false;
 export function generateStaticParams() {
   return LAB_IDS.map((id) => ({ id }));
 }
 
-const SHORT_QUOTE = 24; // 이보다 짧은 말은 첫 화면처럼 파란 판에 크게 — 긴 인용과 같은 크기면 힘이 빠진다
+const SHORT_QUOTE = 24; // 이보다 짧은 말은 첫 화면처럼 파란 판에 크게
 
 function QuoteBlock({ q }: { q: LabQuote }) {
   const short = q.text.length <= SHORT_QUOTE;
@@ -41,112 +43,153 @@ export default async function LabACase({ params }: Props) {
   const all = getLabProjects();
   const next = all[(p.index + 1) % all.length];
   const prev = all[(p.index - 1 + all.length) % all.length];
-  const tallCover = p.cover.height > p.cover.width;
+  const points = DE_POINTS[p.id] ?? [];
+  const videos = VIDEOS.filter((v) => v.project === p.id);
+
+  const toc = [
+    { id: 'overview', label: '개요' },
+    ...(points.length ? [{ id: 'de', label: '디자인 엔지니어링' }] : []),
+    ...(p.improvements?.length ? [{ id: 'changes', label: '바꾼 것' }] : []),
+    ...(p.metrics?.length ? [{ id: 'results', label: t.work.labels.results }] : []),
+    ...(p.labQuotes.length ? [{ id: 'voices', label: '함께 일한 사람들의 말' }] : []),
+    ...(p.gallery?.length ? [{ id: 'screens', label: '화면' }] : []),
+    ...(p.lesson ? [{ id: 'lesson', label: t.work.labels.lesson }] : []),
+  ];
 
   return (
     <>
       <Header locale="ko" t={t} />
-      <main id="main" className="lab lab-case wrap">
-        <a className="detail-back" href="/lab/a#work">← 전체 프로젝트</a>
-
-        <header className="lab-case-head">
-          <p className="pill">{p.context}</p>
-          <h1 className="project-name">{p.name}</h1>
-          <p className="project-tagline">{p.tagline}</p>
-          <dl className="lab-strip" style={{ ['--cols' as string]: p.facts.length }}>
-            {p.facts.map((f) => <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
-          </dl>
-          {p.links && (
-            <p className="project-links">
-              {p.links.map((l) => <a key={l.href} href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>)}
-            </p>
-          )}
+      <main id="main" className="lab lab4-case">
+        <header className="lab4-case-head">
+          <div className="wrap">
+            <a className="detail-back" href="/lab/a#work">← 전체 프로젝트</a>
+            <div className="lab4-case-title">
+              <div>
+                <p className="pill">{p.context}</p>
+                <h1 className="project-name">{p.name}</h1>
+                <p className="project-tagline">{p.tagline}</p>
+              </div>
+              <dl className="lab4-case-facts">
+                {p.facts.map((f) => <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+                {p.links && (
+                  <div><dt>링크</dt><dd className="lab4-links">{p.links.map((l) => <a key={l.href} href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>)}</dd></div>
+                )}
+              </dl>
+            </div>
+          </div>
         </header>
 
-        <div className={`lab-stage${tallCover ? ' is-tall' : ''}`}>
-          <Figure shot={p.cover} sizes="(max-width: 900px) 100vw, 1100px" priority openLabel={t.a11y.openImage} />
-        </div>
+        <div className="wrap lab4-body">
+          <aside className="lab4-aside"><CaseToc items={toc} /></aside>
 
-        <section className="lab-row" aria-labelledby="ov">
-          <h2 id="ov" className="lab-label">개요</h2>
-          <p className="lab-big"><Rich text={p.summary} /></p>
-        </section>
+          <div className="lab4-content">
+            <section id="overview" className="lab4-block">
+              <div className="lab4-cover">
+                <Figure shot={p.cover} className={p.cover.height > p.cover.width ? 'cover cover-tall' : 'cover'} sizes="(max-width: 900px) 100vw, 860px" priority openLabel={t.a11y.openImage} />
+              </div>
+              <p className="lab4-summary"><Rich text={p.summary} /></p>
+            </section>
 
-        {p.improvements && p.improvements.length > 0 && (
-          <section className="lab-row" aria-labelledby="ch">
-            <h2 id="ch" className="lab-label">바꾼 것</h2>
-            <ol className="lab-chapters">
-              {p.improvements.map((item, i) => (
-                <li key={item.title}>
-                  <span className="lab-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                  <div className="lab-ch-card">
-                    {item.badge && <p className="improvement-badge">{item.badge}</p>}
-                    <h3>{item.title}</h3>
-                    <div className="lab-ba">
-                      <div className="lab-ba-before"><span>{t.work.labels.before}</span><p>{item.before}</p></div>
-                      <span className="lab-ba-arrow" aria-hidden="true">→</span>
-                      <div className="lab-ba-after"><span>{t.work.labels.after}</span><p><Rich text={item.after} /></p></div>
-                    </div>
-                    {item.metric && <p className="inline-metric"><strong>{item.metric.value}</strong>{item.metric.label}</p>}
+            {points.length > 0 && (
+              <section id="de" className="lab4-block" aria-labelledby="de-h">
+                <h2 id="de-h" className="lab4-label">디자인 엔지니어링</h2>
+                <ul className="lab4-points">
+                  {points.map((d) => (
+                    <li key={d.title} className={d.example ? 'lab-ex' : undefined}>
+                      <span className="lab4-kind">{d.example ? `예시 · ${d.kind}` : d.kind}</span>
+                      <b>{d.title}</b>
+                      <p>{d.body}</p>
+                    </li>
+                  ))}
+                </ul>
+                {videos.length > 0 && (
+                  <div className="lab4-case-videos">
+                    {videos.map((v) => (
+                      <figure key={v.id} className="lab4-video">
+                        <div className="lab4-poster"><Image src={v.poster} alt="" width={1280} height={720} sizes="(max-width: 900px) 50vw, 280px" /><span className="lab4-dur">{v.duration}</span></div>
+                        <figcaption><b>{v.title}</b><span>{v.role}{v.note ? ` · ${v.note}` : ''} · <em>공개 전 권리 확인</em></span></figcaption>
+                      </figure>
+                    ))}
                   </div>
-                </li>
+                )}
+              </section>
+            )}
+
+            {p.improvements && p.improvements.length > 0 && (
+              <section id="changes" className="lab4-block" aria-labelledby="ch-h">
+                <h2 id="ch-h" className="lab4-label">바꾼 것</h2>
+                <ol className="lab4-changes">
+                  {p.improvements.map((item, i) => (
+                    <li key={item.title}>
+                      <div className="lab4-ch-title">
+                        <span className="lab-num">{String(i + 1).padStart(2, '0')}</span>
+                        <h3>{item.title}</h3>
+                        {item.badge && <span className="improvement-badge">{item.badge}</span>}
+                      </div>
+                      <div className="lab-ba">
+                        <div className="lab-ba-before"><span>{t.work.labels.before}</span><p>{item.before}</p></div>
+                        <span className="lab-ba-arrow" aria-hidden="true">→</span>
+                        <div className="lab-ba-after"><span>{t.work.labels.after}</span><p><Rich text={item.after} /></p></div>
+                      </div>
+                      {item.metric && <p className="inline-metric"><strong>{item.metric.value}</strong>{item.metric.label}</p>}
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
+
+            {p.metrics && p.metrics.length > 0 && (
+              <section id="results" className="lab4-block" aria-labelledby="rs-h">
+                <h2 id="rs-h" className="lab4-label">{t.work.labels.results}</h2>
+                <div className="results lab4-results">
+                  {p.metrics.map((m) => <p key={m.label}><strong>{m.value}</strong><span>{m.label}</span></p>)}
+                </div>
+              </section>
+            )}
+
+            {p.labQuotes.length > 0 && (
+              <section id="voices" className="lab4-block" aria-labelledby="vc-h">
+                <h2 id="vc-h" className="lab4-label">함께 일한 사람들의 말</h2>
+                <div className="lab4-quotes">{p.labQuotes.map((q) => <QuoteBlock key={q.text} q={q} />)}</div>
+              </section>
+            )}
+
+            {p.gallery && p.gallery.length > 0 && (
+              <section id="screens" className="lab4-block" aria-labelledby="gl-h">
+                <h2 id="gl-h" className="lab4-label">화면</h2>
+                <div className="lab4-gallery">
+                  {p.gallery.map((s) => <Figure key={s.src} shot={s} className={s.height > s.width ? 'tall' : undefined} sizes="(max-width: 700px) 100vw, 280px" openLabel={t.a11y.openImage} />)}
+                </div>
+              </section>
+            )}
+
+            {p.lesson && (
+              <aside id="lesson" className="lesson lab4-lesson">
+                <h4>{t.work.labels.lesson} — {p.lesson.title}</h4>
+                <p><Rich text={p.lesson.body} /></p>
+              </aside>
+            )}
+
+            <nav className="lab-next lab4-next" aria-label="다른 프로젝트">
+              {[prev, next].map((n, i) => (
+                <a key={n.id} href={`/lab/a/${n.id}`} className="lab-next-card">
+                  <span className="lab-next-cover">
+                    <Image src={n.cover.src} alt="" width={n.cover.width} height={n.cover.height} sizes="160px" />
+                    <LabArt className="art" id={n.id} index={n.index} />
+                  </span>
+                  <span className="meta">{i === 0 ? '← 이전 프로젝트' : '다음 프로젝트 →'}</span>
+                  <b>{n.name}</b>
+                </a>
               ))}
-            </ol>
-          </section>
-        )}
-
-        {p.metrics && p.metrics.length > 0 && (
-          <section className="lab-row" aria-labelledby="rs">
-            <h2 id="rs" className="lab-label">{t.work.labels.results}</h2>
-            <div className="results lab-results">
-              {p.metrics.map((m) => <p key={m.label}><strong>{m.value}</strong><span>{m.label}</span></p>)}
-            </div>
-          </section>
-        )}
-
-        {p.labQuotes.length > 0 && (
-          <section className="lab-row" aria-labelledby="vc">
-            <h2 id="vc" className="lab-label">함께 일한 사람들의 말</h2>
-            <div className="lab-quotes">{p.labQuotes.map((q) => <QuoteBlock key={q.text} q={q} />)}</div>
-          </section>
-        )}
-
-        {p.gallery && p.gallery.length > 0 && (
-          <section className="lab-row" aria-labelledby="gl">
-            <h2 id="gl" className="lab-label">화면</h2>
-            <div className="gallery lab-gallery">
-              {p.gallery.map((s) => (
-                <Figure key={s.src} shot={s} className={s.height > s.width ? 'tall' : undefined} sizes="(max-width: 700px) 100vw, 40vw" openLabel={t.a11y.openImage} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {p.lesson && (
-          <aside className="lesson lab-lesson">
-            <h4>{t.work.labels.lesson} — {p.lesson.title}</h4>
-            <p><Rich text={p.lesson.body} /></p>
-          </aside>
-        )}
-
-        <nav className="lab-next" aria-label="다른 프로젝트">
-          {[prev, next].map((n, i) => (
-            <a key={n.id} href={`/lab/a/${n.id}`} className="lab-next-card">
-              <span className="lab-next-cover">
-                <Image src={n.cover.src} alt="" width={n.cover.width} height={n.cover.height} sizes="160px" />
-                <LabArt className="art" id={n.id} index={n.index} />
-              </span>
-              <span className="meta">{i === 0 ? '← 이전 프로젝트' : '다음 프로젝트 →'}</span>
-              <b>{n.name}</b>
-            </a>
-          ))}
-        </nav>
+            </nav>
+          </div>
+        </div>
       </main>
 
       <footer className="contact contact-compact">
         <div className="wrap">
           <a className="contact-email" href={`mailto:${t.contact.email}`}>{t.contact.email}</a>
-          <p className="footer-note">© 2026 {t.hero.name} · 시안 A</p>
+          <p className="footer-note">© 2026 {t.hero.name} · 시안 A 4회차</p>
         </div>
       </footer>
       <Lightbox closeLabel={t.a11y.closeImage} prevLabel={t.a11y.prevImage} nextLabel={t.a11y.nextImage} />

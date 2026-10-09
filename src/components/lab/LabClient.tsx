@@ -221,3 +221,31 @@ export function BeforeAfter({ before, after, labels }: { before: ReactNode; afte
     </div>
   );
 }
+
+/* ───────── A 상세: 지금 읽는 장을 표시하는 목차 ───────── */
+
+// 상세가 길어도 길을 잃지 않게 — 화면 위쪽 1/3 에 들어온 장을 목차에서 굵게 표시한다
+export function CaseToc({ items }: { items: { id: string; label: string }[] }) {
+  const [active, setActive] = useState(items[0]?.id);
+  useEffect(() => {
+    const els = items.map((i) => document.getElementById(i.id)).filter((e): e is HTMLElement => !!e);
+    const io = new IntersectionObserver(
+      (entries) => {
+        const hit = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (hit) setActive(hit.target.id);
+      },
+      { rootMargin: '-20% 0px -66% 0px' },
+    );
+    els.forEach((e) => io.observe(e));
+    return () => io.disconnect();
+  }, [items]);
+  return (
+    <nav className="lab-toc" aria-label="이 페이지의 장">
+      <ol>
+        {items.map((i) => (
+          <li key={i.id}><a href={`#${i.id}`} aria-current={active === i.id ? 'true' : undefined}>{i.label}</a></li>
+        ))}
+      </ol>
+    </nav>
+  );
+}

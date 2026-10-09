@@ -265,3 +265,191 @@ main.labb > section { padding-block: 0; }
 
 /* 사이트 기본 스타일 초기화가 h4 굵기를 지워 「배운 점」 제목이 본문처럼 보인다 */
 .lab .lesson h4 { font-weight: 800; }
+
+/* ═════════ A 4회차 — 더 조밀하게 + 디자인 엔지니어링 ═════════
+ * 4회차 코멘트: 「메인이 조금 더 조밀했으면, 상세도」 「디자인 엔지니어로서의 부분이 아쉬움 — 없으면 예시로」.
+ * 색·서체·카드는 그대로 두고 여백과 단 수만 바꾼다. 예시 칸은 점선 + 「예시」 표시로 실제 칸과 구분한다.
+ */
+.lab4 .lab4-hero { padding: clamp(40px, 6vw, 72px) var(--gutter) clamp(36px, 5vw, 56px); }
+.lab4-hero .hero-title { font-size: clamp(38px, 6.2vw, 88px); margin-bottom: 18px; }
+.lab4-hero .hero-lead { font-size: clamp(16px, 1.5vw, 18px); max-width: 36em; }
+.lab4-hero .hero-links { margin-top: 22px; }
+.lab4-hero .hero-wire-a { width: clamp(110px, 13vw, 180px); top: 12px; right: clamp(8px, 3vw, 40px); opacity: .7; }
+.lab4-hero .hero-wire-b { display: none; }
+.lab4-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 48px; align-items: end; }
+.lab4-hero-stats { margin: 0; display: grid; gap: 0; }
+.lab4-hero-stats div { display: flex; flex-direction: column; padding: 12px 0; border-top: 1px solid rgba(255, 248, 244, .45); }
+.lab4-hero-stats dd { margin: 0; font-family: var(--font-display-stack); font-weight: 700; font-size: clamp(26px, 2.6vw, 34px); line-height: 1.15; }
+.lab4-hero-stats dt { font-size: 13.5px; line-height: 1.45; opacity: .88; margin-top: 2px; }
+
+main > section.lab4-sec, .lab4-sec { padding-block: clamp(40px, 5vw, 64px); border-top: 1px solid var(--line); }
+.lab4-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 24px; flex-wrap: wrap; margin: 0 0 18px; }
+.lab4-head h2 { margin: 0; font-size: clamp(26px, 3vw, 36px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+.lab4-head p { margin: 0; color: var(--muted); font-size: 15px; }
+.lab4-h3 { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; margin: 30px 0 12px; font-size: 16px; font-weight: 800; }
+.lab4-h3 span { font-size: 13px; font-weight: 500; color: var(--muted); }
+.lab4 em, .lab4-case em { font-style: normal; color: var(--mark); font-weight: 600; }
+
+/* 만져 보는 도구 — 4열 */
+.lab4-demos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.lab4-demo { margin: 0; }
+.lab4-demo .demo { height: 232px; }
+.lab4-demo figcaption { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; font-size: 14px; }
+.lab4-demo figcaption a { color: var(--signal-ink); font-weight: 600; text-underline-offset: 3px; white-space: nowrap; }
+
+/* 코드로 만든 영상 — 쇼릴 하나 크게 + 클립 6개 */
+.lab4-videos { display: grid; grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)); gap: 14px; }
+.lab4-video { margin: 0; min-width: 0; }
+.lab4-video.is-reel { grid-row: span 2; }
+.lab4-poster { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius-l); overflow: hidden; border: 1px solid var(--line); background: var(--ink); }
+.lab4-poster img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s cubic-bezier(.2, .7, .2, 1); }
+.lab4-video:hover .lab4-poster img { transform: scale(1.03); }
+.lab4-dur { position: absolute; right: 8px; bottom: 8px; font-family: var(--font-display-stack); font-size: 11.5px; font-weight: 700; color: #fff8f4; background: rgba(18, 20, 42, .72); padding: 3px 8px; border-radius: 999px; }
+.lab4-play { position: absolute; inset: 0; margin: auto; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: var(--on-signal); color: var(--signal); font-size: 22px; padding-left: 4px; box-shadow: 0 10px 30px rgba(18, 20, 42, .35); }
+.lab4-video figcaption { margin-top: 8px; display: flex; flex-direction: column; line-height: 1.45; }
+.lab4-video figcaption b { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab4-video figcaption span { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab4-video.is-reel figcaption b { font-size: 17px; }
+
+/* 시스템 · 사전 · 템플릿 */
+.lab4-sys { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.lab4-sys-card { display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: inherit; min-width: 0; }
+.lab4-sys-card img, .lab-ex-shot { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: var(--radius-l); border: 1px solid var(--line); background: var(--paper-raised); margin-bottom: 6px; }
+.lab4-sys-card b { font-size: 15px; }
+.lab4-sys-card > span:last-child { font-size: 13px; color: var(--ink-soft); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.lab4-sys-card:hover b { color: var(--signal-ink); text-decoration: underline; text-underline-offset: 3px; }
+/* 예시 칸 — 점선 테두리 + 줄무늬. 실제 칸과 한눈에 구분된다 */
+.lab-ex-shot { display: grid; place-items: center; text-align: center; padding: 12px; font-size: 13px; font-weight: 600; color: var(--muted); border: 1.5px dashed color-mix(in srgb, var(--muted) 55%, transparent); background: repeating-linear-gradient(135deg, transparent 0 10px, color-mix(in srgb, var(--line) 45%, transparent) 10px 11px); }
+
+/* 프로젝트 — 3열 카드 */
+.lab4-cards { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 20px; }
+.lab4-card { display: flex; flex-direction: column; text-decoration: none; color: inherit; height: 100%; }
+.lab4-card .lab-cover { margin-bottom: 12px; }
+.lab4-card:hover .lab-cover > * { transform: scale(1.025); }
+.lab4-ctx { margin: 0; font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab4-card h3 { display: flex; gap: 8px; align-items: baseline; margin: 2px 0 4px; font-size: 21px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.25; }
+.lab4-card h3 span { font-size: 15px; color: var(--signal-ink); transition: transform .3s; }
+.lab4-card:hover h3 span { transform: translateX(4px); }
+.lab4-tag { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--ink-soft); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.lab4-chips { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 5px; }
+.lab4-chips li { font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink-soft); }
+.lab4-meta { margin: auto 0 0; padding-top: 10px; font-size: 13px; color: var(--muted); }
+.lab4 .thumb-switch > .seg { margin: -6px 0 18px; }
+
+/* 배운 것 + 그 외 — 두 단 */
+.lab4-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 48px; }
+.lab4-notes, .lab4-rows { list-style: none; padding: 0; margin: 0; }
+.lab4-notes li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.lab4-notes a { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; text-decoration: none; }
+.lab4-notes a b { font-size: 16px; font-weight: 800; letter-spacing: -0.02em; }
+.lab4-notes a:hover b { color: var(--signal-ink); }
+.lab4-notes p { margin: 2px 0 0; font-size: 14px; color: var(--ink-soft); line-height: 1.55; }
+.lab4-rows a { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--line); text-decoration: none; font-size: 14px; }
+.lab4-rows b { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab4-rows span { color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab4-rows time { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.lab4-rows a:hover b { color: var(--signal-ink); }
+
+/* 연표 — 두 단 */
+.lab4 .timeline { border-top: 1px solid var(--line); }
+.lab4-tl { columns: 2; column-gap: 48px; }
+.lab4 .lab4-tl li { break-inside: avoid; grid-template-columns: 6em 1fr; gap: 12px; padding: 8px 0; font-size: 15px; }
+.lab4-contact { padding-block: 48px 32px; }
+.lab4-contact .contact-links { margin-top: 18px; }
+.lab4-contact .footer-note { margin-top: 24px; }
+
+/* ── 상세 4회차 ── */
+.lab4-case-head { background: color-mix(in srgb, var(--signal) 6%, var(--paper)); border-bottom: 1px solid var(--line); padding: 22px 0 26px; }
+.lab4-case-head .detail-back { margin-bottom: 14px; }
+.lab4-case-title { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 40px; align-items: end; }
+.lab4-case-title .pill { margin-bottom: 10px; }
+.lab4-case-title .project-name { font-size: clamp(36px, 4.6vw, 56px); margin: 0 0 6px; }
+.lab4-case-title .project-tagline { margin: 0; font-size: 17px; }
+.lab4-case-facts { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; }
+.lab4-case-facts div { padding: 8px 0; border-top: 1px solid var(--line); }
+.lab4-case-facts dt { font-size: 12.5px; color: var(--muted); }
+.lab4-case-facts dd { margin: 1px 0 0; font-size: 14.5px; font-weight: 500; line-height: 1.45; }
+.lab4-links { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.lab4-links a { color: var(--signal-ink); font-weight: 600; text-underline-offset: 3px; }
+
+.lab4-body { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 44px; padding-top: 28px; }
+.lab4-aside { position: sticky; top: 84px; align-self: start; }
+.lab-toc ol { list-style: none; padding: 0; margin: 0; }
+.lab-toc a { display: block; padding: 6px 12px; border-left: 2px solid var(--line); font-size: 14px; color: var(--muted); text-decoration: none; transition: color .2s, border-color .2s; }
+.lab-toc a:hover { color: var(--ink); }
+.lab-toc a[aria-current="true"] { color: var(--ink); font-weight: 700; border-left-color: var(--signal); }
+.lab4-content { max-width: 920px; min-width: 0; }
+.lab4-block { padding: 26px 0; border-bottom: 1px solid var(--line); scroll-margin-top: 84px; }
+.lab4-block:first-child { padding-top: 0; }
+.lab4-cover .frame { box-shadow: 0 18px 44px -26px rgba(38, 42, 59, .45); }
+.lab4-summary { margin: 18px 0 0; font-size: 18px; line-height: 1.7; max-width: 40em; }
+.lab4-label { margin: 0 0 12px; font-size: 13px; font-weight: 800; color: var(--signal-ink); letter-spacing: 0.02em; }
+
+.lab4-points { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.lab4-points li { background: var(--paper-raised); border: 1px solid var(--line); border-radius: 12px; padding: 13px 16px; }
+.lab4-kind { font-size: 12px; font-weight: 700; color: var(--signal-ink); }
+.lab4-points b { display: block; font-size: 16px; font-weight: 800; letter-spacing: -0.02em; margin-top: 2px; }
+.lab4-points p { margin: 3px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+.lab4-points li.lab-ex, .lab-ex { background: transparent; border: 1.5px dashed color-mix(in srgb, var(--muted) 55%, transparent); }
+.lab-ex .lab4-kind { color: var(--mark); }
+.lab-ex p { color: var(--muted); }
+.lab4-case-videos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+
+.lab4-changes { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.lab4-changes > li { background: var(--paper-raised); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; }
+.lab4-ch-title { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; margin-bottom: 8px; }
+.lab4-ch-title .lab-num { font-size: 15px; padding: 0; }
+.lab4-ch-title h3 { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -0.02em; }
+.lab4-ch-title .improvement-badge { margin: 0 0 0 auto; font-size: 12px; }
+.lab4-changes .lab-ba p { font-size: 14.5px; }
+.lab4-changes .lab-ba-arrow { padding-top: 20px; }
+.lab4-changes .inline-metric { margin-top: 10px; padding-top: 8px; }
+.lab4-results { margin-top: 0; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+.lab4-results strong { font-size: clamp(26px, 2.6vw, 32px); }
+.lab4-quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; align-items: stretch; }
+.lab4-quotes .lab-quote { padding: 18px 20px; }
+.lab4-quotes .lab-quote blockquote p { font-size: 16.5px; }
+.lab4-quotes .lab-quote.is-short { display: flex; flex-direction: column; justify-content: center; }
+.lab4-quotes .lab-quote.is-short blockquote p { font-size: clamp(24px, 2.4vw, 30px); }
+.lab4-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: start; }
+.lab4-gallery figcaption { font-size: 12.5px; margin-top: 6px; }
+.lab4-gallery .tall .frame { max-width: 150px; }
+.lab4-lesson { margin: 26px 0 0; padding: 18px 20px; }
+.lab4-lesson h4 { font-size: 16px; }
+.lab4-lesson p { font-size: 16px; }
+.lab4-next { padding-block: 28px 8px; }
+
+@media (max-width: 1100px) {
+  .lab4-demos, .lab4-sys { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lab4-videos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lab4-video.is-reel { grid-column: 1 / -1; grid-row: auto; }
+  .lab4-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .lab4-hero-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .lab4-hero-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 14px; }
+  .lab4-split { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .lab4-tl { columns: 1; }
+  .lab4-case-title { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .lab4-body { grid-template-columns: minmax(0, 1fr); gap: 0; padding-top: 0; }
+  /* 좁은 화면에서는 목차를 위에 가로 띠로 — 따라붙게 두면 본문을 가린다 */
+  .lab4-aside { position: sticky; top: 56px; z-index: 5; margin: 0 calc(-1 * var(--gutter)); padding: 8px var(--gutter); background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .lab-toc ol { display: flex; gap: 4px; overflow-x: auto; }
+  .lab-toc a { border-left: 0; border-bottom: 2px solid transparent; white-space: nowrap; padding: 6px 10px; }
+  .lab-toc a[aria-current="true"] { border-bottom-color: var(--signal); }
+  .lab4-block:first-child { padding-top: 20px; }
+  .lab4-points, .lab4-case-videos { grid-template-columns: minmax(0, 1fr); }
+  .lab4-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .lab4-demos, .lab4-sys, .lab4-cards { grid-template-columns: minmax(0, 1fr); }
+  .lab4-rows a { grid-template-columns: minmax(0, 1fr) auto; }
+  .lab4-rows span { grid-column: 1 / -1; grid-row: 2; }
+  .lab4-hero-stats dd { font-size: 22px; }
+  .lab4-hero-stats dt { font-size: 12px; }
+}
+/* 대표 화면이 세로로 길면 상세 첫 화면을 다 차지한다 — 높이를 묶고 누르면 라이트박스로 전체를 본다 */
+.lab4-cover .frame img { max-height: 460px; object-fit: cover; object-position: top; }
+.lab4-cover .cover-tall .frame img { max-height: none; }
+.board-grid li > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab4-sys-card.lab-ex { border: 0; }
