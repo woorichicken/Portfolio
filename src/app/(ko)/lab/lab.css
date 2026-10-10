@@ -545,3 +545,73 @@ main > section.lab4-sec, .lab4-sec { padding-block: clamp(40px, 5vw, 64px); bord
   .lab5-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 .lab-cover.is-portrait .photo { object-fit: contain; object-position: center; background: color-mix(in srgb, var(--signal) 5%, var(--paper-raised)); }
+
+/* ═════════ A 6회차 ═════════
+ * D2 「사진이 과하게 잘린다」 → 결과물 칸은 사진을 자르지 않고 통째로 담는다(영상 포스터만 채움).
+ * D3 「중심이 안 맞고 비대칭이 심하다」 → 이전·이후를 같은 폭의 두 상자로, 화살표는 두 상자 사이 정가운데.
+ * H2-1 「이 화면도 비대칭」 → 결과물 벽을 크고·넓고·긴 칸이 섞인 격자로.
+ * H3-1 「모바일도 한 섹션에 2개 등 비대칭」 → 모바일 2열에 한 줄·반 칸·가로 행·긴 칸을 섞는다.
+ */
+.lab-art-media { background: color-mix(in srgb, var(--signal) 5%, var(--paper-raised)); }
+.lab-art-media img { object-fit: contain; object-position: center; }
+.lab-art.is-video .lab-art-media img { object-fit: cover; }
+
+/* 이전 → 이후 — 같은 폭 두 상자 + 가운데 화살표 */
+.lab-ba { grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); gap: 10px; align-items: stretch; }
+.lab-ba-before, .lab-ba-after { padding: 12px 14px; border-radius: 10px; }
+.lab-ba-before { background: var(--paper); }
+.lab-ba-after { background: color-mix(in srgb, var(--signal) 7%, var(--paper-raised)); }
+.lab-change { align-self: center; justify-self: center; padding: 0; }
+
+/* 결과물 벽 — 4열, 칸 높이를 고정해 크기만 섞는다 */
+.lab6-wall { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 214px; grid-auto-flow: dense; gap: 16px; }
+.lab6-wall > .lab-art { height: 100%; min-height: 0; }
+.lab6-wall > .lab-art .lab-art-media { aspect-ratio: auto; flex: 1 1 auto; min-height: 0; }
+.lab6-wall > .lab-art figcaption { flex: none; }
+.lab6-wall > [data-size="wide"] { grid-column: span 2; }
+.lab6-wall > [data-size="tall"] { grid-row: span 2; }
+.lab6-wall > [data-size="big"] { grid-column: span 2; grid-row: span 2; }
+.lab6-wall > [data-size="big"] figcaption b { font-size: 17px; }
+
+@media (max-width: 900px) {
+  .lab-ba { grid-template-columns: minmax(0, 1fr); }
+  .lab-change { justify-self: center; padding: 2px 0; }
+}
+@media (max-width: 1100px) {
+  .lab6-wall { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .lab6-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 158px; gap: 12px; }
+
+  /* 홈 프로젝트 — 모바일 비대칭 */
+  .lab5-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 12px; }
+  .lab5-bento > li.m-full, .lab5-bento > li.m-row { grid-column: 1 / -1; grid-row: auto; }
+  .lab5-bento > li.m-half { grid-column: span 1; grid-row: auto; }
+  .lab5-bento > li.m-tall { grid-column: span 1; grid-row: span 2; }
+  .lab5-bento > li .lab5-card { display: flex; flex-direction: column; }
+  .lab5-bento > li.m-full .lab-cover { aspect-ratio: 16 / 10; min-height: 0; flex: none; margin: 0 0 12px; }
+  .lab5-bento > li.m-half .lab-cover { aspect-ratio: 4 / 3; min-height: 0; flex: none; margin: 0 0 8px; }
+  .lab5-bento > li.m-tall .lab-cover { aspect-ratio: auto; flex: 1 1 auto; min-height: 220px; margin: 0 0 8px; }
+  .lab5-bento > li.m-half h3, .lab5-bento > li.m-tall h3 { font-size: 17px; }
+  .lab5-bento > li.m-half .lab4-tag, .lab5-bento > li.m-half .lab4-chips, .lab5-bento > li.m-tall .lab4-chips { display: none; }
+  .lab5-bento > li.m-tall .lab4-tag { font-size: 13px; -webkit-line-clamp: 3; }
+  .lab5-bento > li.m-half .lab4-meta, .lab5-bento > li.m-tall .lab4-meta { font-size: 12px; margin-top: 4px; }
+  .lab5-bento > li.m-row .lab5-card { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr); gap: 12px; align-items: center; }
+  .lab5-bento > li.m-row .lab-cover { aspect-ratio: 1 / 1; min-height: 0; flex: none; margin: 0; }
+  .lab5-bento > li.m-row .lab4-chips { display: none; }
+  .lab5-bento > li.m-row h3 { font-size: 18px; }
+  .lab5-bento > li.m-row .lab4-tag { font-size: 13.5px; }
+}
+/* 6회차 보정 — 영상 포스터도 자르지 않는다(큰 칸·넓은 칸에서 글자가 잘렸다). 남는 자리는 영상답게 어둡게 */
+.lab-art.is-video .lab-art-media { background: #12142a; }
+.lab-art.is-video .lab-art-media img { object-fit: contain; }
+/* 상세 대표 화면 — 높이는 묶되 자르지 않고 통째로(콘텐츠 자동화 카드 글자가 잘렸다) */
+.lab4-cover .frame { background: color-mix(in srgb, var(--signal) 5%, var(--paper-raised)); }
+.lab4-cover .frame img { object-fit: contain; object-position: center; }
+@media (max-width: 640px) {
+  .lab5-bento > li.m-half .lab-cover { aspect-ratio: 16 / 11; }
+  .lab5-bento > li.m-row .lab-cover { aspect-ratio: 4 / 3; }
+  /* 반 칸에서 이름이 두 줄이면 화살표가 오른쪽 끝으로 떨어진다 — 글자 뒤에 붙인다 */
+  .lab5-bento > li.m-half h3, .lab5-bento > li.m-tall h3 { display: block; }
+  .lab5-bento > li.m-half h3 span, .lab5-bento > li.m-tall h3 span { margin-left: 4px; }
+}

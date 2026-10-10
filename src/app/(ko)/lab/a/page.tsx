@@ -23,6 +23,12 @@ const SHAPE: Record<string, 'big' | 'normal' | 'wide' | 'wide-l' | 'tall'> = {
   kits: 'big', fair: 'normal', 'cli-manager': 'normal', automation: 'wide', purple: 'wide', porterx: 'tall', ncdigitec: 'wide-l', content: 'wide-l',
 };
 
+// 모바일(640 이하) 모양 — 6회차 「여기도 한 섹션에 2개 등 비대칭」. 2열 격자에서
+// 한 줄 꽉(full) · 반 칸(half) · 사진 왼쪽 가로 행(row) · 세로로 긴 칸(tall)을 섞는다.
+const MOBILE: Record<string, 'full' | 'half' | 'row' | 'tall'> = {
+  kits: 'full', fair: 'half', 'cli-manager': 'half', automation: 'row', purple: 'half', porterx: 'tall', ncdigitec: 'half', content: 'row',
+};
+
 export default function LabAHome() {
   const t = getContent('ko');
   const projects = getLabProjects();
@@ -70,7 +76,7 @@ export default function LabAHome() {
               {projects.map((p) => {
                 const chips = p.improvements?.map((i) => i.title) ?? [];
                 return (
-                  <li key={p.id} className={`is-${SHAPE[p.id] ?? 'normal'}`}>
+                  <li key={p.id} className={`is-${SHAPE[p.id] ?? 'normal'} m-${MOBILE[p.id] ?? 'half'}`}>
                     <a className="lab5-card" href={`/lab/a/${p.id}`}>
                       {/* 세로로 긴 사진은 넓은 칸에서 잘리면 글자가 반쯤 보인다 — 긴 칸이 아니면 통째로 담는다 */}
                       <div className={`lab-cover${p.cover.height > p.cover.width && SHAPE[p.id] !== 'tall' ? ' is-portrait' : ''}`}>

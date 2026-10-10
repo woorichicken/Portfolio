@@ -229,15 +229,22 @@ export function CaseToc({ items }: { items: { id: string; label: string }[] }) {
   const [active, setActive] = useState(items[0]?.id);
   useEffect(() => {
     const els = items.map((i) => document.getElementById(i.id)).filter((e): e is HTMLElement => !!e);
+    // 마지막 장(배운 점)은 짧아서 화면 위쪽까지 못 올라온다 — 바닥에 닿았으면 마지막 장을 켠다.
+    // 관찰자 콜백이 스크롤 이벤트보다 늦게 와서 덮어쓰므로, 두 곳 모두 바닥 여부를 먼저 본다.
+    const last = items[items.length - 1]?.id;
+    const atBottom = () => window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
     const io = new IntersectionObserver(
       (entries) => {
+        if (last && atBottom()) { setActive(last); return; }
         const hit = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
         if (hit) setActive(hit.target.id);
       },
       { rootMargin: '-20% 0px -66% 0px' },
     );
     els.forEach((e) => io.observe(e));
-    return () => io.disconnect();
+    const onScroll = () => { if (last && atBottom()) setActive(last); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { io.disconnect(); window.removeEventListener('scroll', onScroll); };
   }, [items]);
   return (
     <nav className="lab-toc" aria-label="이 페이지의 장">

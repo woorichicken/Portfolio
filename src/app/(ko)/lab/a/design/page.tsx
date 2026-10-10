@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- 시안끼리는 전체 새로고침 이동이 맞다: 화면마다 처음 그려지는 모습을 리뷰한다 */
 import Header from '@/components/Header';
 import Lightbox from '@/components/Lightbox';
-import { ArtifactTile } from '@/components/lab/LabArtifact';
+import { ArtifactTile, tileSize } from '@/components/lab/LabArtifact';
 import { KindFilter } from '@/components/lab/LabClient';
 import { getLabProjects } from '@/components/lab/labData';
 import { ARTIFACTS, STANDALONE } from '@/components/lab/labExtras';
@@ -40,8 +40,8 @@ export default function LabADesign() {
         </header>
         <div className="wrap lab5-design">
           <KindFilter kinds={kinds}>
-            <div className="lab5-wall">
-              {all.map(({ a, project }) => <ArtifactTile key={`${project}-${a.title}`} a={a} projectName={project} sizes="(max-width: 700px) 100vw, 25vw" />)}
+            <div className="lab6-wall">
+              {all.map(({ a, project }, i) => <ArtifactTile key={`${project}-${a.title}`} a={a} projectName={project} size={tileSize(a, i)} sizes="(max-width: 700px) 100vw, 50vw" />)}
             </div>
           </KindFilter>
           <p className="lab5-note">점선 칸은 아직 자료가 없는 자리입니다. · 영상은 공개 전 권리 확인이 필요합니다.</p>
