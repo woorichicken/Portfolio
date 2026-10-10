@@ -289,32 +289,35 @@ const ko: Content = {
           shot('ncd_plan', '케어 플랜 선택 화면', '케어 플랜 선택'),
         ],
       },
-      {
-        id: 'content',
-        context: '개인 · 오픈소스',
-        name: '콘텐츠 자동화',
-        tagline: '콘텐츠 수집·기획·제작·발행을 잇는 파이프라인',
-        summary:
-          'X 인기글 수집 → AI 에이전트 둘의 주제 토론(최대 3라운드) → 리서치·팩트체크·카피·렌더·캡션 → **Threads·X·Instagram 동시 발행**까지 이어지는 파이프라인입니다. 매일 반응 데이터를 모아 잘된 글은 다른 각도로 다시 만들었고, API 키만 비워 **오픈소스로 공개했습니다**.',
-        facts: [
-          { label: '기간', value: '2026.03 – 2026.04' },
-          { label: '역할', value: '설계 · 개발 · 운영' },
-          { label: '채널', value: 'Threads · X · Instagram' },
-          { label: '이후', value: '사내 콘텐츠 운영 플랫폼으로 확장' },
-        ],
-        cover: shot('ct_coord', '콘텐츠 자동화로 만든 카드뉴스'),
-        metrics: [
-          { value: '78만', label: '3주 누적 조회수' },
-          { value: '94 → 8,600', label: 'Threads 팔로워(정점)' },
-          { value: '100+', label: '발행 · 1,500뷰 이상 50개' },
-        ],
-        lesson: {
-          title: '팀이 같이 쓰는 도구로',
-          body: '사내에는 "짧게라도 적어두면 AI가 알아서 발전시킵니다"로 성과를 발표했고, 이후 사내 콘텐츠 운영 플랫폼과 카드뉴스 자동 생성으로 키워 **팀이 같이 쓰는 도구가 됐습니다**.',
-        },
-        gallery: [shot('cli_card', 'CLI Manager 소개 카드뉴스', '파이프라인으로 만든 CLI Manager 소개 카드')],
-        links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
-      },
+      // ── 콘텐츠 자동화: 잠시 제외(2026-10-10 리뷰 X2 「일단 이 부분은 제외, 주석 처리」) ──
+      // 다시 켤 때 아래 주석만 풀면 된다. 커버는 캐릭터를 잘라 낸 ct_cover_v2 로 바꿔 두었다
+      // (옛 ct_coord.jpg 에 저작권 미확인 캐릭터가 있어 지웠다).
+      // {
+      //   id: 'content',
+      //   context: '개인 · 오픈소스',
+      //   name: '콘텐츠 자동화',
+      //   tagline: '콘텐츠 수집·기획·제작·발행을 잇는 파이프라인',
+      //   summary:
+      //     'X 인기글 수집 → AI 에이전트 둘의 주제 토론(최대 3라운드) → 리서치·팩트체크·카피·렌더·캡션 → **Threads·X·Instagram 동시 발행**까지 이어지는 파이프라인입니다. 매일 반응 데이터를 모아 잘된 글은 다른 각도로 다시 만들었고, API 키만 비워 **오픈소스로 공개했습니다**.',
+      //   facts: [
+      //     { label: '기간', value: '2026.03 – 2026.04' },
+      //     { label: '역할', value: '설계 · 개발 · 운영' },
+      //     { label: '채널', value: 'Threads · X · Instagram' },
+      //     { label: '이후', value: '사내 콘텐츠 운영 플랫폼으로 확장' },
+      //   ],
+      //   cover: shot('ct_cover_v2', '콘텐츠 자동화로 만든 카드뉴스'),
+      //   metrics: [
+      //     { value: '78만', label: '3주 누적 조회수' },
+      //     { value: '94 → 8,600', label: 'Threads 팔로워(정점)' },
+      //     { value: '100+', label: '발행 · 1,500뷰 이상 50개' },
+      //   ],
+      //   lesson: {
+      //     title: '팀이 같이 쓰는 도구로',
+      //     body: '사내에는 "짧게라도 적어두면 AI가 알아서 발전시킵니다"로 성과를 발표했고, 이후 사내 콘텐츠 운영 플랫폼과 카드뉴스 자동 생성으로 키워 **팀이 같이 쓰는 도구가 됐습니다**.',
+      //   },
+      //   gallery: [shot('cli_card', 'CLI Manager 소개 카드뉴스', '파이프라인으로 만든 CLI Manager 소개 카드')],
+      //   links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
+      // },
     ],
   },
   others: {

@@ -1,5 +1,4 @@
 import { getContent } from '@/content';
-import { shot } from '@/content/images';
 import type { Metric, Project, Quote } from '@/content/types';
 
 // 시안(/lab) 전용 읽기 창구. 콘텐츠 파일(ko.ts)은 건드리지 않고, 열린 제보 중 「빼 달라」는 것만 여기서 걸러 보여 준다.
@@ -35,8 +34,6 @@ export function getLabProjects(): LabProject[] {
   const t = getContent('ko');
   return t.work.projects.map((p, index) => ({
     ...p,
-    // 6회차 X2 — 콘텐츠 자동화 커버에서 주토피아 캐릭터를 잘라 낸 원래 카드(운영용 커밋은 fix/content-cover-261009)
-    ...(p.id === 'content' ? { cover: shot('ct_cover_v2', '콘텐츠 자동화로 만든 카드뉴스') } : {}),
     index,
     role: factValue(p, '역할'),
     period: factValue(p, '기간'),

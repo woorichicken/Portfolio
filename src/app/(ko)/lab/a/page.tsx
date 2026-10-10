@@ -19,8 +19,9 @@ import { getContent } from '@/content';
 // - 「일하며 배운 것 + 그 외」는 뺐다(H4).
 
 // 카드 모양 — 사진 비율에 맞춰 골랐다(PorterX 는 세로 폰 화면, 엔씨디지텍은 가로로 긴 키비주얼)
-const SHAPE: Record<string, 'big' | 'normal' | 'wide' | 'wide-l' | 'tall'> = {
-  kits: 'big', fair: 'normal', 'cli-manager': 'normal', automation: 'wide', purple: 'wide', porterx: 'tall', ncdigitec: 'wide-l', content: 'wide-l',
+// 엔씨디지텍은 PorterX(세로로 긴 칸) 옆을 두 줄 높이로 채운다 — 콘텐츠 자동화를 빼면서 생긴 빈자리를 막는다
+const SHAPE: Record<string, 'big' | 'normal' | 'wide' | 'wide-l' | 'tall' | 'feature'> = {
+  kits: 'big', fair: 'normal', 'cli-manager': 'normal', automation: 'wide', purple: 'wide', porterx: 'tall', ncdigitec: 'feature', content: 'wide-l',
 };
 
 // 모바일(640 이하) 모양 — 6회차 「여기도 한 섹션에 2개 등 비대칭」. 2열 격자에서
@@ -33,7 +34,7 @@ export default function LabAHome() {
   const t = getContent('ko');
   const projects = getLabProjects();
   const pick = (project: string, title: string) => ARTIFACTS[project].find((a) => a.title === title)!;
-  const preview: Artifact[] = [STANDALONE[0], STANDALONE[1], pick('kits', '리뷰 보드'), pick('content', '카드뉴스 템플릿'), pick('cli-manager', 'AI 세션은 녹색')];
+  const preview: Artifact[] = [STANDALONE[0], STANDALONE[1], pick('kits', '리뷰 보드'), pick('kits', '요소 지목 제보 위젯'), pick('cli-manager', 'AI 세션은 녹색')];
 
   return (
     <>

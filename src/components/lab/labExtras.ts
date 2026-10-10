@@ -80,11 +80,12 @@ export const ARTIFACTS: Record<string, Artifact[]> = {
     { kind: '도구', title: '화면 위 수정 피드백', shot: shotOf('ncd_ux') },
     { kind: '화면', title: '리디자인 전후', example: true, hint: '메인·GNB 리디자인 전후 캡처 한 쌍' },
   ],
-  content: [
-    { kind: '시스템', title: '카드뉴스 템플릿', shot: shotOf('cli_card') },
-    { kind: '영상', title: video('cardnews-agent-film').title, video: video('cardnews-agent-film') },
-    { kind: '시스템', title: '템플릿 규칙', example: true, hint: '카드 템플릿을 늘린 격자·글자·색 규칙 한 장' },
-  ],
+  // 콘텐츠 자동화는 콘텐츠 파일에서 주석 처리돼 있다(2026-10-10 X2). 다시 켤 때 이 줄도 함께 푼다.
+  // content: [
+  //   { kind: '시스템', title: '카드뉴스 템플릿', shot: shotOf('cli_card') },
+  //   { kind: '영상', title: video('cardnews-agent-film').title, video: video('cardnews-agent-film') },
+  //   { kind: '시스템', title: '템플릿 규칙', example: true, hint: '카드 템플릿을 늘린 격자·글자·색 규칙 한 장' },
+  // ],
 };
 
 /** 「디자인 엔지니어로서」 화면 전용 — 특정 프로젝트에 묶이지 않는 결과물 */

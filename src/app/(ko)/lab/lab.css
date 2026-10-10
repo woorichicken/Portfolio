@@ -615,3 +615,18 @@ main > section.lab4-sec, .lab4-sec { padding-block: clamp(40px, 5vw, 64px); bord
   .lab5-bento > li.m-half h3, .lab5-bento > li.m-tall h3 { display: block; }
   .lab5-bento > li.m-half h3 span, .lab5-bento > li.m-tall h3 span { margin-left: 4px; }
 }
+
+/* 7회차 — 콘텐츠 자동화를 빼서 7개가 됐다. 엔씨디지텍을 PorterX(두 줄 높이) 옆에 4칸 × 두 줄로 세워 빈자리를 막는다.
+ * 모바일 모양(m-*)과 같은 선택자 우선순위라 폭 구간을 나눠 건다 — 안 그러면 뒤에 쓴 규칙이 모바일을 덮는다. */
+@media (min-width: 1101px) {
+  .lab5-bento > li.is-feature { grid-column: span 4; grid-row: span 2; }
+  /* 엔씨디지텍 키비주얼은 아주 가로로 길다(1400×612) — 사진 옆에 글을 두면 세로로 잘려서, 사진 위 · 글 아래로 */
+  .lab5-bento > li.is-feature .lab5-card { display: flex; flex-direction: column; }
+  .lab5-bento > li.is-feature .lab-cover { aspect-ratio: 2.2 / 1; min-height: 0; flex: none; margin: 0 0 14px; }
+  .lab5-bento > li.is-feature h3 { font-size: clamp(26px, 2.6vw, 32px); }
+}
+@media (min-width: 641px) and (max-width: 1100px) {
+  .lab5-bento > li.is-feature { grid-column: span 2; grid-row: auto; }
+  .lab5-bento > li.is-feature .lab5-card { display: flex; }
+  .lab5-bento > li.is-feature .lab-cover { aspect-ratio: 16 / 10; margin-bottom: 12px; }
+}

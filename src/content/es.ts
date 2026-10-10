@@ -288,32 +288,35 @@ const es: Content = {
           shot('ncd_plan', 'Selección de plan de cuidado', 'Elegir un plan de cuidado'),
         ],
       },
-      {
-        id: 'content',
-        context: 'Personal · código abierto',
-        name: 'Automatización de contenidos',
-        tagline: 'Un pipeline que va de recoger ideas a planificar, producir y publicar',
-        summary:
-          'Recoger publicaciones populares en X → dos agentes de IA debaten el tema (hasta 3 rondas) → investigación, verificación, texto, render y pie → **publicación simultánea en Threads, X e Instagram**. Cada día reunía datos de interacción y rehacía las mejores publicaciones desde otro ángulo. **Lo publiqué como código abierto** dejando vacías las claves de API.',
-        facts: [
-          { label: 'Período', value: 'mar. – abr. 2026' },
-          { label: 'Rol', value: 'Diseño · desarrollo · operación' },
-          { label: 'Canales', value: 'Threads · X · Instagram' },
-          { label: 'Después', value: 'Creció hasta ser una plataforma interna de contenidos' },
-        ],
-        cover: shot('ct_coord', 'Tarjetas informativas creadas con el pipeline'),
-        metrics: [
-          { value: '780 mil', label: 'visitas en 3 semanas' },
-          { value: '94 → 8.600', label: 'seguidores en Threads (máximo)' },
-          { value: '100+', label: 'publicaciones · 50 con más de 1.500 visitas' },
-        ],
-        lesson: {
-          title: 'Una herramienta que usa el equipo',
-          body: 'Presenté los resultados internamente con la idea de «apúntalo, aunque sea breve, y la IA lo desarrollará». Después creció hasta una plataforma interna de contenidos con tarjetas automáticas, y **ahora el equipo la usa en conjunto**.',
-        },
-        gallery: [shot('cli_card', 'Tarjeta que presenta CLI Manager', 'Una tarjeta de presentación de CLI Manager hecha con el pipeline')],
-        links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
-      },
+      // ── 콘텐츠 자동화: 잠시 제외(2026-10-10 리뷰 X2 「일단 이 부분은 제외, 주석 처리」) ──
+      // 다시 켤 때 아래 주석만 풀면 된다. 커버는 캐릭터를 잘라 낸 ct_cover_v2 로 바꿔 두었다
+      // (옛 ct_coord.jpg 에 저작권 미확인 캐릭터가 있어 지웠다).
+      // {
+      //   id: 'content',
+      //   context: 'Personal · código abierto',
+      //   name: 'Automatización de contenidos',
+      //   tagline: 'Un pipeline que va de recoger ideas a planificar, producir y publicar',
+      //   summary:
+      //     'Recoger publicaciones populares en X → dos agentes de IA debaten el tema (hasta 3 rondas) → investigación, verificación, texto, render y pie → **publicación simultánea en Threads, X e Instagram**. Cada día reunía datos de interacción y rehacía las mejores publicaciones desde otro ángulo. **Lo publiqué como código abierto** dejando vacías las claves de API.',
+      //   facts: [
+      //     { label: 'Período', value: 'mar. – abr. 2026' },
+      //     { label: 'Rol', value: 'Diseño · desarrollo · operación' },
+      //     { label: 'Canales', value: 'Threads · X · Instagram' },
+      //     { label: 'Después', value: 'Creció hasta ser una plataforma interna de contenidos' },
+      //   ],
+      //   cover: shot('ct_cover_v2', 'Tarjetas informativas creadas con el pipeline'),
+      //   metrics: [
+      //     { value: '780 mil', label: 'visitas en 3 semanas' },
+      //     { value: '94 → 8.600', label: 'seguidores en Threads (máximo)' },
+      //     { value: '100+', label: 'publicaciones · 50 con más de 1.500 visitas' },
+      //   ],
+      //   lesson: {
+      //     title: 'Una herramienta que usa el equipo',
+      //     body: 'Presenté los resultados internamente con la idea de «apúntalo, aunque sea breve, y la IA lo desarrollará». Después creció hasta una plataforma interna de contenidos con tarjetas automáticas, y **ahora el equipo la usa en conjunto**.',
+      //   },
+      //   gallery: [shot('cli_card', 'Tarjeta que presenta CLI Manager', 'Una tarjeta de presentación de CLI Manager hecha con el pipeline')],
+      //   links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
+      // },
     ],
   },
   others: {
