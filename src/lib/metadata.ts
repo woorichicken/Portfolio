@@ -76,7 +76,8 @@ export function buildDesignMetadata(locale: Locale): Metadata {
     title,
     description,
     alternates: { canonical: designPath(locale), languages: { ...languages, 'x-default': designPath('ko') } },
-    openGraph: { type: 'website', url: designPath(locale), title, description, siteName: 'SOLHUN', locale: OG_LOCALES[locale] },
+    // 링크 미리보기 이미지 — 결과물 화면의 첫 칸(디자인 아틀라스). 없으면 카카오톡 등에서 글자만 뜬다
+    openGraph: { type: 'website', url: designPath(locale), title, description, siteName: 'SOLHUN', locale: OG_LOCALES[locale], images: [{ url: '/work/design_atlas.jpg', width: 1400, height: 875 }] },
     twitter: { card: 'summary_large_image', title, description },
     robots: { index: true, follow: true },
   };
