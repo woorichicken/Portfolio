@@ -14,11 +14,11 @@ const en: Content = {
   hero: {
     name: 'Gyeonghun Jeong',
     role: 'Design engineer · Lightsoft · maker of CLI Manager',
-    lead: "I don't stay inside the \"write the code\" box. From the moment a request comes in, **I define the whole path** — spec, build, review, release and feedback — and **keep looking for the parts of it that can work better**.",
+    lead: 'From the moment a request comes in, I own the path to release and feedback: spec, build, review, ship. **Where feedback gets lost or repeated, I build a tool or a routine to fix it.**',
     keywords: [
-      { title: 'The whole path', body: 'I take on every step from request to feedback, so I understand how the work actually flows.' },
-      { title: 'Better process', body: 'I find where feedback gets lost or repeated, and turn that spot into a tool or a routine.' },
-      { title: 'Tools people use', body: 'I share what I build with teammates, designers and clients, and keep refining it until they use it.' },
+      { title: 'The whole path', body: 'For a labor law firm’s CRM/ERP I handled the contract, feature spec, user guides and product video myself.' },
+      { title: 'Better process', body: 'Sixty feedback notes used to arrive in one Slack message; I turned them into reports filed right on the screen.' },
+      { title: 'Tools people use', body: 'The designer filed 41 reports in a single day with that tool.' },
     ],
     links: [
       { label: 'GitHub', href: 'https://github.com/woorichicken' },
@@ -26,9 +26,9 @@ const en: Content = {
     ],
   },
   stats: {
-    title: 'Two years in numbers',
+    title: 'The past year in numbers',
     items: [
-      { value: '19', label: 'company projects with designers and clients' },
+      { value: '19', label: 'company projects I worked on' },
       { value: '#10', label: 'Product of the Day on Product Hunt — CLI Manager' },
       { value: '$1,200+', label: 'early paid revenue from CLI Manager — before it went open source' },
     ],
@@ -45,7 +45,7 @@ const en: Content = {
         name: 'KITS',
         tagline: 'An education service from placement tests to daily study, across phone, tablet and web',
         summary:
-          'Every screen fans out into the app, mobile web, desktop web, teacher web and admin web. **Matching screens with the designer and the client** was a bigger job than the code itself, so together with the designer I **rebuilt the feedback process** that kept losing items when requests were vague or piled up.',
+          'Each screen ships in five versions: app, mobile web, desktop web, teacher web and admin web. Getting the designer and the client to agree on every one took more work than the code, so together with the designer I **rebuilt the feedback process** that kept dropping items when requests were vague or piled up.',
         facts: [
           { label: 'When', value: 'Nov 2025 – present' },
           { label: 'Role', value: 'Front end & QA lead' },
@@ -57,7 +57,7 @@ const en: Content = {
           {
             title: 'Responsive review',
             before: 'Dragging the Chrome window wider and narrower, one screen at a time',
-            after: '**A review board showing 55 screens and 39 modals in portrait and landscape at once**. Each screen has a comment box, so a designer’s comment becomes a work instruction as is.',
+            after: '**A review board showing 55 screens and 39 modals in portrait and landscape at once**. Each screen has a comment box, so a designer’s comment goes straight in as a work instruction.',
             metric: { value: '55 / 55', label: 'tablet screens checked · 0 errors' },
           },
           {
@@ -74,7 +74,7 @@ const en: Content = {
           },
         ],
         metrics: [
-          { value: '41 → 22', label: 'of 41 reports on a busy day, 22 closed within 3 hours' },
+          { value: '22 / 41', label: 'of 41 reports filed in one day, 22 closed within 3 hours' },
           { value: '94+', label: 'screens reviewed together on one board' },
         ],
         quotes: [
@@ -82,8 +82,8 @@ const en: Content = {
           { text: 'We’ve never worked with a vendor like this.', who: 'Client — during a review meeting' },
         ],
         lesson: {
-          title: 'Placement beats the tool',
-          body: 'Nobody opened the review board while it was a local HTML file. People only started using it once it lived at a deployed URL. Building a tool and having it used are different jobs — **it has to feel easy inside the other person’s workflow** before it convinces anyone.',
+          title: 'It had to live at a URL',
+          body: 'Nobody opened the review board while I sent it as a local HTML file. Once it moved to a single deployed URL, the designer replied “Seeing it like this is great!”, and that thread became the main channel for responsive feedback. **It has to be easy inside the other person’s workflow to get used.**',
         },
         gallery: [
           shot('kits_board_top', 'Top of the review board', 'The review board — portrait and landscape captures plus a comment box for every screen'),
@@ -98,7 +98,7 @@ const en: Content = {
         name: 'FAIR HR consulting CRM/ERP',
         tagline: 'A labor law firm’s whole consulting process — diagnose, design, execute, manage change, evaluate — turned into an ERP',
         summary:
-          'I worked with the labor attorneys as if we were one team. We **moved checklist-and-document manual work into software** and **shifted the consulting process to AI (AX)**. It also **checks the statutes an AI cites against the actual law**.',
+          'I worked with the labor attorneys as if we were one team. We moved checklist-and-document manual work into software and **built AI into the consulting process (AX)**. Statutes the AI cites are checked against the government’s official law database.',
         facts: [
           { label: 'When', value: 'Feb 2026 – present' },
           { label: 'Role', value: 'Planning, development and operations' },
@@ -115,11 +115,12 @@ const en: Content = {
           {
             title: 'Screens for each role',
             before: 'Everyone saw the same data on the same screen',
-            after: 'CEO, executives, advisors, case handlers and staff each see different data and screens. Designing that and walking the attorneys through it taught me a great deal about HR and labor work.',
+            after: 'CEO, executives, advisors, case handlers and staff each see different data and screens; I designed that and walked the attorneys through it.',
           },
         ],
         metrics: [
           { value: '3', label: 'apps in production — CRM · public site · staff app' },
+          { value: '5', label: 'screen sets by role · CEO, executives, advisors, case handlers, staff' },
         ],
         lesson: {
           title: 'Working solo means building in the user’s view',
@@ -138,7 +139,7 @@ const en: Content = {
         name: 'CLI Manager',
         tagline: 'A desktop app to run and organize multiple AI coding agents (CLIs) from one screen',
         summary:
-          'It started with my own mess: ten terminals open and no idea which was which. **Ten months and 57 releases later it’s a public product.** I did the planning, development, releases, landing page and marketing alone — **it launched as a paid app, earned its first revenue, then went open source**.',
+          'It started with my own mess: ten terminals open and no idea which was which. **Since its first release in December 2025, it has shipped more than 60 releases as a public product.** I did the planning, development, releases, landing page and marketing alone — **it launched as a paid app, earned its first revenue, then went open source**.',
         facts: [
           { label: 'When', value: 'Nov 2025 – present' },
           { label: 'Role', value: 'Solo maker' },
@@ -148,22 +149,22 @@ const en: Content = {
         cover: shot('cli_main', 'CLI Manager main screen'),
         improvements: [
           {
-            badge: 'Latest update · v1.10.0 · Sep 29, 2026',
+            badge: 'v1.9 – v1.10 · Sep 2026',
             title: 'AI Control API',
             before: 'With non-interactive runs, you only find out an AI went off track once it’s done',
-            after: 'In v1.9 (Sep 23, 2026), **a local API lets another AI open sessions and work inside CLI Manager**. AI sessions show up in green, so you can check in and step in at any time. Since v1.10 (Sep 29, 2026) the AI also reads the notes on those sessions.',
+            after: 'In v1.9 (Sep 23, 2026), **a local API lets another AI open sessions and work inside CLI Manager**. AI input flows through the same path as a person’s typing, so you can watch an AI session (in green) on screen and step in at any time. I also added a CLI that works without MCP, and since v1.10 (Sep 29, 2026) the AI also reads the notes on those sessions.',
           },
         ],
         metrics: [
           { value: '#10', label: 'Product of the Day on Product Hunt · 105 upvotes' },
-          { value: '57', label: 'releases in 10 months' },
+          { value: '60+', label: 'releases since Dec 2025' },
           { value: '$1,200+', label: 'early paid revenue → then open source' },
           { value: '23K', label: 'views on the top Reddit post' },
         ],
         quotes: [{ text: 'I picked this up today and am obsessed!!', who: 'A Product Hunt user' }],
         lesson: {
           title: 'The cheapest QA',
-          body: 'Both bugs caught in the latest update were about how things looked, not what they did. **Using my own tool every day turned out to be the cheapest QA there is**.',
+          body: 'Instead of letting AI work out of sight, I had it work inside the screen I watch, and the center of the design moved from the API to visibility (colors, badges). Both bugs caught after release were about how things looked, too. **Using it every day myself was the cheapest QA.**',
         },
         gallery: [
           shot('cli_green', 'AI sessions shown in green', 'A real AI agent working inside CLI Manager — AI sessions are green'),
@@ -190,16 +191,19 @@ const en: Content = {
           { label: 'With', value: 'CEO · in-house developers' },
         ],
         cover: shot('sym_flow', 'Flow view in the internal docs and QA platform'),
+        improvements: [
+          {
+            title: 'Issue handling',
+            before: 'People checked progress, reviewed and re-requested by hand every time',
+            after: 'When an issue comes in, AI agents build it from the docs and ping a person on Slack when they get stuck. **After the internal demo in Jul 2026, it went to work on the KITS teacher and admin web apps.**',
+          },
+        ],
         metrics: [
           { value: '44', label: 'comments after the demo video was shared' },
         ],
         quotes: [
           { text: 'Ultimately I’d like it to be manageable from a dashboard, even by people who aren’t developers.', who: 'CEO, Lightsoft — demo thread, Jul 2026' },
         ],
-        lesson: {
-          title: 'Sharing it with the team',
-          body: 'In Feb 2026 I made “how I use AI tools” a regular session (3+ times) and presented our E2E and unit test automation workflow. In Mar 2026 I announced an idea → Slack approval → auto-publish flow, and a designer posted their first idea within 7 minutes. After the official demo in Jul 2026, Symphony went to work on the KITS teacher and admin web apps.',
-        },
       },
       {
         id: 'purple',
@@ -217,9 +221,14 @@ const en: Content = {
         cover: shot('pur_class', 'Purple admin class screen'),
         improvements: [
           {
+            title: 'Data model redesign',
+            before: 'Questions were locked inside quizzes and couldn’t be reused',
+            after: '**Redesigned it so questions live on their own and link to quizzes.** The production data migration was verified at each step: design → plan → execution.',
+          },
+          {
             title: 'QA',
             before: 'Clicking through screens one by one to find bugs',
-            after: 'A table that round-trips every type through create → read → update → delete and checks the saved values come back unchanged. I also tried an AI QA tool first and shared it; two teammates applied it to their own areas right away.',
+            after: 'A table that round-trips every type through create → read → update → delete and checks the saved values come back unchanged. When the automated check misjudged values like “강아지” (puppy), I made screenshot checks part of the verification rules. I also tried an AI QA tool first and shared it; two teammates applied it to their own areas right away.',
             metric: { value: '17×16', label: 'CRUD round-trip matrix, 5 h 41 min' },
           },
         ],
@@ -241,9 +250,9 @@ const en: Content = {
         context: 'Lightsoft · client · on the App Store',
         name: 'PorterX',
         tagline: 'A mission-matching app that connects travelers’ routes with local shopping requests',
-        summary: 'The project where I handled **the most post-launch operations** — payments, refunds, store review and security.',
+        summary: 'A project that dealt with payments, refunds and store review after launch. **I handled the payment gateway decisions and the refund-abuse fix**; a fellow developer owned releases and store submissions.',
         facts: [
-          { label: 'When', value: 'Aug 2025 – Apr 2026' },
+          { label: 'When', value: 'Nov 2025 – Apr 2026' },
           { label: 'Role', value: 'App features · design · operations' },
           { label: 'Platforms', value: 'iOS · Android · admin' },
           { label: 'With', value: 'Developer · CEO · client' },
@@ -253,7 +262,6 @@ const en: Content = {
           { title: 'Payments', before: 'Settlement broke every time payment gateway rules changed', after: 'Switched gateways four times, redesigned settlement, and landed on in-app purchases.' },
           { title: 'Refunds', before: 'Users spent credits and then got refunds (refund events weren’t received)', after: 'Within 3 days: a refund webhook plus automatic credit clawback.' },
           { title: 'Release', before: 'Two App Store rejections, and every fix meant another review', after: 'Moved to OTA updates so fixes no longer wait on review every time.' },
-          { title: 'Security', before: 'Security gaps in code built quickly with AI agents', after: 'A full audit four months in blocked 4 critical issues.' },
         ],
         gallery: [
           shot('ptx_credit', 'Missions and credits screen', 'Missions and credits'),
@@ -542,8 +550,8 @@ const en: Content = {
       { date: '2024.04', text: 'Started the student dev team DEVHOON' },
       { date: '2025.01', text: 'First client: FAIR HR website rebuild · freelance on Kmong (5.0 reviews)' },
       { date: '2025.03', text: 'DebateTimer.org · PrayNie' },
-      { date: '2025.06', text: 'Ddingsroom (team, back end) — award at Myongji’s Creative SW contest' },
-      { date: '2025.10', text: 'Joined Lightsoft' },
+      { date: '2025.05', text: 'Built Ddingsroom (team, back end)' },
+      { date: '2025.10', text: 'Joined Lightsoft · Ddingsroom award at Myongji’s Creative SW contest' },
       { date: '2025.11', text: 'Started KITS, PorterX and Purple · released CLI Manager (Product Hunt #10 in December)' },
       { date: '2026.02', text: 'FAIR CRM/ERP contract · internal knowledge platform light-archive' },
       { date: '2026.03', text: 'Content automation (780K views in 3 weeks) · YouTube Manager · Motion Meme (2nd at internal hackathon) · AI TOP 100' },
@@ -556,7 +564,7 @@ const en: Content = {
   awards: {
     title: 'Awards & activities',
     items: [
-      { date: '2025.10', title: 'Encouragement Award, 4th Creative SW Program Contest', org: 'Myongji University', body: 'Ddingsroom, a study-room booking service — back end. It later became an official university service.' },
+      { date: '2025.10', title: 'Encouragement Award, 4th Creative SW Program Contest', org: 'Myongji University', body: 'Ddingsroom, a study-room booking service (back end). It later became an official university service.' },
       { date: '2025.12', title: 'Product Hunt #10 Product of the Day', org: 'Product Hunt', body: 'CLI Manager, 105 upvotes.' },
       { date: '2026.02', title: 'Internal talk — AI-based test automation workflow', org: 'Lightsoft', body: 'Presented our E2E and unit test automation workflow with real examples.' },
       { date: '2026.03', title: '2nd place, internal hackathon', org: 'Lightsoft', body: 'Motion Meme, an MVP of a social platform built around meme challenges.' },
@@ -571,7 +579,7 @@ const en: Content = {
       { label: 'GitHub', href: 'https://github.com/woorichicken' },
       { label: 'Threads', href: 'https://www.threads.com/@aisolutiondev' },
     ],
-    closing: 'I want to keep exploring the whole process — and keep fixing what I find along the way.',
+    closing: 'Today I work at Lightsoft on client projects and on internal development automation.',
   },
   detail: { more: 'View details', back: 'Back to the full portfolio' },
   footer: { note: 'Personal details in screenshots are blurred; client data shown is demo data.' },
