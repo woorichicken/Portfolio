@@ -14,11 +14,11 @@ const es: Content = {
   hero: {
     name: 'Gyeonghun Jeong',
     role: 'Ingeniero de diseño · Lightsoft · creador de CLI Manager',
-    lead: 'No me quedo solo en escribir código. Desde que llega una solicitud **defino todo el recorrido** —especificación, desarrollo, revisión, lanzamiento y feedback— y **busco sin parar qué partes pueden funcionar mejor**.',
+    lead: 'Desde que llega una solicitud me encargo de todo el recorrido: especificación, desarrollo, revisión, lanzamiento y feedback. **Donde el feedback se pierde o se repite, lo arreglo con una herramienta o una rutina.**',
     keywords: [
-      { title: 'Todo el recorrido', body: 'Me encargo de cada paso, de la solicitud al feedback, para entender cómo fluye el trabajo de verdad.' },
-      { title: 'Mejores procesos', body: 'Detecto dónde el feedback se pierde o se repite y lo convierto en una herramienta o una rutina.' },
-      { title: 'Herramientas que se usan', body: 'Comparto lo que construyo con compañeros, diseñadores y clientes, y lo pulo hasta que lo usan.' },
+      { title: 'Todo el recorrido', body: 'En el CRM/ERP de un despacho laboral llevé yo mismo el contrato, la especificación, las guías de uso y el vídeo de producto.' },
+      { title: 'Mejores procesos', body: 'El feedback llegaba en un solo mensaje de Slack con sesenta notas; lo convertí en reportes que se dejan directamente sobre la pantalla.' },
+      { title: 'Herramientas que se usan', body: 'La diseñadora dejó 41 reportes en un solo día con esa herramienta.' },
     ],
     links: [
       { label: 'GitHub', href: 'https://github.com/woorichicken' },
@@ -26,9 +26,9 @@ const es: Content = {
     ],
   },
   stats: {
-    title: 'Dos años en cifras',
+    title: 'El último año en cifras',
     items: [
-      { value: '19', label: 'proyectos de empresa con diseñadores y clientes' },
+      { value: '19', label: 'proyectos de empresa en los que participé' },
       { value: '#10', label: 'Product of the Day en Product Hunt — CLI Manager' },
       { value: '1.200+ US$', label: 'ingresos iniciales de pago de CLI Manager, antes de pasar a código abierto' },
     ],
@@ -45,7 +45,7 @@ const es: Content = {
         name: 'KITS',
         tagline: 'Un servicio educativo, de las pruebas de nivel al estudio diario, en móvil, tableta y web',
         summary:
-          'Cada pantalla se multiplica en la app, la web móvil, la web de escritorio, la web para docentes y la de administración. **Ajustar las pantallas con la diseñadora y el cliente** fue más trabajo que el propio código, así que **rehicimos juntos un proceso de feedback** que perdía puntos cuando las peticiones eran vagas o se acumulaban.',
+          'Cada pantalla existe en cinco versiones: app, web móvil, web de escritorio, web para docentes y web de administración. Poner de acuerdo a la diseñadora y al cliente en cada una costó más que el propio código. Cuando las peticiones eran vagas o se acumulaban, el feedback se perdía, así que **rehicimos ese proceso junto con la diseñadora**.',
         facts: [
           { label: 'Período', value: 'nov. 2025 – actualidad' },
           { label: 'Rol', value: 'Responsable de front-end y QA' },
@@ -57,7 +57,7 @@ const es: Content = {
           {
             title: 'Revisión responsive',
             before: 'Estirar y encoger la ventana de Chrome, una pantalla cada vez',
-            after: '**Un tablero de revisión con 55 pantallas y 39 modales en vertical y horizontal a la vez**. Cada pantalla tiene su caja de comentarios, y el comentario de la diseñadora pasa a ser una instrucción de trabajo tal cual.',
+            after: '**Un tablero de revisión con 55 pantallas y 39 modales en vertical y horizontal a la vez**. Cada pantalla tiene su caja de comentarios, y el comentario de la diseñadora entra directamente como instrucción de trabajo.',
             metric: { value: '55 / 55', label: 'pantallas de tableta revisadas · 0 errores' },
           },
           {
@@ -70,11 +70,11 @@ const es: Content = {
             title: 'Seguimiento',
             before: 'Un documento de revisión de 613 líneas actualizado a mano; había que preguntar para saber qué estaba corregido',
             after: '**Reporte → sistema interno → issue en Linear → aviso en Slack, todo automático**. Al publicar un arreglo, Slack recibe qué cambió y un enlace al tablero.',
-            metric: { value: '301+', label: 'reportes con estado controlado' },
+            metric: { value: '301+', label: 'reportes con seguimiento de estado' },
           },
         ],
         metrics: [
-          { value: '41 → 22', label: 'de 41 reportes en un día intenso, 22 cerrados en 3 horas' },
+          { value: '22 / 41', label: 'de 41 reportes en un mismo día, 22 cerrados en 3 horas' },
           { value: '94+', label: 'pantallas revisadas juntas en un solo tablero' },
         ],
         quotes: [
@@ -82,8 +82,8 @@ const es: Content = {
           { text: 'Nunca habíamos trabajado con un proveedor así.', who: 'Cliente — durante una reunión de revisión' },
         ],
         lesson: {
-          title: 'El lugar pesa más que la herramienta',
-          body: 'Nadie abrió el tablero mientras era un HTML local; empezó a usarse cuando tuvo una URL publicada. Construir una herramienta y que se use son cosas distintas: **tiene que resultar cómoda dentro del flujo de trabajo del otro** para convencer.',
+          title: 'Tenía que vivir en una URL',
+          body: 'Nadie abrió el tablero mientras lo mandaba como HTML local. Al pasarlo a una sola URL publicada, la diseñadora respondió «¡Así se ve mucho mejor!», y ese hilo se volvió el canal principal de los comentarios responsive. **Tiene que ser cómodo dentro del flujo de trabajo del otro para que se use.**',
         },
         gallery: [
           shot('kits_board_top', 'Parte superior del tablero de revisión', 'El tablero: capturas en vertical y horizontal y comentarios para cada pantalla'),
@@ -98,7 +98,7 @@ const es: Content = {
         name: 'CRM/ERP de consultoría laboral FAIR',
         tagline: 'Todo el proceso de consultoría de un despacho laboral —diagnóstico, diseño, ejecución, gestión del cambio y evaluación— convertido en un ERP',
         summary:
-          'Trabajé con los abogados laboralistas como un solo equipo. **Pasamos a software un trabajo manual basado en listas y documentos** y **llevamos el proceso de consultoría a la IA (AX)**. También **contrasta con la ley vigente los artículos que cita la IA**.',
+          'Trabajé con los abogados laboralistas como un solo equipo. Pasamos a software un trabajo manual basado en listas y documentos y **llevamos la IA al proceso de consultoría (AX)**. Los artículos que cita la IA se contrastan con la base de datos oficial de legislación.',
         facts: [
           { label: 'Período', value: 'feb. 2026 – actualidad' },
           { label: 'Rol', value: 'Planificación, desarrollo y operación' },
@@ -115,11 +115,12 @@ const es: Content = {
           {
             title: 'Pantallas por rol',
             before: 'Todos veían los mismos datos en la misma pantalla',
-            after: 'Dirección, ejecutivos, asesores, responsables de casos y empleados ven datos y pantallas distintos. Diseñarlo y explicárselo a los abogados me enseñó muchísimo sobre recursos humanos y derecho laboral.',
+            after: 'Dirección, ejecutivos, asesores, responsables de casos y empleados ven datos y pantallas distintos; lo diseñé y se lo expliqué a los abogados.',
           },
         ],
         metrics: [
           { value: '3', label: 'apps en producción — CRM · web pública · app de empleados' },
+          { value: '5', label: 'conjuntos de pantallas por rol · dirección, ejecutivos, asesores, casos, empleados' },
         ],
         lesson: {
           title: 'Trabajando solo, hay que forzar la mirada del usuario',
@@ -138,7 +139,7 @@ const es: Content = {
         name: 'CLI Manager',
         tagline: 'Una app de escritorio para gestionar varios agentes de programación con IA (CLI) desde una sola pantalla',
         summary:
-          'Nació de mi propio caos: diez terminales abiertas y sin saber cuál era cuál. **Diez meses y 57 versiones después es un producto público.** Hice solo la planificación, el desarrollo, los lanzamientos, la landing y el marketing; **salió como app de pago, generó sus primeros ingresos y luego pasó a código abierto**.',
+          'Nació de mi propio caos: diez terminales abiertas y sin saber cuál era cuál. **Desde su primera versión en diciembre de 2025 lleva más de 60 como producto público.** Hice solo la planificación, el desarrollo, los lanzamientos, la landing y el marketing; **salió como app de pago, generó sus primeros ingresos y luego pasó a código abierto**.',
         facts: [
           { label: 'Período', value: 'nov. 2025 – actualidad' },
           { label: 'Rol', value: 'Creador en solitario' },
@@ -148,22 +149,22 @@ const es: Content = {
         cover: shot('cli_main', 'Pantalla principal de CLI Manager'),
         improvements: [
           {
-            badge: 'Última actualización · v1.10.0 · 29 sep. 2026',
+            badge: 'v1.9 – v1.10 · sep. 2026',
             title: 'AI Control API',
             before: 'En ejecuciones no interactivas, solo sabes que la IA se desvió cuando ya ha terminado',
-            after: 'En la v1.9 (23 sep. 2026), **una API local permite que otra IA abra sesiones y trabaje dentro de CLI Manager**. Las sesiones de IA aparecen en verde para que puedas revisarlas e intervenir cuando quieras. Desde la v1.10 (29 sep. 2026) la IA también lee las notas de esas sesiones.',
+            after: 'En la v1.9 (23 sep. 2026), **una API local permite que otra IA abra sesiones y trabaje dentro de CLI Manager**. La entrada de la IA pasa por el mismo camino que la de una persona, así que la sesión de IA (en verde) se ve en pantalla y puedes intervenir cuando quieras. También añadí una CLI que funciona sin MCP, y desde la v1.10 (29 sep. 2026) la IA también lee las notas de esas sesiones.',
           },
         ],
         metrics: [
           { value: '#10', label: 'Product of the Day en Product Hunt · 105 votos' },
-          { value: '57', label: 'versiones en 10 meses' },
+          { value: '60+', label: 'versiones desde dic. 2025' },
           { value: '1.200+ US$', label: 'ingresos iniciales → luego código abierto' },
           { value: '23 mil', label: 'visitas en la publicación de Reddit más vista' },
         ],
         quotes: [{ text: 'I picked this up today and am obsessed!!', who: 'Un usuario de Product Hunt' }],
         lesson: {
           title: 'El QA más barato',
-          body: 'Los dos fallos de la última actualización tenían que ver con cómo se veía, no con lo que hacía. **Usar mi propia herramienta a diario resultó ser el QA más barato que existe**.',
+          body: 'En vez de dejar que la IA trabajara fuera de mi vista, la puse a trabajar dentro de la pantalla que yo miro, y el centro del diseño pasó de la API a la visibilidad (colores, insignias). Los dos fallos detectados tras publicar también eran de cómo se veía. **Usarlo yo mismo cada día fue el QA más barato.**',
         },
         gallery: [
           shot('cli_green', 'Sesiones de IA en verde', 'Un agente de IA real trabajando dentro de CLI Manager: las sesiones de IA van en verde'),
@@ -190,16 +191,19 @@ const es: Content = {
           { label: 'Con', value: 'CEO · desarrolladores internos' },
         ],
         cover: shot('sym_flow', 'Vista de flujo en la plataforma interna de docs y QA'),
+        improvements: [
+          {
+            title: 'Gestión de issues',
+            before: 'Comprobar el avance, revisar y volver a pedir, todo a mano cada vez',
+            after: 'Cuando llega un issue, los agentes de IA lo desarrollan a partir de la documentación y avisan a una persona por Slack si se atascan. **Tras la demo interna de jul. 2026, pasó a trabajar en las webs de docentes y administración de KITS.**',
+          },
+        ],
         metrics: [
           { value: '44', label: 'comentarios tras compartir el vídeo de la demo' },
         ],
         quotes: [
           { text: 'Al final me gustaría que se pudiera gestionar desde un panel, incluso sin ser desarrollador.', who: 'CEO de Lightsoft — hilo de la demo, jul. 2026' },
         ],
-        lesson: {
-          title: 'Compartirlo con el equipo',
-          body: 'En feb. 2026 convertí «cómo uso las herramientas de IA» en una sesión fija (3+ veces) y presenté nuestro flujo de automatización de pruebas E2E y unitarias. En mar. 2026 anuncié un flujo idea → aprobación en Slack → publicación automática, y una diseñadora subió su primera idea en 7 minutos. Tras la demo oficial de jul. 2026, Symphony pasó a trabajar en las webs de docentes y administración de KITS.',
-        },
       },
       {
         id: 'purple',
@@ -217,9 +221,14 @@ const es: Content = {
         cover: shot('pur_class', 'Pantalla de clases del admin de Purple'),
         improvements: [
           {
+            title: 'Rediseño de datos',
+            before: 'Las preguntas estaban atadas a cada cuestionario y no se podían reutilizar',
+            after: '**Lo rediseñé para que las preguntas vivan por separado y se enlacen a los cuestionarios.** La migración de datos de producción se verificó en cada paso: diseño → plan → ejecución.',
+          },
+          {
             title: 'QA',
             before: 'Hacer clic pantalla por pantalla para encontrar errores',
-            after: 'Una tabla que recorre cada tipo con crear → leer → actualizar → borrar y comprueba que los valores guardados vuelven intactos. También probé primero una herramienta de QA con IA y la compartí; dos compañeros la aplicaron enseguida en sus áreas.',
+            after: 'Una tabla que recorre cada tipo con crear → leer → actualizar → borrar y comprueba que los valores guardados vuelven intactos. Cuando la comprobación automática juzgó mal valores como «강아지» (cachorro), añadí la verificación con capturas de pantalla a las reglas. También probé primero una herramienta de QA con IA y la compartí; dos compañeros la aplicaron enseguida en sus áreas.',
             metric: { value: '17×16', label: 'matriz de ida y vuelta CRUD, 5 h 41 min' },
           },
         ],
@@ -241,9 +250,9 @@ const es: Content = {
         context: 'Lightsoft · cliente · en la App Store',
         name: 'PorterX',
         tagline: 'Una app que conecta las rutas de los viajeros con encargos de compra locales',
-        summary: 'El proyecto en el que **más operación posterior al lanzamiento** gestioné: pagos, reembolsos, revisión en tiendas y seguridad.',
+        summary: 'Un proyecto que lidió con pagos, reembolsos y revisión en tiendas tras el lanzamiento. **Las decisiones de pasarela de pago y la respuesta al abuso de reembolsos fueron mías**; los lanzamientos y el envío a las tiendas los llevó un compañero desarrollador.',
         facts: [
-          { label: 'Período', value: 'ago. 2025 – abr. 2026' },
+          { label: 'Período', value: 'nov. 2025 – abr. 2026' },
           { label: 'Rol', value: 'Funciones de la app · diseño · operación' },
           { label: 'Plataformas', value: 'iOS · Android · admin' },
           { label: 'Con', value: 'Desarrollador · CEO · cliente' },
@@ -253,7 +262,6 @@ const es: Content = {
           { title: 'Pagos', before: 'La liquidación se rompía cada vez que cambiaban las reglas de la pasarela', after: 'Cambié de pasarela cuatro veces, rediseñé la liquidación y terminé en compras dentro de la app.' },
           { title: 'Reembolsos', before: 'Usuarios que gastaban créditos y pedían el reembolso (no llegaban los avisos)', after: 'En 3 días: webhook de reembolsos y recuperación automática de créditos.' },
           { title: 'Lanzamientos', before: 'Dos rechazos de Apple, y cada arreglo exigía otra revisión', after: 'Pasamos a actualizaciones OTA para que los arreglos no esperen cada vez a la revisión.' },
-          { title: 'Seguridad', before: 'Huecos de seguridad en código hecho deprisa con agentes de IA', after: 'Una auditoría completa a los cuatro meses bloqueó 4 problemas críticos.' },
         ],
         gallery: [
           shot('ptx_credit', 'Pantalla de misiones y créditos', 'Misiones y créditos'),
@@ -542,8 +550,8 @@ const es: Content = {
       { date: '2024.04', text: 'Fundo el equipo universitario DEVHOON' },
       { date: '2025.01', text: 'Primer cliente: nueva web de FAIR · encargos en Kmong (reseñas de 5,0)' },
       { date: '2025.03', text: 'DebateTimer.org · PrayNie' },
-      { date: '2025.06', text: 'Ddingsroom (equipo, back-end): premio en el concurso de SW creativo de Myongji' },
-      { date: '2025.10', text: 'Entro en Lightsoft' },
+      { date: '2025.05', text: 'Desarrollo de Ddingsroom (equipo, back-end)' },
+      { date: '2025.10', text: 'Entro en Lightsoft · premio de Ddingsroom en el concurso de SW creativo de Myongji' },
       { date: '2025.11', text: 'Arrancan KITS, PorterX y Purple · lanzo CLI Manager (#10 en Product Hunt en diciembre)' },
       { date: '2026.02', text: 'Contrato del CRM/ERP de FAIR · plataforma interna de conocimiento light-archive' },
       { date: '2026.03', text: 'Automatización de contenidos (780 mil visitas en 3 semanas) · YouTube Manager · Motion Meme (2.º en el hackatón interno) · AI TOP 100' },
@@ -571,7 +579,7 @@ const es: Content = {
       { label: 'GitHub', href: 'https://github.com/woorichicken' },
       { label: 'Threads', href: 'https://www.threads.com/@aisolutiondev' },
     ],
-    closing: 'Quiero seguir explorando todo el proceso y arreglando lo que encuentre por el camino.',
+    closing: 'Hoy trabajo en Lightsoft en proyectos de clientes y en la automatización interna del desarrollo.',
   },
   detail: { more: 'Ver detalles', back: 'Volver al portafolio completo' },
   footer: { note: 'Los datos personales de las capturas están difuminados; los datos de clientes son de demostración.' },
