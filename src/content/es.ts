@@ -13,7 +13,7 @@ const es: Content = {
   nav: { work: 'Proyectos', timeline: 'Trayectoria', contact: 'Contacto' },
   hero: {
     name: 'Gyeonghun Jeong',
-    role: 'Desarrollador en Lightsoft · creador de CLI Manager',
+    role: 'Ingeniero de diseño · Lightsoft · creador de CLI Manager',
     lead: 'No me quedo solo en escribir código. Desde que llega una solicitud **defino todo el recorrido** —especificación, desarrollo, revisión, lanzamiento y feedback— y **busco sin parar qué partes pueden funcionar mejor**.',
     keywords: [
       { title: 'Todo el recorrido', body: 'Me encargo de cada paso, de la solicitud al feedback, para entender cómo fluye el trabajo de verdad.' },
@@ -37,6 +37,7 @@ const es: Content = {
     title: 'Proyectos',
     intro: 'Trabajo con clientes en Lightsoft y proyectos que asumí por mi cuenta.',
     labels: { before: 'Antes', after: 'Después', lesson: 'Lo que aprendí', results: 'Resultados' },
+    caseLabels: { back: '← Todos los proyectos', overview: 'Resumen', design: 'Ingeniería de diseño', changes: 'Qué cambió', voices: 'Lo que dijeron', screens: 'Pantallas', links: 'Enlaces', prev: '← Proyecto anterior', next: 'Proyecto siguiente →', toc: 'Secciones de esta página' },
     projects: [
       {
         id: 'kits',
@@ -119,7 +120,6 @@ const es: Content = {
         ],
         metrics: [
           { value: '3', label: 'apps en producción — CRM · web pública · app de empleados' },
-          { value: '1.086', label: 'commits · 164 PR fusionados' },
         ],
         lesson: {
           title: 'Trabajando solo, hay que forzar la mirada del usuario',
@@ -192,11 +192,9 @@ const es: Content = {
         cover: shot('sym_flow', 'Vista de flujo en la plataforma interna de docs y QA'),
         metrics: [
           { value: '44', label: 'comentarios tras compartir el vídeo de la demo' },
-          { value: '798', label: 'commits en Symphony' },
         ],
         quotes: [
-          { text: 'Al final me gustaría que se pudiera gestionar desde un panel, incluso sin ser desarrollador.', who: 'CEO — hilo de la demo, jul. 2026' },
-          { text: 'La verdad es que pensé que solo lo usaríamos internamente y apenas cuidé la usabilidad. Incorporaré lo que comentas.', who: 'Yo — y en ese momento creé un flujo de alta de proyectos' },
+          { text: 'Al final me gustaría que se pudiera gestionar desde un panel, incluso sin ser desarrollador.', who: 'CEO de Lightsoft — hilo de la demo, jul. 2026' },
         ],
         lesson: {
           title: 'Compartirlo con el equipo',
@@ -227,7 +225,7 @@ const es: Content = {
         ],
         metrics: [
           { value: '6.752', label: 'cuestionarios migrados en producción · 0 discrepancias' },
-          { value: '137 días', label: 'canal dedicado, hasta el pago final' },
+          { value: '137 días', label: 'canal dedicado' },
         ],
         lesson: {
           title: 'Avisar cuando el alcance cambia',
@@ -288,33 +286,47 @@ const es: Content = {
           shot('ncd_plan', 'Selección de plan de cuidado', 'Elegir un plan de cuidado'),
         ],
       },
-      {
-        id: 'content',
-        context: 'Personal · código abierto',
-        name: 'Automatización de contenidos',
-        tagline: 'Un pipeline que va de recoger ideas a planificar, producir y publicar',
-        summary:
-          'Recoger publicaciones populares en X → dos agentes de IA debaten el tema (hasta 3 rondas) → investigación, verificación, texto, render y pie → **publicación simultánea en Threads, X e Instagram**. Cada día reunía datos de interacción y rehacía las mejores publicaciones desde otro ángulo. **Lo publiqué como código abierto** dejando vacías las claves de API.',
-        facts: [
-          { label: 'Período', value: 'mar. – abr. 2026' },
-          { label: 'Rol', value: 'Diseño · desarrollo · operación' },
-          { label: 'Canales', value: 'Threads · X · Instagram' },
-          { label: 'Después', value: 'Creció hasta ser una plataforma interna de contenidos' },
-        ],
-        cover: shot('ct_coord', 'Tarjetas informativas creadas con el pipeline'),
-        metrics: [
-          { value: '780 mil', label: 'visitas en 3 semanas' },
-          { value: '94 → 8.600', label: 'seguidores en Threads (máximo)' },
-          { value: '100+', label: 'publicaciones · 50 con más de 1.500 visitas' },
-        ],
-        lesson: {
-          title: 'Una herramienta que usa el equipo',
-          body: 'Presenté los resultados internamente con la idea de «apúntalo, aunque sea breve, y la IA lo desarrollará». Después creció hasta una plataforma interna de contenidos con tarjetas automáticas, y **ahora el equipo la usa en conjunto**.',
-        },
-        gallery: [shot('cli_card', 'Tarjeta que presenta CLI Manager', 'Una tarjeta de presentación de CLI Manager hecha con el pipeline')],
-        links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
-      },
+      // ── 콘텐츠 자동화: 잠시 제외(2026-10-10 리뷰 X2 「일단 이 부분은 제외, 주석 처리」) ──
+      // 다시 켤 때 아래 주석만 풀면 된다. 커버는 캐릭터를 잘라 낸 ct_cover_v2 로 바꿔 두었다
+      // (옛 ct_coord.jpg 에 저작권 미확인 캐릭터가 있어 지웠다).
+      // {
+      //   id: 'content',
+      //   context: 'Personal · código abierto',
+      //   name: 'Automatización de contenidos',
+      //   tagline: 'Un pipeline que va de recoger ideas a planificar, producir y publicar',
+      //   summary:
+      //     'Recoger publicaciones populares en X → dos agentes de IA debaten el tema (hasta 3 rondas) → investigación, verificación, texto, render y pie → **publicación simultánea en Threads, X e Instagram**. Cada día reunía datos de interacción y rehacía las mejores publicaciones desde otro ángulo. **Lo publiqué como código abierto** dejando vacías las claves de API.',
+      //   facts: [
+      //     { label: 'Período', value: 'mar. – abr. 2026' },
+      //     { label: 'Rol', value: 'Diseño · desarrollo · operación' },
+      //     { label: 'Canales', value: 'Threads · X · Instagram' },
+      //     { label: 'Después', value: 'Creció hasta ser una plataforma interna de contenidos' },
+      //   ],
+      //   cover: shot('ct_cover_v2', 'Tarjetas informativas creadas con el pipeline'),
+      //   metrics: [
+      //     { value: '780 mil', label: 'visitas en 3 semanas' },
+      //     { value: '94 → 8.600', label: 'seguidores en Threads (máximo)' },
+      //     { value: '100+', label: 'publicaciones · 50 con más de 1.500 visitas' },
+      //   ],
+      //   lesson: {
+      //     title: 'Una herramienta que usa el equipo',
+      //     body: 'Presenté los resultados internamente con la idea de «apúntalo, aunque sea breve, y la IA lo desarrollará». Después creció hasta una plataforma interna de contenidos con tarjetas automáticas, y **ahora el equipo la usa en conjunto**.',
+      //   },
+      //   gallery: [shot('cli_card', 'Tarjeta que presenta CLI Manager', 'Una tarjeta de presentación de CLI Manager hecha con el pipeline')],
+      //   links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
+      // },
     ],
+  },
+  design: {
+    title: 'Como ingeniero de diseño',
+    more: 'Ver todo el trabajo →',
+    pageTitle: 'Pantallas, video y productos, con código',
+    back: '← Inicio',
+    all: 'Todo',
+    filter: 'Tipo de trabajo',
+    kinds: { video: 'Video', tool: 'Herramientas', system: 'Sistemas', screen: 'Pantallas' },
+    example: 'Ejemplo',
+    note: 'Las casillas punteadas aún se están completando — solo se ven en modo de comentarios.',
   },
   others: {
     title: 'Otros proyectos',

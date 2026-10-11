@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
+import ProjectCase from '@/components/ProjectCase';
 import WorkDetail from '@/components/WorkDetail';
-import { WORK_SLUGS, getWorkEntry } from '@/content';
+import { PROJECT_IDS, WORK_SLUGS, getProject, getWorkEntry } from '@/content';
 import { buildDetailMetadata } from '@/lib/metadata';
 
 export { viewport } from '@/lib/metadata';
@@ -9,7 +10,7 @@ export { viewport } from '@/lib/metadata';
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return WORK_SLUGS.map((slug) => ({ slug }));
+  return [...PROJECT_IDS, ...WORK_SLUGS].map((slug) => ({ slug }));
 }
 
 type Props = { params: Promise<{ slug: string }> };
@@ -21,6 +22,8 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function KoreanProjectDetail({ params }: Props) {
   const { slug } = await params;
+  const project = getProject('ko', slug);
+  if (project) return <ProjectCase locale="ko" project={project} />;
   const entry = getWorkEntry('ko', slug);
   if (!entry) notFound();
   return <WorkDetail locale="ko" entry={entry} />;

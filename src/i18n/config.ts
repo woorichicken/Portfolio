@@ -22,6 +22,11 @@ export function projectPath(locale: Locale, slug: string): string {
   return `${locale === DEFAULT_LOCALE ? '' : `/${locale}`}/projects/${slug}`;
 }
 
+/** 「디자인 엔지니어로서」 결과물 화면 주소. 한국어는 /design, 나머지는 /<언어>/design */
+export function designPath(locale: Locale): string {
+  return `${locale === DEFAULT_LOCALE ? '' : `/${locale}`}/design`;
+}
+
 // canonical·hreflang 의 절대 주소 기준. 도메인이 아직 확정 전이라 env 로 바꿀 수 있게 둔다(docs/DEPLOY.md).
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://solhun.com').replace(/\/$/, '');
 

@@ -28,7 +28,8 @@ const DIMENSIONS = {
   ncd_kv: [1400, 612],
   ncd_ux: [1400, 787],
   ncd_plan: [706, 1400],
-  ct_coord: [1120, 1400],
+  // 6회차 — ct_coord 에서 저작권 미확인 캐릭터(위쪽)를 잘라 낸 판. 파이프라인이 만든 카드 그대로
+  ct_cover_v2: [1120, 840],
   cli_card: [1120, 1400],
   design_atlas: [1400, 875],
   zzan_tab: [390, 1400],

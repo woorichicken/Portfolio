@@ -2,6 +2,7 @@ import { Unbounded } from 'next/font/google';
 import type { ReactNode } from 'react';
 import type { Locale } from '@/i18n/config';
 import '@/app/globals.css';
+import '@/app/portfolio.css';
 
 // 참고 배너(JEONG (SOLHUN))의 넓은 기하 대문자 느낌을 내는 서체. 로마자 제목·숫자에만 쓴다.
 const display = Unbounded({ subsets: ['latin', 'latin-ext'], weight: ['500', '700', '800'], variable: '--font-display', display: 'swap' });

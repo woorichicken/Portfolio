@@ -14,7 +14,7 @@ const ko: Content = {
   nav: { work: '프로젝트', timeline: '연표', contact: '연락' },
   hero: {
     name: '정경훈',
-    role: '라이트소프트 개발자 · CLI Manager 제작자',
+    role: '디자인 엔지니어 · 라이트소프트 · CLI Manager 제작자',
     lead: '개발이라는 한 칸에 머물지 않고 **일의 처음부터 끝까지 관여**합니다. 요청을 받는 순간부터 기획·구현·검수·배포·피드백까지 **전 과정을 정의**하고, 그 안에서 개선점을 찾아 공부합니다.',
     keywords: [
       { title: '전 과정 탐구', body: '요청부터 피드백까지 직접 맡아 일의 흐름 전체를 이해합니다.' },
@@ -38,6 +38,7 @@ const ko: Content = {
     title: '프로젝트',
     intro: '라이트소프트에서 고객사와 함께한 일, 그리고 개인으로 맡은 일입니다.',
     labels: { before: '이전', after: '이후', lesson: '배운 점', results: '결과' },
+    caseLabels: { back: '← 전체 프로젝트', overview: '개요', design: '디자인 엔지니어링', changes: '바꾼 것', voices: '함께 일한 사람들의 말', screens: '화면', links: '링크', prev: '← 이전 프로젝트', next: '다음 프로젝트 →', toc: '이 페이지의 장' },
     projects: [
       {
         id: 'kits',
@@ -120,7 +121,6 @@ const ko: Content = {
         ],
         metrics: [
           { value: '3', label: '운영 중인 앱 — CRM · 공개 사이트 · 직원 앱' },
-          { value: '1,086', label: '커밋 · PR 164건 병합' },
         ],
         lesson: {
           title: '혼자 맡을수록 사용자 관점을 일부러',
@@ -193,11 +193,9 @@ const ko: Content = {
         cover: shot('sym_flow', '사내 문서·QA 플랫폼의 흐름 화면'),
         metrics: [
           { value: '44', label: '데모 영상 공유 후 달린 댓글' },
-          { value: '798', label: 'Symphony 커밋' },
         ],
         quotes: [
-          { text: '궁극적으로는 대시보드에서, 개발자 아니더라도 관리가 되면 좋겠습니다.', who: '대표 — 데모 스레드, 2026.07' },
-          { text: '저도 사실 내부에서만 쓸 줄 알고 사용성을 거의 신경을 안 썼는데, 말씀해주신 부분 반영하겠습니다.', who: '본인 — 같은 자리에서 프로젝트 등록 절차를 만들어 대응' },
+          { text: '궁극적으로는 대시보드에서, 개발자 아니더라도 관리가 되면 좋겠습니다.', who: '라이트소프트 대표 — 데모 스레드, 2026.07' },
         ],
         lesson: {
           title: '사내 공유 기록',
@@ -228,7 +226,7 @@ const ko: Content = {
         ],
         metrics: [
           { value: '6,752', label: '퀴즈 운영 DB 이전 · 검증 오차 0건' },
-          { value: '137일', label: '전담 채널 · 잔금까지 완주' },
+          { value: '137일', label: '전담 채널' },
         ],
         lesson: {
           title: '범위가 흔들리면 먼저 말하기',
@@ -289,33 +287,47 @@ const ko: Content = {
           shot('ncd_plan', '케어 플랜 선택 화면', '케어 플랜 선택'),
         ],
       },
-      {
-        id: 'content',
-        context: '개인 · 오픈소스',
-        name: '콘텐츠 자동화',
-        tagline: '콘텐츠 수집·기획·제작·발행을 잇는 파이프라인',
-        summary:
-          'X 인기글 수집 → AI 에이전트 둘의 주제 토론(최대 3라운드) → 리서치·팩트체크·카피·렌더·캡션 → **Threads·X·Instagram 동시 발행**까지 이어지는 파이프라인입니다. 매일 반응 데이터를 모아 잘된 글은 다른 각도로 다시 만들었고, API 키만 비워 **오픈소스로 공개했습니다**.',
-        facts: [
-          { label: '기간', value: '2026.03 – 2026.04' },
-          { label: '역할', value: '설계 · 개발 · 운영' },
-          { label: '채널', value: 'Threads · X · Instagram' },
-          { label: '이후', value: '사내 콘텐츠 운영 플랫폼으로 확장' },
-        ],
-        cover: shot('ct_coord', '콘텐츠 자동화로 만든 카드뉴스'),
-        metrics: [
-          { value: '78만', label: '3주 누적 조회수' },
-          { value: '94 → 8,600', label: 'Threads 팔로워(정점)' },
-          { value: '100+', label: '발행 · 1,500뷰 이상 50개' },
-        ],
-        lesson: {
-          title: '팀이 같이 쓰는 도구로',
-          body: '사내에는 "짧게라도 적어두면 AI가 알아서 발전시킵니다"로 성과를 발표했고, 이후 사내 콘텐츠 운영 플랫폼과 카드뉴스 자동 생성으로 키워 **팀이 같이 쓰는 도구가 됐습니다**.',
-        },
-        gallery: [shot('cli_card', 'CLI Manager 소개 카드뉴스', '파이프라인으로 만든 CLI Manager 소개 카드')],
-        links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
-      },
+      // ── 콘텐츠 자동화: 잠시 제외(2026-10-10 리뷰 X2 「일단 이 부분은 제외, 주석 처리」) ──
+      // 다시 켤 때 아래 주석만 풀면 된다. 커버는 캐릭터를 잘라 낸 ct_cover_v2 로 바꿔 두었다
+      // (옛 ct_coord.jpg 에 저작권 미확인 캐릭터가 있어 지웠다).
+      // {
+      //   id: 'content',
+      //   context: '개인 · 오픈소스',
+      //   name: '콘텐츠 자동화',
+      //   tagline: '콘텐츠 수집·기획·제작·발행을 잇는 파이프라인',
+      //   summary:
+      //     'X 인기글 수집 → AI 에이전트 둘의 주제 토론(최대 3라운드) → 리서치·팩트체크·카피·렌더·캡션 → **Threads·X·Instagram 동시 발행**까지 이어지는 파이프라인입니다. 매일 반응 데이터를 모아 잘된 글은 다른 각도로 다시 만들었고, API 키만 비워 **오픈소스로 공개했습니다**.',
+      //   facts: [
+      //     { label: '기간', value: '2026.03 – 2026.04' },
+      //     { label: '역할', value: '설계 · 개발 · 운영' },
+      //     { label: '채널', value: 'Threads · X · Instagram' },
+      //     { label: '이후', value: '사내 콘텐츠 운영 플랫폼으로 확장' },
+      //   ],
+      //   cover: shot('ct_cover_v2', '콘텐츠 자동화로 만든 카드뉴스'),
+      //   metrics: [
+      //     { value: '78만', label: '3주 누적 조회수' },
+      //     { value: '94 → 8,600', label: 'Threads 팔로워(정점)' },
+      //     { value: '100+', label: '발행 · 1,500뷰 이상 50개' },
+      //   ],
+      //   lesson: {
+      //     title: '팀이 같이 쓰는 도구로',
+      //     body: '사내에는 "짧게라도 적어두면 AI가 알아서 발전시킵니다"로 성과를 발표했고, 이후 사내 콘텐츠 운영 플랫폼과 카드뉴스 자동 생성으로 키워 **팀이 같이 쓰는 도구가 됐습니다**.',
+      //   },
+      //   gallery: [shot('cli_card', 'CLI Manager 소개 카드뉴스', '파이프라인으로 만든 CLI Manager 소개 카드')],
+      //   links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
+      // },
     ],
+  },
+  design: {
+    title: '디자인 엔지니어로서',
+    more: '결과물 전체 보기 →',
+    pageTitle: '화면·영상·제품을 코드로',
+    back: '← 홈으로',
+    all: '전체',
+    filter: '결과물 종류',
+    kinds: { video: '영상', tool: '도구', system: '시스템', screen: '화면' },
+    example: '예시',
+    note: '점선 칸은 자료를 채우는 중인 자리입니다 — 피드백 모드에서만 보입니다.',
   },
   others: {
     title: '그 외 프로젝트',
