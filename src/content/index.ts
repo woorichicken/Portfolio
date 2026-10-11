@@ -3,7 +3,7 @@ import ko from './ko';
 import en from './en';
 import es from './es';
 import type { Shot } from './images';
-import type { Content, Detail } from './types';
+import type { Content, Detail, Project } from './types';
 
 const CONTENT: Record<Locale, Content> = { ko, en, es };
 
@@ -28,3 +28,10 @@ export function getWorkEntry(locale: Locale, slug: string): WorkEntry | undefine
 
 /** 주소는 언어와 무관하게 같다 — 한국어 목록을 기준으로 만든다 */
 export const WORK_SLUGS = getWorkEntries('ko').map((w) => w.slug);
+
+/** 큰 프로젝트(상세는 ProjectCase). 주소는 언어와 무관하게 같다 — 「그 외」·「이전」 slug 와 겹치지 않는다 */
+export const PROJECT_IDS = getContent('ko').work.projects.map((p) => p.id);
+
+export function getProject(locale: Locale, id: string): Project | undefined {
+  return getContent(locale).work.projects.find((p) => p.id === id);
+}

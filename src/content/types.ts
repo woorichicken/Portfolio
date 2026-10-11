@@ -4,6 +4,9 @@ import type { Shot } from './images';
 // 한 언어에서 항목을 빠뜨리면 타입체크에서 바로 드러난다.
 
 export type Fact = { label: string; value: string };
+
+/** 결과물 종류. 영상은 공개 권리 확인 전이라 지금은 쓰는 곳이 없다 */
+export type ArtifactKind = 'video' | 'tool' | 'system' | 'screen';
 export type Metric = { value: string; label: string };
 export type Quote = { text: string; who: string };
 export type Link = { label: string; href: string };
@@ -70,7 +73,16 @@ export type Content = {
     links: Link[];
   };
   stats: { title: string; items: Metric[] };
-  work: { title: string; intro: string; labels: { before: string; after: string; lesson: string; results: string }; projects: Project[] };
+  work: {
+    title: string;
+    intro: string;
+    labels: { before: string; after: string; lesson: string; results: string };
+    /** 프로젝트 상세(/projects/<id>)의 장 이름과 이동 문구 */
+    caseLabels: { back: string; overview: string; design: string; changes: string; voices: string; screens: string; links: string; prev: string; next: string; toc: string };
+    projects: Project[];
+  };
+  /** 「디자인 엔지니어로서」 — 홈 미리보기와 결과물 화면(/design) */
+  design: { title: string; more: string; pageTitle: string; back: string; all: string; filter: string; kinds: Record<ArtifactKind, string>; example: string; note: string };
   others: { title: string; intro: string; items: OtherWork[]; contestsTitle: string; contests: string };
   early: {
     title: string;

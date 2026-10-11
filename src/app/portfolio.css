@@ -1,15 +1,12 @@
 /*
- * 시안(/lab) 전용 배치. 색·서체·배지·카드·숫자는 globals.css 의 토큰과 클래스를 그대로 쓰고,
- * 여기에는 「레퍼런스 구조」에 필요한 배치만 더한다 — 지금 사이트와 다른 디자인처럼 보이면 안 된다(2회차 코멘트).
+ * 2026-10 디자인 엔지니어 개편(시안 A) — 홈 · 프로젝트 상세(/projects/<id>) · 결과물 화면(/design)의 배치.
+ * 색·서체·배지·카드·숫자는 globals.css 의 토큰과 클래스를 그대로 쓰고, 여기에는 배치만 더한다.
+ * 클래스 접두어 lab·lab4·lab5·lab6 은 시안(/lab) 회차에서 온 이름이다(lab4 = 조밀한 기본 배치, lab5 = 비대칭 카드·결과물 칸,
+ * lab6 = 결과물 벽). 회차마다 아래쪽 블록이 위쪽을 덮어쓴다 — 고칠 때는 아래에서부터 찾는다.
  */
 
-/* ───────── 시안 목록 ───────── */
-.lab-index { max-width: 720px; margin: 0 auto; padding: 96px var(--gutter); }
-.lab-index h1 { font-family: var(--font-display-stack); font-size: 40px; letter-spacing: -0.01em; margin: 8px 0 32px; }
-.lab-index ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 18px; }
-.lab-index li a { font-weight: 800; font-size: 20px; color: var(--signal-ink); text-underline-offset: 4px; }
-.lab-index li p { margin: 2px 0 0; color: var(--muted); font-size: 15px; }
-.lab-eyebrow { font-size: 13px; color: var(--muted); }
+/* 자료를 채우는 중인 「예시」 칸 — 일반 방문자에게는 숨기고, 피드백 모드(?feedback 통과 → <html data-feedback>)에서만 보인다 */
+html:not([data-feedback]) [data-example] { display: none; }
 
 /* 둘 중 하나 고르는 스위치 — 헤더의 언어 전환(KO·EN·ES)과 같은 모양 */
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--paper-raised); }
@@ -113,131 +110,6 @@ main > .lab-row, .lab-row { display: grid; grid-template-columns: 180px minmax(0
 .lab-next-card .meta { align-self: end; font-size: 13px; }
 .lab-next-card b { align-self: start; font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
 
-/* ═════════ B — 크래프트 로그: 좁은 한 단 ═════════ */
-.labb { max-width: calc(720px + 2 * var(--gutter)); margin-inline: auto; padding: clamp(48px, 8vw, 96px) var(--gutter) clamp(56px, 8vw, 96px); }
-main.labb > section { padding-block: 0; }
-.labb-word { margin: 0 0 18px; font-family: var(--font-display-stack); font-weight: 800; font-size: clamp(30px, 5vw, 44px); line-height: 1; letter-spacing: -0.01em; color: var(--signal); }
-.labb-word span { color: var(--ink); }
-.labb-intro h1 { font-size: 20px; font-weight: 800; margin: 0; letter-spacing: -0.02em; }
-.labb-intro h1 span { color: var(--ink-soft); font-weight: 600; }
-.labb-role { margin: 2px 0 18px; color: var(--muted); font-size: 15px; }
-.labb-lead { margin: 0; font-size: 17px; color: var(--ink-soft); }
-.labb-links { display: flex; gap: 10px; margin: 22px 0 0; }
-.labb-links a { text-decoration: none; font-weight: 600; font-size: 14px; border: 1.5px solid var(--ink); border-radius: 999px; padding: 6px 16px; }
-.labb-links a:hover { background: var(--ink); color: var(--paper); }
-
-.labb-sec { margin-top: clamp(56px, 7vw, 80px); }
-.labb-title { display: flex; align-items: baseline; gap: 10px; margin: 0 0 6px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
-.labb-title span { font-family: var(--font-display-stack); font-size: 14px; font-weight: 500; color: var(--signal-ink); }
-.labb-sub { margin: 0 0 20px; color: var(--muted); font-size: 15px; }
-
-.labb-exp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-.labb-exp { margin: 0; }
-.labb-exp figcaption { margin-top: 10px; font-size: 14px; line-height: 1.5; }
-.labb-exp figcaption b { display: block; color: var(--ink); font-weight: 700; font-size: 15px; }
-.labb-exp figcaption a { color: var(--signal-ink); text-underline-offset: 3px; }
-
-.labb-list { list-style: none; padding: 0; margin: 14px 0 0; }
-.labb-list a { display: flex; gap: 16px; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--line); text-decoration: none; }
-.labb-list a:hover b { color: var(--signal-ink); text-decoration: underline; text-underline-offset: 4px; }
-.labb-l-main { min-width: 0; display: flex; flex-direction: column; }
-.labb-l-main b { font-size: 19px; font-weight: 800; letter-spacing: -0.02em; }
-.labb-l-main span { color: var(--ink-soft); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.labb-list .pill { margin: 0; flex: none; font-size: 12px; padding: 3px 10px; font-variant-numeric: tabular-nums; }
-.labb-rows { list-style: none; padding: 0; margin: 14px 0 0; }
-.labb-rows a { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); text-decoration: none; min-width: 0; font-size: 15px; }
-.labb-rows b { font-weight: 700; white-space: nowrap; }
-.labb-rows span { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.labb.timeline, .labb .timeline { border-top: 0; }
-.labb .timeline li { grid-template-columns: 6em 1fr; padding: 10px 0; font-size: 15px; }
-.labb-foot { max-width: calc(720px + 2 * var(--gutter)); }
-
-/* B 상세 */
-.labb-case header .project-name { font-size: clamp(34px, 5vw, 52px); margin-bottom: 10px; }
-.labb-case header .project-tagline { margin-bottom: 0; }
-.labb-hero-demo { margin-top: 28px; }
-.labb-hero-demo .demo { height: 320px; }
-.labb-case .project-summary { margin-top: 28px; }
-.labb-facts { margin-top: 24px; }
-.labb-imps { margin-top: 14px; }
-.labb-imps h4 { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
-.labb-case .results { margin-top: 28px; }
-.labb-case .lesson { margin-top: clamp(40px, 5vw, 56px); }
-
-/* 이전 / 이후 스위치 */
-.ba-toggle .seg { margin-bottom: 12px; }
-.ba-panes { display: grid; }
-.ba-pane { grid-area: 1 / 1; transition: opacity .3s, transform .3s; }
-.ba-pane p { margin: 0; font-size: 16px; line-height: 1.7; }
-.ba-before p { color: var(--muted); }
-.ba-panes[data-side="after"] .ba-before, .ba-panes[data-side="before"] .ba-after { opacity: 0; transform: translateY(4px); pointer-events: none; }
-
-/* 인용 — 받은 메시지처럼 */
-.labb-msgs { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 18px; }
-.labb-msgs li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; }
-.labb-av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--signal); color: var(--on-signal); font-weight: 800; font-size: 15px; }
-.labb-who { margin: 0 0 6px; font-size: 14px; display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; }
-.labb-who span { color: var(--muted); font-size: 13px; }
-.labb-msgs blockquote { display: inline-block; max-width: 100%; padding: 12px 16px; border: 1px solid var(--line); border-radius: 4px var(--radius-l) var(--radius-l) var(--radius-l); background: var(--paper-raised); }
-.labb-msgs blockquote p { font-size: 16px; line-height: 1.65; }
-
-.labb-next { display: flex; gap: 10px; align-items: baseline; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); text-decoration: none; }
-.labb-next b { margin-right: auto; font-size: 18px; font-weight: 800; }
-
-/* ───────── 실험 데모 — 흰 카드(.frame 과 같은 테두리·반경) ───────── */
-.demo { position: relative; height: 248px; border: 1px solid var(--line); border-radius: var(--radius-l); background: var(--paper-raised); overflow: hidden; display: flex; flex-direction: column; }
-.demo-foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 9px 14px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
-.demo-foot span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.lab .ghost { font: inherit; font-size: 12px; font-weight: 600; border: 1px solid var(--line); background: transparent; color: var(--ink-soft); border-radius: 999px; padding: 3px 12px; cursor: pointer; }
-.lab .ghost:hover { border-color: var(--ink); color: var(--ink); }
-
-/* 요소 지목 — 핀은 「직접 만든 도구」 표시색(--mark) */
-.picker-stage { position: relative; flex: 1; display: grid; place-items: center; padding: 16px; background: color-mix(in srgb, var(--signal) 6%, var(--paper)); }
-.picker-card { width: min(100%, 236px); background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius-l); padding: 16px; box-shadow: 0 12px 28px -16px rgba(38, 42, 59, .4); }
-.pickable { position: relative; cursor: crosshair; outline: 2px dashed transparent; outline-offset: 3px; border-radius: 4px; transition: outline-color .15s; }
-.pickable.is-hover, .pickable:focus-visible { outline-color: var(--signal); }
-.pk-title { font-size: 16px; font-weight: 800; margin: 0 0 4px; }
-.pk-body { font-size: 13px; margin: 0 0 12px; color: var(--ink-soft); line-height: 1.5; }
-.lab .pk-cta { font: inherit; font-size: 13px; font-weight: 600; border: 0; background: var(--signal); color: var(--on-signal); border-radius: 999px; padding: 6px 16px; }
-.pick-tag { position: absolute; left: -4px; top: -24px; font-size: 11px; font-weight: 700; line-height: 1; background: var(--signal); color: #fff; padding: 5px 7px; border-radius: var(--radius-s); white-space: nowrap; pointer-events: none; }
-.pin { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--mark); color: #fff; font-size: 12px; font-weight: 800; line-height: 22px; text-align: center; box-shadow: 0 0 0 3px var(--paper-raised); animation: lab-pop .35s cubic-bezier(.3, 1.6, .5, 1); pointer-events: none; }
-@keyframes lab-pop { from { transform: scale(0); } to { transform: scale(1); } }
-
-/* 리뷰 보드 */
-.board { padding: 14px 14px 0; }
-.board .seg { align-self: flex-start; margin-bottom: 12px; }
-.board-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; align-items: end; }
-.board-grid.is-land { grid-template-columns: repeat(3, 1fr); }
-.board-grid li { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--muted); }
-.lab .screen { position: relative; display: flex; flex-direction: column; gap: 3px; padding: 7px 6px; height: 80px; border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--paper); cursor: pointer; transition: height .4s cubic-bezier(.2, .7, .2, 1), border-color .2s; }
-.board-grid.is-land .screen { height: 46px; }
-.lab .screen:hover { border-color: var(--signal); }
-.screen i { display: block; height: 4px; border-radius: 2px; background: var(--line); }
-.screen i:nth-child(2) { width: 70%; }
-.screen i:nth-child(3) { width: 45%; background: color-mix(in srgb, var(--signal) 45%, var(--line)); }
-.note-dot { position: absolute; top: -5px; right: -5px; width: 11px; height: 11px; border-radius: 50%; background: var(--mark); box-shadow: 0 0 0 2px var(--paper-raised); animation: lab-pop .3s; }
-
-/* 검수 진행 — 숫자는 지금 사이트의 숫자 서체 */
-.progress { padding: 18px 16px 0; }
-.ticks { display: flex; flex-wrap: wrap; gap: 4px; }
-.ticks i { width: 10px; height: 20px; border-radius: 2px; background: color-mix(in srgb, var(--signal) 10%, var(--paper)); transition: background .2s; }
-.ticks i.on { background: var(--signal); }
-.progress-num { margin: 14px 0 0; font-size: 14px; color: var(--muted); }
-.progress-num strong { font-family: var(--font-display-stack); font-size: 34px; color: var(--ink); font-variant-numeric: tabular-nums; margin-right: 4px; }
-
-/* AI 세션 — 터미널 화면만 제품(CLI Manager)의 녹색 그대로 */
-.session { flex-direction: row; flex-wrap: wrap; }
-.session-list { list-style: none; margin: 0; padding: 10px 0; width: 44%; border-right: 1px solid var(--line); font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink-soft); white-space: nowrap; }
-.session-list li { padding: 7px 12px; display: flex; gap: 6px; align-items: center; overflow: hidden; text-overflow: ellipsis; }
-.session-list li.is-ai { color: #1f9d6b; background: rgba(31, 157, 107, .09); font-weight: 700; }
-.session-list li.is-ai b { width: 7px; height: 7px; border-radius: 50%; background: #1f9d6b; animation: lab-ping 1.8s infinite; }
-@keyframes lab-ping { 0% { box-shadow: 0 0 0 0 rgba(31, 157, 107, .45); } 70%, 100% { box-shadow: 0 0 0 7px transparent; } }
-.session-pane { width: 56%; padding: 12px 14px; background: #12142a; color: #c9cce0; font: 11.5px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; overflow: hidden; }
-.session-pane p { margin: 0 0 4px; animation: lab-in .35s ease-out; }
-.session-pane p:last-child:not(.held) { color: #6fe3b0; }
-.session-pane .held { color: var(--glow); }
-@keyframes lab-in { from { opacity: 0; transform: translateY(4px); } }
-.session .demo-foot { width: 100%; }
 
 @media (max-width: 900px) {
   .lab-cards { grid-template-columns: minmax(0, 1fr); gap: 44px; }
@@ -255,12 +127,8 @@ main.labb > section { padding-block: 0; }
   .lab-num { padding: 0; font-size: 18px; }
   .lab-next { grid-template-columns: minmax(0, 1fr); }
 }
-@media (max-width: 600px) {
-  .labb-exp-grid { grid-template-columns: minmax(0, 1fr); }
-  .labb-list .pill { display: none; }
-}
 @media (prefers-reduced-motion: reduce) {
-  .lab *, .lab-index * { animation: none !important; transition: none !important; }
+  .lab * { animation: none !important; transition: none !important; }
 }
 
 /* 사이트 기본 스타일 초기화가 h4 굵기를 지워 「배운 점」 제목이 본문처럼 보인다 */

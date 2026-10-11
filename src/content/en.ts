@@ -13,7 +13,7 @@ const en: Content = {
   nav: { work: 'Work', timeline: 'Timeline', contact: 'Contact' },
   hero: {
     name: 'Gyeonghun Jeong',
-    role: 'Developer at Lightsoft · maker of CLI Manager',
+    role: 'Design engineer · Lightsoft · maker of CLI Manager',
     lead: "I don't stay inside the \"write the code\" box. From the moment a request comes in, **I define the whole path** — spec, build, review, release and feedback — and **keep looking for the parts of it that can work better**.",
     keywords: [
       { title: 'The whole path', body: 'I take on every step from request to feedback, so I understand how the work actually flows.' },
@@ -37,6 +37,7 @@ const en: Content = {
     title: 'Work',
     intro: 'Client work at Lightsoft, and projects I took on myself.',
     labels: { before: 'Before', after: 'After', lesson: 'What I learned', results: 'Results' },
+    caseLabels: { back: '← All projects', overview: 'Overview', design: 'Design engineering', changes: 'What changed', voices: 'What people said', screens: 'Screens', links: 'Links', prev: '← Previous project', next: 'Next project →', toc: 'Sections on this page' },
     projects: [
       {
         id: 'kits',
@@ -119,7 +120,6 @@ const en: Content = {
         ],
         metrics: [
           { value: '3', label: 'apps in production — CRM · public site · staff app' },
-          { value: '1,086', label: 'commits · 164 merged PRs' },
         ],
         lesson: {
           title: 'Working solo means building in the user’s view',
@@ -192,11 +192,9 @@ const en: Content = {
         cover: shot('sym_flow', 'Flow view in the internal docs and QA platform'),
         metrics: [
           { value: '44', label: 'comments after the demo video was shared' },
-          { value: '798', label: 'Symphony commits' },
         ],
         quotes: [
-          { text: 'Ultimately I’d like it to be manageable from a dashboard, even by people who aren’t developers.', who: 'CEO — demo thread, Jul 2026' },
-          { text: 'Honestly I built it for internal use and barely thought about usability. I’ll work in what you said.', who: 'Me — then built a project sign-up flow on the spot' },
+          { text: 'Ultimately I’d like it to be manageable from a dashboard, even by people who aren’t developers.', who: 'CEO, Lightsoft — demo thread, Jul 2026' },
         ],
         lesson: {
           title: 'Sharing it with the team',
@@ -227,7 +225,7 @@ const en: Content = {
         ],
         metrics: [
           { value: '6,752', label: 'quizzes migrated in production · 0 mismatches' },
-          { value: '137 days', label: 'dedicated channel, through final payment' },
+          { value: '137 days', label: 'dedicated channel' },
         ],
         lesson: {
           title: 'Speak up when scope moves',
@@ -318,6 +316,17 @@ const en: Content = {
       //   links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
       // },
     ],
+  },
+  design: {
+    title: 'As a design engineer',
+    more: 'See all work →',
+    pageTitle: 'Screens, video and products, in code',
+    back: '← Home',
+    all: 'All',
+    filter: 'Kind of work',
+    kinds: { video: 'Video', tool: 'Tools', system: 'Systems', screen: 'Screens' },
+    example: 'Example',
+    note: 'Dashed tiles are still being filled in — they only show in feedback mode.',
   },
   others: {
     title: 'More work',

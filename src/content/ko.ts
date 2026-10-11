@@ -14,7 +14,7 @@ const ko: Content = {
   nav: { work: '프로젝트', timeline: '연표', contact: '연락' },
   hero: {
     name: '정경훈',
-    role: '라이트소프트 개발자 · CLI Manager 제작자',
+    role: '디자인 엔지니어 · 라이트소프트 · CLI Manager 제작자',
     lead: '개발이라는 한 칸에 머물지 않고 **일의 처음부터 끝까지 관여**합니다. 요청을 받는 순간부터 기획·구현·검수·배포·피드백까지 **전 과정을 정의**하고, 그 안에서 개선점을 찾아 공부합니다.',
     keywords: [
       { title: '전 과정 탐구', body: '요청부터 피드백까지 직접 맡아 일의 흐름 전체를 이해합니다.' },
@@ -38,6 +38,7 @@ const ko: Content = {
     title: '프로젝트',
     intro: '라이트소프트에서 고객사와 함께한 일, 그리고 개인으로 맡은 일입니다.',
     labels: { before: '이전', after: '이후', lesson: '배운 점', results: '결과' },
+    caseLabels: { back: '← 전체 프로젝트', overview: '개요', design: '디자인 엔지니어링', changes: '바꾼 것', voices: '함께 일한 사람들의 말', screens: '화면', links: '링크', prev: '← 이전 프로젝트', next: '다음 프로젝트 →', toc: '이 페이지의 장' },
     projects: [
       {
         id: 'kits',
@@ -120,7 +121,6 @@ const ko: Content = {
         ],
         metrics: [
           { value: '3', label: '운영 중인 앱 — CRM · 공개 사이트 · 직원 앱' },
-          { value: '1,086', label: '커밋 · PR 164건 병합' },
         ],
         lesson: {
           title: '혼자 맡을수록 사용자 관점을 일부러',
@@ -193,11 +193,9 @@ const ko: Content = {
         cover: shot('sym_flow', '사내 문서·QA 플랫폼의 흐름 화면'),
         metrics: [
           { value: '44', label: '데모 영상 공유 후 달린 댓글' },
-          { value: '798', label: 'Symphony 커밋' },
         ],
         quotes: [
-          { text: '궁극적으로는 대시보드에서, 개발자 아니더라도 관리가 되면 좋겠습니다.', who: '대표 — 데모 스레드, 2026.07' },
-          { text: '저도 사실 내부에서만 쓸 줄 알고 사용성을 거의 신경을 안 썼는데, 말씀해주신 부분 반영하겠습니다.', who: '본인 — 같은 자리에서 프로젝트 등록 절차를 만들어 대응' },
+          { text: '궁극적으로는 대시보드에서, 개발자 아니더라도 관리가 되면 좋겠습니다.', who: '라이트소프트 대표 — 데모 스레드, 2026.07' },
         ],
         lesson: {
           title: '사내 공유 기록',
@@ -228,7 +226,7 @@ const ko: Content = {
         ],
         metrics: [
           { value: '6,752', label: '퀴즈 운영 DB 이전 · 검증 오차 0건' },
-          { value: '137일', label: '전담 채널 · 잔금까지 완주' },
+          { value: '137일', label: '전담 채널' },
         ],
         lesson: {
           title: '범위가 흔들리면 먼저 말하기',
@@ -319,6 +317,17 @@ const ko: Content = {
       //   links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
       // },
     ],
+  },
+  design: {
+    title: '디자인 엔지니어로서',
+    more: '결과물 전체 보기 →',
+    pageTitle: '화면·영상·제품을 코드로',
+    back: '← 홈으로',
+    all: '전체',
+    filter: '결과물 종류',
+    kinds: { video: '영상', tool: '도구', system: '시스템', screen: '화면' },
+    example: '예시',
+    note: '점선 칸은 자료를 채우는 중인 자리입니다 — 피드백 모드에서만 보입니다.',
   },
   others: {
     title: '그 외 프로젝트',

@@ -13,7 +13,7 @@ const es: Content = {
   nav: { work: 'Proyectos', timeline: 'Trayectoria', contact: 'Contacto' },
   hero: {
     name: 'Gyeonghun Jeong',
-    role: 'Desarrollador en Lightsoft · creador de CLI Manager',
+    role: 'Ingeniero de diseño · Lightsoft · creador de CLI Manager',
     lead: 'No me quedo solo en escribir código. Desde que llega una solicitud **defino todo el recorrido** —especificación, desarrollo, revisión, lanzamiento y feedback— y **busco sin parar qué partes pueden funcionar mejor**.',
     keywords: [
       { title: 'Todo el recorrido', body: 'Me encargo de cada paso, de la solicitud al feedback, para entender cómo fluye el trabajo de verdad.' },
@@ -37,6 +37,7 @@ const es: Content = {
     title: 'Proyectos',
     intro: 'Trabajo con clientes en Lightsoft y proyectos que asumí por mi cuenta.',
     labels: { before: 'Antes', after: 'Después', lesson: 'Lo que aprendí', results: 'Resultados' },
+    caseLabels: { back: '← Todos los proyectos', overview: 'Resumen', design: 'Ingeniería de diseño', changes: 'Qué cambió', voices: 'Lo que dijeron', screens: 'Pantallas', links: 'Enlaces', prev: '← Proyecto anterior', next: 'Proyecto siguiente →', toc: 'Secciones de esta página' },
     projects: [
       {
         id: 'kits',
@@ -119,7 +120,6 @@ const es: Content = {
         ],
         metrics: [
           { value: '3', label: 'apps en producción — CRM · web pública · app de empleados' },
-          { value: '1.086', label: 'commits · 164 PR fusionados' },
         ],
         lesson: {
           title: 'Trabajando solo, hay que forzar la mirada del usuario',
@@ -192,11 +192,9 @@ const es: Content = {
         cover: shot('sym_flow', 'Vista de flujo en la plataforma interna de docs y QA'),
         metrics: [
           { value: '44', label: 'comentarios tras compartir el vídeo de la demo' },
-          { value: '798', label: 'commits en Symphony' },
         ],
         quotes: [
-          { text: 'Al final me gustaría que se pudiera gestionar desde un panel, incluso sin ser desarrollador.', who: 'CEO — hilo de la demo, jul. 2026' },
-          { text: 'La verdad es que pensé que solo lo usaríamos internamente y apenas cuidé la usabilidad. Incorporaré lo que comentas.', who: 'Yo — y en ese momento creé un flujo de alta de proyectos' },
+          { text: 'Al final me gustaría que se pudiera gestionar desde un panel, incluso sin ser desarrollador.', who: 'CEO de Lightsoft — hilo de la demo, jul. 2026' },
         ],
         lesson: {
           title: 'Compartirlo con el equipo',
@@ -227,7 +225,7 @@ const es: Content = {
         ],
         metrics: [
           { value: '6.752', label: 'cuestionarios migrados en producción · 0 discrepancias' },
-          { value: '137 días', label: 'canal dedicado, hasta el pago final' },
+          { value: '137 días', label: 'canal dedicado' },
         ],
         lesson: {
           title: 'Avisar cuando el alcance cambia',
@@ -318,6 +316,17 @@ const es: Content = {
       //   links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
       // },
     ],
+  },
+  design: {
+    title: 'Como ingeniero de diseño',
+    more: 'Ver todo el trabajo →',
+    pageTitle: 'Pantallas, video y productos, con código',
+    back: '← Inicio',
+    all: 'Todo',
+    filter: 'Tipo de trabajo',
+    kinds: { video: 'Video', tool: 'Herramientas', system: 'Sistemas', screen: 'Pantallas' },
+    example: 'Ejemplo',
+    note: 'Las casillas punteadas aún se están completando — solo se ven en modo de comentarios.',
   },
   others: {
     title: 'Otros proyectos',

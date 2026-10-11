@@ -43,6 +43,13 @@ export default function FeedbackGate({ copy }: { copy: Content['feedback'] }) {
     if (open) inputRef.current?.focus();
   }, [open]);
 
+  // 피드백 모드 표시 — 자료를 채우는 중인 「예시」 칸을 주인에게만 보여 주는 데 쓴다(CSS: html[data-feedback])
+  useEffect(() => {
+    const root = document.documentElement;
+    if (allowedHost && unlocked) root.dataset.feedback = 'on';
+    else delete root.dataset.feedback;
+  }, [allowedHost, unlocked]);
+
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const value = inputRef.current?.value ?? '';

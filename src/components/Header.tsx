@@ -4,8 +4,9 @@ import { LANGUAGE_NAMES, LOCALES, localePath, projectPath, type Locale } from '@
 
 // 언어 전환은 페이지 전체를 다른 주소로 옮기는 링크다. 언어별 루트 레이아웃이 달라 SPA 전환이 아니어도 된다.
 // detailSlug 가 있으면 상세 페이지다 — 메뉴는 홈의 해당 위치로, 언어 전환은 같은 프로젝트의 다른 언어판으로 간다.
-export default function Header({ locale, t, detailSlug }: { locale: Locale; t: Content; detailSlug?: string }) {
-  const home = detailSlug ? localePath(locale) : '';
+// altPath 를 주면(결과물 화면 등) 메뉴는 홈으로, 언어 전환은 altPath(언어)로 간다.
+export default function Header({ locale, t, detailSlug, altPath }: { locale: Locale; t: Content; detailSlug?: string; altPath?: (l: Locale) => string }) {
+  const home = detailSlug || altPath ? localePath(locale) : '';
   return (
     <header className="site-header">
       <div className="site-header-inner">
@@ -23,7 +24,7 @@ export default function Header({ locale, t, detailSlug }: { locale: Locale; t: C
           {LOCALES.map((l) => (
             <a
               key={l}
-              href={detailSlug ? projectPath(l, detailSlug) : localePath(l)}
+              href={altPath ? altPath(l) : detailSlug ? projectPath(l, detailSlug) : localePath(l)}
               hrefLang={l}
               lang={l}
               aria-current={l === locale ? 'true' : undefined}
