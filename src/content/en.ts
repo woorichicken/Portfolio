@@ -288,32 +288,35 @@ const en: Content = {
           shot('ncd_plan', 'Care plan picker', 'Choosing a care plan'),
         ],
       },
-      {
-        id: 'content',
-        context: 'Personal · open source',
-        name: 'Content automation',
-        tagline: 'A pipeline from collecting ideas to planning, producing and publishing',
-        summary:
-          'Collect popular posts on X → two AI agents debate the topic (up to 3 rounds) → research, fact-check, copy, render and caption → **publish to Threads, X and Instagram at once**. Every day it gathered engagement data and remade the best posts from a new angle. **I open-sourced it** with the API keys left blank.',
-        facts: [
-          { label: 'When', value: 'Mar – Apr 2026' },
-          { label: 'Role', value: 'Design · build · operations' },
-          { label: 'Channels', value: 'Threads · X · Instagram' },
-          { label: 'Then', value: 'Grew into an internal content platform' },
-        ],
-        cover: shot('ct_coord', 'Card news made by the pipeline'),
-        metrics: [
-          { value: '780K', label: 'views in 3 weeks' },
-          { value: '94 → 8,600', label: 'Threads followers (peak)' },
-          { value: '100+', label: 'posts · 50 above 1,500 views' },
-        ],
-        lesson: {
-          title: 'A tool the team uses',
-          body: 'I presented the results in-house as “write it down, even briefly, and AI will develop it for you”. It later grew into an internal content platform with automatic card news, and **the team now uses it together**.',
-        },
-        gallery: [shot('cli_card', 'Card introducing CLI Manager', 'A CLI Manager intro card made with the pipeline')],
-        links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
-      },
+      // ── 콘텐츠 자동화: 잠시 제외(2026-10-10 리뷰 X2 「일단 이 부분은 제외, 주석 처리」) ──
+      // 다시 켤 때 아래 주석만 풀면 된다. 커버는 캐릭터를 잘라 낸 ct_cover_v2 로 바꿔 두었다
+      // (옛 ct_coord.jpg 에 저작권 미확인 캐릭터가 있어 지웠다).
+      // {
+      //   id: 'content',
+      //   context: 'Personal · open source',
+      //   name: 'Content automation',
+      //   tagline: 'A pipeline from collecting ideas to planning, producing and publishing',
+      //   summary:
+      //     'Collect popular posts on X → two AI agents debate the topic (up to 3 rounds) → research, fact-check, copy, render and caption → **publish to Threads, X and Instagram at once**. Every day it gathered engagement data and remade the best posts from a new angle. **I open-sourced it** with the API keys left blank.',
+      //   facts: [
+      //     { label: 'When', value: 'Mar – Apr 2026' },
+      //     { label: 'Role', value: 'Design · build · operations' },
+      //     { label: 'Channels', value: 'Threads · X · Instagram' },
+      //     { label: 'Then', value: 'Grew into an internal content platform' },
+      //   ],
+      //   cover: shot('ct_cover_v2', 'Card news made by the pipeline'),
+      //   metrics: [
+      //     { value: '780K', label: 'views in 3 weeks' },
+      //     { value: '94 → 8,600', label: 'Threads followers (peak)' },
+      //     { value: '100+', label: 'posts · 50 above 1,500 views' },
+      //   ],
+      //   lesson: {
+      //     title: 'A tool the team uses',
+      //     body: 'I presented the results in-house as “write it down, even briefly, and AI will develop it for you”. It later grew into an internal content platform with automatic card news, and **the team now uses it together**.',
+      //   },
+      //   gallery: [shot('cli_card', 'Card introducing CLI Manager', 'A CLI Manager intro card made with the pipeline')],
+      //   links: [{ label: 'GitHub', href: 'https://github.com/lightsoft-dev/claude-content-pipeline' }],
+      // },
     ],
   },
   others: {
