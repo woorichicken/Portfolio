@@ -21,11 +21,15 @@ type FigWindow = Window & { setPose?: (t: number) => void };
 type Box = { x: number; y: number; w: number; h: number };
 export type FigureApi = { setPose: (t: number) => void };
 
+// color-scheme 을 밝게 고정하는 까닭: 그림 문서와 iframe 의 color-scheme 이 다르면 브라우저가 iframe 에 불투명한 바탕(어두우면 검정)을
+// 깐다 — 기록계 초안이 color-scheme:dark 를 갖고 있어 첫 화면이 검은 사각형이 됐다(2026-10-18). iframe 쪽도 CSS 에서 light 로 맞춘다.
 const HOST_CSS = `
+:root, html, body { color-scheme: light !important; }
 html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important;
   overflow: hidden !important; background: transparent !important; }
 [data-host-hide] { display: none !important; }
-[data-host-stage] { transform-origin: 0 0 !important; will-change: auto; }
+[data-host-stage] { transform-origin: 0 0 !important; }
+[data-host-stage], [data-host-chain] { background: transparent !important; border-color: transparent !important; box-shadow: none !important; }
 `;
 /** 확대한 부품 말고는 옅게 — 부품을 감싼 큰 묶음(조상)과 부품 안의 작은 부품은 빼고 */
 const dimCss = (part: string) =>
@@ -44,10 +48,11 @@ function findStage(doc: Document): { stage: HTMLElement; art: Element } | null {
   return { stage, art: biggest.el };
 }
 
-/** 상자에서 body 까지 올라가며 형제를 숨긴다(스크립트·스타일은 그대로) */
+/** 상자에서 body 까지 올라가며 형제를 숨기고, 조상의 카드 모양(바탕·테두리·그림자)을 지운다(스크립트·스타일은 그대로) */
 function isolate(doc: Document, stage: HTMLElement) {
   let node: HTMLElement = stage;
   while (node.parentElement && node !== doc.body) {
+    if (node.parentElement !== doc.body) node.parentElement.setAttribute('data-host-chain', '');
     for (const sib of Array.from(node.parentElement.children)) {
       if (sib !== node && !['SCRIPT', 'STYLE', 'LINK', 'TEMPLATE'].includes(sib.tagName)) sib.setAttribute('data-host-hide', '');
     }
@@ -91,8 +96,11 @@ class Host {
       let box: Box | null = null;
       for (const t of ts) {
         this.win.setPose?.(t);
-        const el = this.doc.querySelector(`[data-part="${CSS.escape(part)}"]`);
-        if (el) { const r = rectOf(el); if (r.w > 0 && r.h > 0) box = union(box, r); }
+        // 한 부품이 여러 조각(<g data-part="gauge"> 여러 개)으로 나뉘어 있을 수 있어 모두 합친다
+        for (const el of Array.from(this.doc.querySelectorAll(`[data-part="${CSS.escape(part)}"]`))) {
+          const r = rectOf(el);
+          if (r.w > 0 && r.h > 0) box = union(box, r);
+        }
       }
       this.win.setPose?.(back);
       return box;
@@ -152,6 +160,8 @@ export default function FigureFrame({ fig, t, part, range, zoomIn, className, la
       iframe.dataset.ready = '';
       const h = new Host(win, doc, found);
       h.full = h.measure(() => rectOf(found.art)) ?? h.full;
+      // 그림의 가로:세로 — 좁은 화면에서 틀 높이를 그림에 맞춰 빈 여백을 줄이는 데 쓴다(CSS 의 --fig-ar)
+      iframe.parentElement?.style.setProperty('--fig-ar', (h.full.w / h.full.h).toFixed(3));
       partBoxRef.current = part ? h.partBox(part, range, t0) : null;
       h.fit(h.full, PAD_FULL);
       setHost(h);

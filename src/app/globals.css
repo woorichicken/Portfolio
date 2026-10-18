@@ -59,7 +59,7 @@
     --mark: #e58a6e;         /* 카드 위 5.8:1 */
     --band: #0f141a;
     --on-band-soft: #b5aea6; /* 8.4:1 */
-    --plate: #efe3d9;
+    --plate: #e8dbcf;
     --plate-part: #e6d6c4;
     --shadow: rgb(0 0 0 / 0.5);
     color-scheme: dark;
@@ -80,7 +80,7 @@
   --mark: #e58a6e;
   --band: #0f141a;
   --on-band-soft: #b5aea6;
-  --plate: #efe3d9;
+  --plate: #e8dbcf;
   --plate-part: #e6d6c4;
   --shadow: rgb(0 0 0 / 0.5);
   color-scheme: dark;

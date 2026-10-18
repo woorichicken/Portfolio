@@ -17,7 +17,8 @@
   display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: clamp(20px, 4vw, 56px); align-items: center;
 }
 .stage-figure { order: 2; position: relative; height: min(100%, 640px); border-radius: calc(var(--radius-l) + 6px); background: var(--plate); overflow: hidden; }
-.fig-frame { display: block; width: 100%; height: 100%; border: 0; pointer-events: none; opacity: 0; transition: opacity .4s; }
+/* 그림은 밝은 종이 위에 그린 것이라 iframe 도 늘 밝은 색 체계로(그림 문서와 다르면 브라우저가 불투명한 바탕을 깐다) */
+.fig-frame { display: block; width: 100%; height: 100%; border: 0; pointer-events: none; color-scheme: light; opacity: 0; transition: opacity .4s; }
 .fig-frame[data-ready] { opacity: 1; }
 .stage-copy { order: 1; min-width: 0; }
 .stage-role { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0 0 14px; font-size: clamp(14px, 1.3vw, 16px); font-weight: 600; color: var(--ink-soft); }
@@ -43,9 +44,9 @@
 
 @media (max-width: 760px) {
   .stage { height: 300vh; }
-  /* 좁은 화면 — 그림이 위, 글이 아래. 그림은 남는 높이를 다 쓴다 */
-  .stage-pin { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; align-items: stretch; gap: 10px; padding-block: 10px 18px; }
-  .stage-figure { order: 0; height: 100%; }
+  /* 좁은 화면 — 그림이 위, 글이 아래. 그림 틀은 그림 비율(--fig-ar, FigureFrame 이 잰다)대로, 둘을 화면 가운데에 모은다 */
+  .stage-pin { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; align-content: center; gap: 14px; padding-block: 10px 18px; }
+  .stage-figure { order: 0; height: auto; aspect-ratio: var(--fig-ar, 4 / 3); max-height: 52svh; }
   .stage-copy { order: 1; }
   .stage-role { font-size: 13px; gap: 0 8px; margin-bottom: 8px; }
   .stage-sep { display: none; }
@@ -58,18 +59,18 @@
 @media (prefers-reduced-motion: reduce) {
   .stage { height: auto; }
   .stage-pin { position: relative; top: 0; height: auto; padding-block: clamp(24px, 5vw, 56px); }
-  .stage-figure { height: auto; aspect-ratio: 16 / 11; }
+  .stage-figure { height: auto; aspect-ratio: var(--fig-ar, 16 / 11); max-height: 70svh; }
   .stage-steps { gap: 6px; }
   .stage-steps li { grid-area: auto; opacity: 1; transform: none; font-size: clamp(19px, 1.9vw, 26px); }
   .stage-ticks { display: none; }
 }
 
 /* 소개 + 숫자 — 첫 화면 바로 아래 */
-.intro { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: end; padding-block: clamp(36px, 5vw, 56px); border-top: 1px solid var(--line); }
+.intro { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; padding-block: clamp(36px, 5vw, 56px); border-top: 1px solid var(--line); }
 .intro-lead { margin: 0; max-width: 34em; font-size: clamp(18px, 1.8vw, 22px); line-height: 1.65; }
 .intro-stats { margin: 0; display: grid; }
-/* 글은 이름(dt) → 값(dd) 순서로 읽히고, 눈에는 값이 위로 */
-.intro-stats div { display: flex; flex-direction: column-reverse; padding: 12px 0; border-top: 1px solid var(--line); }
+/* 글은 이름(dt) → 값(dd) 순서로 읽히고, 눈에는 값이 위로. 칸 높이가 달라도 값이 같은 줄에 오게 위에서부터 쌓는다 */
+.intro-stats div { display: flex; flex-direction: column-reverse; justify-content: flex-end; padding: 12px 0; border-top: 1px solid var(--line); }
 .intro-stats dd { margin: 0; font-family: var(--font-display-stack); font-weight: 700; font-size: clamp(26px, 2.6vw, 34px); line-height: 1.15; }
 .intro-stats dt { margin-top: 2px; font-size: 13.5px; line-height: 1.45; color: var(--muted); }
 @media (max-width: 900px) {
@@ -77,7 +78,8 @@
   .intro-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 14px; }
 }
 @media (max-width: 640px) {
-  .intro-stats dd { font-size: 22px; }
+  /* 「$1,200+」 가 세 칸 중 한 칸(약 105px)에 한 줄로 들어가는 크기 — 22px 에서는 「+」 가 다음 줄로 떨어졌다 */
+  .intro-stats dd { font-size: 18px; white-space: nowrap; }
   .intro-stats dt { font-size: 12px; }
 }
 
