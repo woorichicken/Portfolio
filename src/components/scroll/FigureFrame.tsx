@@ -16,6 +16,17 @@ const PAD_FULL = 0.02;
 const PAD_PART = 0.06;
 /** 그림 전체 → 부품 확대에 걸리는 시간 */
 const ZOOM_MS = 900;
+/**
+ * 첫 화면 선 굵기 — 그림이 화면에서 차지하는 폭에 맞춰 키트의 --anatomy-weight(기본 .6px)를 올린다.
+ * 2026-10-18 비교(0.6·0.8·1.0·1.2px): 1440 폭(그림 약 510px, 1배 화면)은 0.6px 이 흐리고 1.0px 이 또렷,
+ * 375 폭(약 330px, 2배 화면)은 0.6~0.7px 이 맞고 1.0px 부터 다이얼 같은 작은 부품이 뭉친다. 그 사이는 폭에 비례.
+ * 부품 판은 확대 배율이 이미 선을 키우므로 키트 기본 그대로 둔다.
+ */
+const LINE = { narrowWidth: 330, narrowPx: 0.65, wideWidth: 510, widePx: 1.0 };
+function lineFor(fittedWidth: number): number {
+  const k = Math.min(1, Math.max(0, (fittedWidth - LINE.narrowWidth) / (LINE.wideWidth - LINE.narrowWidth)));
+  return LINE.narrowPx + (LINE.widePx - LINE.narrowPx) * k;
+}
 
 type FigWindow = Window & { setPose?: (t: number) => void };
 type Box = { x: number; y: number; w: number; h: number };
@@ -75,6 +86,8 @@ class Host {
   stage: HTMLElement;
   origin: Box;
   full: Box;
+  /** 첫 화면처럼 그림 전체를 보일 때 선 굵기를 화면 폭에 맞춘다 */
+  lineByWidth = false;
   constructor(private win: FigWindow, private doc: Document, found: { stage: HTMLElement; art: Element }) {
     this.stage = found.stage;
     this.stage.setAttribute('data-host-stage', '');
@@ -115,10 +128,12 @@ class Host {
     const tx = (vw - box.w * s) / 2 - (box.x - this.origin.x) * s - this.origin.x;
     const ty = (vh - box.h * s) / 2 - (box.y - this.origin.y) * s - this.origin.y;
     this.stage.style.transform = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(${s.toFixed(4)})`;
+    // 선은 화면 픽셀 기준(non-scaling-stroke)이라 transform 배율 s 만큼 같이 커진다 — 화면에서 원하는 굵기 ÷ s 를 준다
+    if (this.lineByWidth) this.doc.body.style.setProperty('--anatomy-weight', `${(lineFor(box.w * s) / s).toFixed(3)}px`);
   }
 }
 
-export default function FigureFrame({ fig, t, part, range, zoomIn, className, lazy, onApi }: {
+export default function FigureFrame({ fig, t, part, range, zoomIn, className, lazy, lineByWidth, onApi }: {
   fig: FigName;
   /** 싣자마자 맞출 t — 그 뒤 움직임은 setPose 로만 준다(주소를 바꾸면 문서를 다시 불러온다) */
   t: number;
@@ -130,6 +145,8 @@ export default function FigureFrame({ fig, t, part, range, zoomIn, className, la
   zoomIn?: boolean;
   className?: string;
   lazy?: boolean;
+  /** 선 굵기를 그림이 차지하는 화면 폭에 맞춘다(첫 화면) */
+  lineByWidth?: boolean;
   onApi?: (api: FigureApi | null) => void;
 }) {
   const ref = useRef<HTMLIFrameElement>(null);
@@ -160,6 +177,7 @@ export default function FigureFrame({ fig, t, part, range, zoomIn, className, la
       // 맞추기 전 모습(제목 카드 등)이 한 번 비치지 않게, 준비가 끝나야 보이게 한다(CSS 의 [data-ready])
       iframe.dataset.ready = '';
       const h = new Host(win, doc, found);
+      h.lineByWidth = !!lineByWidth;
       h.full = h.measure(() => rectOf(found.art)) ?? h.full;
       // 그림의 가로:세로 — 좁은 화면에서 틀 높이를 그림에 맞춰 빈 여백을 줄이는 데 쓴다(CSS 의 --fig-ar)
       iframe.parentElement?.style.setProperty('--fig-ar', (h.full.w / h.full.h).toFixed(3));

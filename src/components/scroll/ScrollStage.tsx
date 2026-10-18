@@ -66,7 +66,7 @@ export default function ScrollStage({ steps, head, foot, labelledBy }: {
     <section ref={sectionRef} className="stage" id="top" aria-labelledby={labelledBy} data-step={step} data-fig={fig} data-motion={reduced ? 'still' : 'scroll'}>
       <div className="stage-pin">
         <div className="stage-figure">
-          <FigureFrame key={fig} fig={fig} t={reduced ? spec.rest : spec.start} className="fig-frame" onApi={onApi} />
+          <FigureFrame key={fig} fig={fig} t={reduced ? spec.rest : spec.start} className="fig-frame" lineByWidth onApi={onApi} />
         </div>
         <div className="stage-copy">
           {head}

@@ -2,9 +2,10 @@
 // 그림 파일은 public/figures/<bench|recorder>/figure.html 이다(anatomy 로 그린 단독 HTML, 넘겨주기 계약:
 // ?t= 로 정지 · window.setPose(t) 결정적 · 큰 부품마다 <g data-part>). 그림이 바뀌면 이 파일의 부품 이름·t 구간만 맞춘다.
 //
-// 출처(2026-10-18, task-anatomy-brand-1018 의 사본 · 원본은 brand 저장소):
-//   bench    — brand 브랜치 feat/anatomy-bumper-bench-261018 커밋 37c6871 · brand-kit/videos/anatomy-bumper-bench/figure/figure.html
-//   recorder — brand 브랜치 feat/anatomy-bumper-recorder-261018 커밋 a3831eb · brand-kit/videos/anatomy-bumper-recorder/figure/figure.html
+// 출처(2026-10-18 19:37·19:38 갱신본, task-anatomy-brand-1018 의 사본 · 원본은 brand 저장소):
+//   bench    — brand 브랜치 feat/anatomy-bumper-bench-261018 커밋 fb4707f · brand-kit/videos/anatomy-bumper-bench/figure/figure.html
+//   recorder — brand 브랜치 feat/anatomy-bumper-recorder-261018 커밋 1c5ff4a · brand-kit/videos/anatomy-bumper-recorder/figure/figure.html
+// 선 굵기(--anatomy-weight)는 그림 파일을 고치지 않고 FigureFrame 이 화면 폭에 맞춰 준다.
 // t 구간·부품 이름은 각 그림의 README(같은 브랜치) 표를 옮겼다.
 
 export type FigName = 'bench' | 'recorder';
