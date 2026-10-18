@@ -37,9 +37,11 @@ export default function ScrollStage({ steps, head, foot, labelledBy }: {
     // 무대가 화면에 붙어 있는 동안(섹션 높이 - 화면 높이)이 한 바퀴다
     const run = el.offsetHeight - window.innerHeight;
     const p = run > 0 ? clamp01(-el.getBoundingClientRect().top / run) : 0;
-    apiRef.current?.setPose(lerp(spec.start, spec.end, p));
+    const t = lerp(spec.start, spec.end, p);
+    apiRef.current?.setPose(t);
     el.style.setProperty('--p', p.toFixed(4));
-    setStep(Math.min(STEP_COUNT - 1, Math.floor(p * STEP_COUNT)));
+    // 문장은 스크롤 비율이 아니라 그림의 동작 단계(t)에 맞춰 바꾼다 — 대차가 멈춘 뒤에 「한 번 더 확인」이 나오게
+    setStep(t >= spec.steps[1] ? 2 : t >= spec.steps[0] ? 1 : 0);
   }, [reduced, spec]);
 
   useEffect(() => {

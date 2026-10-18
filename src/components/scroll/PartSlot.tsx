@@ -58,7 +58,7 @@ export default function PartSlot({ section }: { section: SectionId }) {
         key={`${spec.fig}-${spec.part}`}
         fig={spec.fig}
         t={spec.range[reduced ? 1 : 0]}
-        part={spec.part}
+        part={[spec.part, ...(spec.with ?? [])]}
         range={spec.range}
         zoomIn={inView || reduced}
         className="fig-frame"

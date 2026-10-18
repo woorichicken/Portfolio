@@ -78,8 +78,9 @@
   .intro-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 14px; }
 }
 @media (max-width: 640px) {
-  /* 「$1,200+」 가 세 칸 중 한 칸(약 105px)에 한 줄로 들어가는 크기 — 22px 에서는 「+」 가 다음 줄로 떨어졌다 */
-  .intro-stats dd { font-size: 18px; white-space: nowrap; }
+  /* 「$1,200+」 가 세 칸 중 한 칸(약 105px)에 한 줄로 들어가는 크기 — 22px 에서는 「+」 가 다음 줄로 떨어졌다.
+     값 안에서는 끊지 않고(본문의 overflow-wrap:anywhere 를 끈다) 띄어쓰기에서만 접는다 — 스페인어 「1.200+ US$」 는 두 줄 */
+  .intro-stats dd { font-size: 18px; overflow-wrap: normal; }
   .intro-stats dt { font-size: 12px; }
 }
 
@@ -90,13 +91,19 @@
 .sec-head h2 { margin: 0; font-size: clamp(26px, 3vw, 36px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
 .sec-head p { margin: 0; color: var(--muted); font-size: 15px; }
 .sec-more { font-weight: 700; font-size: 15px; color: var(--accent-ink); text-underline-offset: 4px; }
-/* 첫 화면 그림의 부품 하나 — 섹션에 들어서면 그림 전체에서 그 부품으로 확대돼 들어온다(PartSlot) */
+/* 첫 화면 그림의 부품 하나 — 섹션에 들어서면 그림 전체에서 그 부품으로 확대돼 들어온다(PartSlot).
+ * 그림은 넓은 틀(480px)에 그린 뒤 판 크기로 줄여 보인다 — anatomy 선은 화면 픽셀 기준 굵기라(non-scaling-stroke)
+ * 84px 틀에 바로 그리면 선이 그림에 비해 대여섯 배 굵어져 얼룩처럼 뭉친다(2026-10-18 375px 캡처). --k = 판 크기 / 480 */
 .part {
-  flex: none; width: clamp(84px, 11vw, 156px); aspect-ratio: 1; border-radius: var(--radius-l); overflow: hidden;
+  --size: 156px; --k: .325;
+  position: relative; flex: none; width: var(--size); height: var(--size); border-radius: var(--radius-l); overflow: hidden;
   background: var(--plate-part); border: 1px solid var(--line);
   transition: opacity .6s, transform .7s cubic-bezier(.2, .7, .2, 1);
 }
 .part:not([data-in]) { opacity: 0; transform: translateY(14px) scale(.9); }
+.part .fig-frame { position: absolute; left: 0; top: 0; width: 480px; height: 480px; transform-origin: 0 0; transform: scale(var(--k)); }
+@media (max-width: 1100px) { .part { --size: 120px; --k: .25; } }
+@media (max-width: 640px) { .part { --size: 84px; --k: .175; } }
 
 /* ═════════ 홈 — 프로젝트(크기가 섞인 격자) ═════════
  * 「모두 같은 앨범형보다 비대칭」 → 6칸 격자에 크고(4×2)·넓고(3)·긴(2×2)·대표(4×2, 가로로 긴 사진) 카드를 섞는다.

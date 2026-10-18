@@ -32,8 +32,8 @@ html, body { margin: 0 !important; padding: 0 !important; width: 100% !important
 [data-host-stage], [data-host-chain] { background: transparent !important; border-color: transparent !important; box-shadow: none !important; }
 `;
 /** 확대한 부품 말고는 옅게 — 부품을 감싼 큰 묶음(조상)과 부품 안의 작은 부품은 빼고 */
-const dimCss = (part: string) =>
-  `[data-part]:not([data-part="${part}"]):not(:has([data-part="${part}"])):not([data-part="${part}"] [data-part]) { opacity: .22 !important; }`;
+const dimCss = (parts: string[]) =>
+  `[data-part]${parts.map((p) => `:not([data-part="${p}"]):not(:has([data-part="${p}"])):not([data-part="${p}"] [data-part])`).join('')} { opacity: .22 !important; }`;
 
 /** 그림 문서에서 그림을 담은 상자를 찾는다 — 넓은 svg·canvas 들을 모두 품는 가장 가까운 상자 */
 function findStage(doc: Document): { stage: HTMLElement; art: Element } | null {
@@ -90,14 +90,15 @@ class Host {
     this.stage.style.transform = saved;
     return box;
   }
-  partBox(part: string, range: [number, number] | undefined, back: number): Box | null {
+  partBox(parts: string[], range: [number, number] | undefined, back: number): Box | null {
     return this.measure(() => {
       const ts = range ? [0, 0.25, 0.5, 0.75, 1].map((k) => range[0] + (range[1] - range[0]) * k) : [back];
       let box: Box | null = null;
       for (const t of ts) {
         this.win.setPose?.(t);
         // 한 부품이 여러 조각(<g data-part="gauge"> 여러 개)으로 나뉘어 있을 수 있어 모두 합친다
-        for (const el of Array.from(this.doc.querySelectorAll(`[data-part="${CSS.escape(part)}"]`))) {
+        const selector = parts.map((p) => `[data-part="${CSS.escape(p)}"]`).join(', ');
+        for (const el of Array.from(this.doc.querySelectorAll(selector))) {
           const r = rectOf(el);
           if (r.w > 0 && r.h > 0) box = union(box, r);
         }
@@ -119,10 +120,10 @@ class Host {
 
 export default function FigureFrame({ fig, t, part, range, zoomIn, className, lazy, onApi }: {
   fig: FigName;
-  /** 처음 불러올 때의 t — 그 뒤 움직임은 setPose 로만 준다(주소를 바꾸면 문서를 다시 불러온다) */
+  /** 싣자마자 맞출 t — 그 뒤 움직임은 setPose 로만 준다(주소를 바꾸면 문서를 다시 불러온다) */
   t: number;
-  /** 이 부품 하나를 확대해 보여 준다 */
-  part?: string;
+  /** 이 부품을 확대해 보여 준다(같이 보여 줄 작은 부품이 있으면 여럿) */
+  part?: string[];
   /** 부품이 이 t 구간을 움직이는 동안 늘 틀 안에 있게 영역을 잡는다 */
   range?: [number, number];
   /** true 가 되는 순간 그림 전체 → 부품으로 확대해 들어간다(false 면 그림 전체) */
@@ -150,7 +151,7 @@ export default function FigureFrame({ fig, t, part, range, zoomIn, className, la
       const win = iframe.contentWindow as FigWindow | null;
       if (done || !doc || !win || !win.location.pathname.startsWith('/figures/') || doc.readyState !== 'complete') return;
       const style = doc.createElement('style');
-      style.textContent = HOST_CSS + (part ? dimCss(part) : '');
+      style.textContent = HOST_CSS + (part?.length ? dimCss(part) : '');
       doc.head.appendChild(style);
       const found = findStage(doc);
       if (!found) return;
@@ -162,7 +163,8 @@ export default function FigureFrame({ fig, t, part, range, zoomIn, className, la
       h.full = h.measure(() => rectOf(found.art)) ?? h.full;
       // 그림의 가로:세로 — 좁은 화면에서 틀 높이를 그림에 맞춰 빈 여백을 줄이는 데 쓴다(CSS 의 --fig-ar)
       iframe.parentElement?.style.setProperty('--fig-ar', (h.full.w / h.full.h).toFixed(3));
-      partBoxRef.current = part ? h.partBox(part, range, t0) : null;
+      partBoxRef.current = part?.length ? h.partBox(part, range, t0) : null;
+      win.setPose?.(t0);
       h.fit(h.full, PAD_FULL);
       setHost(h);
       onResize = () => {
@@ -204,7 +206,7 @@ export default function FigureFrame({ fig, t, part, range, zoomIn, className, la
   return (
     <iframe
       ref={ref}
-      src={figureUrl(fig, t0)}
+      src={figureUrl(fig)}
       className={className}
       title=""
       aria-hidden="true"
