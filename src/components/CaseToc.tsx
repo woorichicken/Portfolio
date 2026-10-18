@@ -25,7 +25,7 @@ export default function CaseToc({ items, label }: { items: { id: string; label: 
     return () => { io.disconnect(); window.removeEventListener('scroll', onScroll); };
   }, [items]);
   return (
-    <nav className="lab-toc" aria-label={label}>
+    <nav className="toc" aria-label={label}>
       <ol>
         {items.map((i) => (
           <li key={i.id}><a href={`#${i.id}`} aria-current={active === i.id ? 'true' : undefined}>{i.label}</a></li>

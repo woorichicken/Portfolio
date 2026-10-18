@@ -8,11 +8,14 @@ import FeedbackGate from './feedback/FeedbackGate';
 import Header from './Header';
 import Lightbox from './Lightbox';
 import Rich from './Rich';
-import { Icosahedron, RingSphere } from './Wireframes';
+import PartSlot from './scroll/PartSlot';
+import ScrollStage from './scroll/ScrollStage';
 
-// 홈 — 2026-10 디자인 엔지니어 개편(시안 A, 리뷰 7회차까지).
-// 첫 화면(이름·역할·숫자) → 프로젝트(크기가 섞인 카드, 이야기는 상세 /projects/<id>) → 디자인 엔지니어로서(결과물 미리보기)
-// → 연표 → 연락. 「그 외」·「이전」 프로젝트와 수상은 홈에서 뺐다(상세 주소는 그대로 살아 있다 — 리뷰 H4 「빼기」).
+// 홈 — 2026-10 디자인 엔지니어 개편(시안 A, 리뷰 7회차까지) + 2026-10-18 채널 색 · 스크롤 그림.
+// 첫 화면(내리면 그림이 한 바퀴, 문장 셋) → 소개·숫자 → 프로젝트(크기가 섞인 카드, 이야기는 상세 /projects/<id>)
+// → 디자인 엔지니어로서(결과물 미리보기) → 연표 → 연락. 섹션 머리마다 그림의 부품 하나가 확대돼 다시 나온다(PartSlot).
+// 그림은 ?fig=bench(검수대, 기본) | recorder(기록계) 로 바꾼다 — 설정은 scroll/figures.ts.
+// 「그 외」·「이전」 프로젝트와 수상은 홈에서 뺐다(상세 주소는 그대로 살아 있다 — 리뷰 H4 「빼기」).
 
 // 카드 모양 — 사진 비율에 맞춰 골랐다. PorterX 는 세로 폰 화면, 엔씨디지텍은 아주 가로로 긴 키비주얼이라
 // PorterX(두 줄 높이) 옆에 4칸 × 두 줄로 세운다.
@@ -42,45 +45,52 @@ export default function Portfolio({ locale }: { locale: Locale }) {
       <a className="skip-link" href="#main">{t.a11y.skip}</a>
       <Header locale={locale} t={t} />
 
-      <main id="main" className="lab lab4">
-        <section className="hero lab4-hero" aria-labelledby="hero-title">
-          <div className="hero-glow" aria-hidden="true" />
-          <Icosahedron className="hero-wire hero-wire-a" />
-          <RingSphere className="hero-wire hero-wire-b" />
-          <div className="hero-inner lab4-hero-grid">
-            <div>
-              <h1 id="hero-title" className="hero-title">
-                <span className="hero-mark">JEONG</span> <span className="hero-mark">(SOLHUN)</span>
-                <span className="visually-hidden"> — {t.hero.name}</span>
-              </h1>
-              <p className="hero-role">
+      <main id="main" className="home">
+        <ScrollStage
+          steps={t.hero.steps}
+          labelledBy="hero-title"
+          head={
+            <>
+              <p className="stage-role">
                 <span lang={locale}>{t.hero.name}</span>
-                <span aria-hidden="true" className="hero-sep" />
+                <span aria-hidden="true" className="stage-sep" />
                 {t.hero.role}
               </p>
-              <p className="hero-lead"><Rich text={t.hero.lead} /></p>
-              <p className="hero-links">
-                {t.hero.links.map((l) =>
-                  l.href.startsWith('mailto:') ? (
-                    <EmailLink key={l.href} href={l.href} label={l.label} copiedLabel={t.a11y.copied} />
-                  ) : (
-                    <a key={l.href} href={l.href} target="_blank" rel="noreferrer">{l.label}</a>
-                  ),
-                )}
-              </p>
-            </div>
-            <dl className="lab4-hero-stats" aria-label={t.stats.title}>
-              {t.stats.items.map((s) => <div key={s.label}><dd>{s.value}</dd><dt>{s.label}</dt></div>)}
-            </dl>
-          </div>
+              <h1 id="hero-title" className="stage-title">
+                <span>JEONG</span> <span>(SOLHUN)</span>
+                <span className="visually-hidden"> — {t.hero.name}</span>
+              </h1>
+            </>
+          }
+          foot={
+            <p className="stage-links">
+              {t.hero.links.map((l) =>
+                l.href.startsWith('mailto:') ? (
+                  <EmailLink key={l.href} href={l.href} label={l.label} copiedLabel={t.a11y.copied} />
+                ) : (
+                  <a key={l.href} href={l.href} target="_blank" rel="noreferrer">{l.label}</a>
+                ),
+              )}
+            </p>
+          }
+        />
+
+        <section className="wrap intro" aria-label={t.stats.title}>
+          <p className="intro-lead"><Rich text={t.hero.lead} /></p>
+          <dl className="intro-stats">
+            {t.stats.items.map((s) => <div key={s.label}><dt>{s.label}</dt><dd>{s.value}</dd></div>)}
+          </dl>
         </section>
 
-        <section className="wrap lab4-sec" id="work" aria-labelledby="work-title">
-          <header className="lab4-head">
-            <h2 id="work-title">{t.work.title}</h2>
-            <p>{t.work.intro}</p>
+        <section className="wrap sec" id="work" aria-labelledby="work-title">
+          <header className="sec-head">
+            <PartSlot section="work" />
+            <div className="sec-head-text">
+              <h2 id="work-title">{t.work.title}</h2>
+              <p>{t.work.intro}</p>
+            </div>
           </header>
-          <ul className="lab5-bento">
+          <ul className="bento">
             {t.work.projects.map((p) => {
               const chips = p.improvements?.map((i) => i.title) ?? [];
               const shape = SHAPE[p.id] ?? 'normal';
@@ -89,16 +99,16 @@ export default function Portfolio({ locale }: { locale: Locale }) {
               return (
                 // id 는 예전 홈의 「#kits」 같은 주소가 그 카드로 오게 남긴다
                 <li key={p.id} id={p.id} className={`is-${shape} m-${MOBILE[p.id] ?? 'half'}`}>
-                  <a className="lab5-card" href={projectPath(locale, p.id)}>
-                    <div className={`lab-cover${portrait ? ' is-portrait' : ''}`}>
+                  <a className="bento-card" href={projectPath(locale, p.id)}>
+                    <div className={`card-cover${portrait ? ' is-portrait' : ''}`}>
                       <Image className="photo" src={p.cover.src} alt={p.cover.alt} width={p.cover.width} height={p.cover.height} sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 60vw" priority={shape === 'big'} />
                     </div>
-                    <div className="lab5-text">
-                      <p className="lab4-ctx">{p.context}</p>
+                    <div className="bento-text">
+                      <p className="card-ctx">{p.context}</p>
                       <h3>{p.name}<span aria-hidden="true">→</span></h3>
-                      <p className="lab4-tag">{p.tagline}</p>
-                      {chips.length > 0 && <ul className="lab4-chips">{chips.slice(0, 4).map((c) => <li key={c}>{c}</li>)}</ul>}
-                      <p className="lab4-meta">{p.facts[1]?.value} · {p.facts[0]?.value}</p>
+                      <p className="card-tag">{p.tagline}</p>
+                      {chips.length > 0 && <ul className="chips">{chips.slice(0, 4).map((c) => <li key={c}>{c}</li>)}</ul>}
+                      <p className="card-meta">{p.facts[1]?.value} · {p.facts[0]?.value}</p>
                     </div>
                   </a>
                 </li>
@@ -107,21 +117,27 @@ export default function Portfolio({ locale }: { locale: Locale }) {
           </ul>
         </section>
 
-        <section className="wrap lab4-sec" id="design" aria-labelledby="design-title">
-          <header className="lab4-head">
-            <h2 id="design-title">{t.design.title}</h2>
-            <a className="lab5-more" href={designPath(locale)}>{t.design.more}</a>
+        <section className="wrap sec" id="design" aria-labelledby="design-title">
+          <header className="sec-head">
+            <PartSlot section="design" />
+            <div className="sec-head-text">
+              <h2 id="design-title">{t.design.title}</h2>
+              <a className="sec-more" href={designPath(locale)}>{t.design.more}</a>
+            </div>
           </header>
-          <div className="lab5-preview">
+          <div className="art-preview">
             {preview.map((a) => (
               <ArtifactTile key={a.title} a={a} sizes="(max-width: 700px) 100vw, 30vw" exampleLabel={t.design.example} openLabel={t.a11y.openImage} />
             ))}
           </div>
         </section>
 
-        <section className="wrap lab4-sec timeline" id="timeline" aria-labelledby="timeline-title">
-          <header className="lab4-head"><h2 id="timeline-title">{t.timeline.title}</h2></header>
-          <ol className="lab4-tl">
+        <section className="wrap sec timeline" id="timeline" aria-labelledby="timeline-title">
+          <header className="sec-head">
+            <PartSlot section="timeline" />
+            <div className="sec-head-text"><h2 id="timeline-title">{t.timeline.title}</h2></div>
+          </header>
+          <ol className="tl-cols">
             {t.timeline.items.slice().reverse().map((item) => (
               <li key={item.date}><time>{item.date}</time><p>{item.text}</p></li>
             ))}
@@ -129,7 +145,7 @@ export default function Portfolio({ locale }: { locale: Locale }) {
         </section>
       </main>
 
-      <footer className="contact lab4-contact" id="contact" aria-labelledby="contact-title">
+      <footer className="contact contact-home" id="contact" aria-labelledby="contact-title">
         <div className="wrap">
           <h2 id="contact-title" className="visually-hidden">{t.contact.title}</h2>
           <p className="contact-body">{t.contact.body}</p>

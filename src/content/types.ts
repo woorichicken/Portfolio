@@ -71,6 +71,8 @@ export type Content = {
     lead: string;
     keywords: { title: string; body: string }[];
     links: Link[];
+    /** 첫 화면 스크롤 문장 셋 — 그림마다(검수대 bench · 기록계 recorder). 내릴수록 한 문장씩 바뀐다 */
+    steps: { bench: string[]; recorder: string[] };
   };
   stats: { title: string; items: Metric[] };
   work: {

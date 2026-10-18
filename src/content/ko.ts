@@ -25,6 +25,11 @@ const ko: Content = {
       { label: 'GitHub', href: 'https://github.com/woorichicken' },
       { label: '이메일', href: 'mailto:solhun.jeong@gmail.com' },
     ],
+    // 첫 화면 스크롤 문장 — 검수대: 직접 돌려 봄 → 한 번 더 확인 → 근거 표 · 기록계: 운영에 붙임 → 흔들림 기록 → 깨진 곳에 도장
+    steps: {
+      bench: ['만든 것은 직접 돌려 봅니다.', '돌았다고 끝내지 않고, 한 번 더 확인합니다.', '그리고 근거를 표로 가져옵니다.'],
+      recorder: ['에이전트를 실제 운영에 붙입니다.', '흔들리는 순간을 그대로 기록합니다.', '깨진 곳에는 숫자와 증거를 남깁니다.'],
+    },
   },
   stats: {
     title: '숫자로 본 지난 1년',

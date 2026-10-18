@@ -15,7 +15,7 @@ import Rich from './Rich';
 // 머리 띠(배지·이름·한 줄·사실 표) → 왼쪽 따라오는 목차 + 오른쪽 장: 개요 → 디자인 엔지니어링(결과물만) → 바꾼 것 →
 // 결과 → 함께 일한 사람들의 말 → 화면 → 배운 점 → 이전·다음 프로젝트.
 
-// 이보다 짧은 인용은 첫 화면처럼 파란 판에 크게 — 긴 인용과 같은 크기면 힘이 빠진다.
+// 이보다 짧은 인용은 이끼색 판에 크게 — 긴 인용과 같은 크기면 힘이 빠진다.
 // 한글은 글자가 넓어 같은 길이가 더 길게 보여 기준을 따로 둔다.
 const SHORT_QUOTE: Record<Locale, number> = { ko: 24, en: 44, es: 44 };
 
@@ -53,63 +53,63 @@ export default function ProjectCase({ locale, project: p }: { locale: Locale; pr
     <>
       <a className="skip-link" href="#main">{t.a11y.skip}</a>
       <Header locale={locale} t={t} altPath={(l) => projectPath(l, p.id)} />
-      <main id="main" className="lab lab4-case">
-        <header className="lab4-case-head">
+      <main id="main" className="case">
+        <header className="case-head">
           <div className="wrap">
             <a className="detail-back" href={`${localePath(locale)}#work`}>{L.back}</a>
-            <div className="lab4-case-title">
+            <div className="case-title">
               <div>
                 <p className="pill">{p.context}</p>
                 <h1 className="project-name">{p.name}</h1>
                 <p className="project-tagline">{p.tagline}</p>
               </div>
-              <dl className="lab4-case-facts">
+              <dl className="case-facts">
                 {p.facts.map((f) => <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
                 {p.links && (
-                  <div><dt>{L.links}</dt><dd className="lab4-links">{p.links.map((l) => <a key={l.href} href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>)}</dd></div>
+                  <div><dt>{L.links}</dt><dd className="case-links">{p.links.map((l) => <a key={l.href} href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>)}</dd></div>
                 )}
               </dl>
             </div>
           </div>
         </header>
 
-        <div className="wrap lab4-body">
-          <aside className="lab4-aside">
+        <div className="wrap case-body">
+          <aside className="case-aside">
             <CaseToc items={toc.filter((i) => !('examplesOnly' in i && i.examplesOnly))} label={L.toc} />
           </aside>
 
-          <article className="lab4-content">
-            <section id="overview" className="lab4-block">
-              <div className="lab4-cover">
+          <article className="case-content">
+            <section id="overview" className="case-block">
+              <div className="case-cover">
                 <Figure shot={p.cover} className={p.cover.height > p.cover.width ? 'cover cover-tall' : 'cover'} sizes="(max-width: 900px) 100vw, 860px" priority openLabel={t.a11y.openImage} />
               </div>
-              <p className="lab4-summary"><Rich text={p.summary} /></p>
+              <p className="case-summary"><Rich text={p.summary} /></p>
             </section>
 
             {artifacts.length > 0 && (
-              <section id="de" className="lab4-block" aria-labelledby="de-h" data-example={deExamplesOnly ? '' : undefined}>
-                <h2 id="de-h" className="lab4-label">{L.design}</h2>
-                <div className="lab5-arts">
+              <section id="de" className="case-block" aria-labelledby="de-h" data-example={deExamplesOnly ? '' : undefined}>
+                <h2 id="de-h" className="case-label">{L.design}</h2>
+                <div className="art-grid">
                   {artifacts.map((a) => <ArtifactTile key={a.title} a={a} sizes="(max-width: 700px) 100vw, 300px" exampleLabel={t.design.example} openLabel={t.a11y.openImage} />)}
                 </div>
               </section>
             )}
 
             {p.improvements && p.improvements.length > 0 && (
-              <section id="changes" className="lab4-block" aria-labelledby="ch-h">
-                <h2 id="ch-h" className="lab4-label">{L.changes}</h2>
-                <ol className="lab4-changes">
+              <section id="changes" className="case-block" aria-labelledby="ch-h">
+                <h2 id="ch-h" className="case-label">{L.changes}</h2>
+                <ol className="changes">
                   {p.improvements.map((item, i) => (
                     <li key={item.title}>
-                      <div className="lab4-ch-title">
-                        <span className="lab-num">{String(i + 1).padStart(2, '0')}</span>
+                      <div className="change-title">
+                        <span className="change-num">{String(i + 1).padStart(2, '0')}</span>
                         <h3>{item.title}</h3>
                         {item.badge && <span className="improvement-badge">{item.badge}</span>}
                       </div>
-                      <div className="lab-ba">
-                        <div className="lab-ba-before"><span>{t.work.labels.before}</span><p>{item.before}</p></div>
+                      <div className="ba">
+                        <div className="ba-before"><span>{t.work.labels.before}</span><p>{item.before}</p></div>
                         <ChangeArrow />
-                        <div className="lab-ba-after"><span>{t.work.labels.after}</span><p><Rich text={item.after} /></p></div>
+                        <div className="ba-after"><span>{t.work.labels.after}</span><p><Rich text={item.after} /></p></div>
                       </div>
                       {item.metric && <p className="inline-metric"><strong>{item.metric.value}</strong>{item.metric.label}</p>}
                     </li>
@@ -119,24 +119,23 @@ export default function ProjectCase({ locale, project: p }: { locale: Locale; pr
             )}
 
             {p.metrics && p.metrics.length > 0 && (
-              <section id="results" className="lab4-block" aria-labelledby="rs-h">
-                <h2 id="rs-h" className="lab4-label">{t.work.labels.results}</h2>
-                <div className="results lab4-results">
+              <section id="results" className="case-block" aria-labelledby="rs-h">
+                <h2 id="rs-h" className="case-label">{t.work.labels.results}</h2>
+                <div className="results case-results">
                   {p.metrics.map((m) => <p key={m.label}><strong>{m.value}</strong><span>{m.label}</span></p>)}
                 </div>
               </section>
             )}
 
             {p.quotes && p.quotes.length > 0 && (
-              <section id="voices" className="lab4-block" aria-labelledby="vc-h">
-                <h2 id="vc-h" className="lab4-label">{L.voices}</h2>
-                <div className="lab4-quotes">
+              <section id="voices" className="case-block" aria-labelledby="vc-h">
+                <h2 id="vc-h" className="case-label">{L.voices}</h2>
+                <div className="quotes-grid">
                   {p.quotes.map((q) => {
                     const { speaker, context } = splitWho(q);
                     const short = q.text.length <= SHORT_QUOTE[locale];
                     return (
-                      <figure key={q.text} className={`lab-quote${short ? ' is-short' : ''}`}>
-                        {short && <div className="hero-glow" aria-hidden="true" />}
+                      <figure key={q.text} className={`quote${short ? ' is-short' : ''}`}>
                         <blockquote><p>{q.text}</p></blockquote>
                         <figcaption><b>{speaker}</b>{context && <span>{context}</span>}</figcaption>
                       </figure>
@@ -147,25 +146,25 @@ export default function ProjectCase({ locale, project: p }: { locale: Locale; pr
             )}
 
             {screens.length > 0 && (
-              <section id="screens" className="lab4-block" aria-labelledby="gl-h">
-                <h2 id="gl-h" className="lab4-label">{L.screens}</h2>
-                <div className="lab4-gallery">
+              <section id="screens" className="case-block" aria-labelledby="gl-h">
+                <h2 id="gl-h" className="case-label">{L.screens}</h2>
+                <div className="case-gallery">
                   {screens.map((s) => <Figure key={s.src} shot={s} className={s.height > s.width ? 'tall' : undefined} sizes="(max-width: 700px) 100vw, 280px" openLabel={t.a11y.openImage} />)}
                 </div>
               </section>
             )}
 
             {p.lesson && (
-              <aside id="lesson" className="lesson lab4-lesson">
+              <aside id="lesson" className="lesson">
                 <h4>{t.work.labels.lesson} — {p.lesson.title}</h4>
                 <p><Rich text={p.lesson.body} /></p>
               </aside>
             )}
 
-            <nav className="lab-next lab4-next" aria-label={`${L.prev} / ${L.next}`}>
+            <nav className="case-next" aria-label={`${L.prev} / ${L.next}`}>
               {[prev, next].map((n, i) => (
-                <a key={n.id} href={projectPath(locale, n.id)} className="lab-next-card">
-                  <span className="lab-next-cover"><Image src={n.cover.src} alt="" width={n.cover.width} height={n.cover.height} sizes="160px" /></span>
+                <a key={n.id} href={projectPath(locale, n.id)} className="next-card">
+                  <span className="next-cover"><Image src={n.cover.src} alt="" width={n.cover.width} height={n.cover.height} sizes="160px" /></span>
                   <span className="meta">{i === 0 ? L.prev : L.next}</span>
                   <b>{n.name}</b>
                 </a>

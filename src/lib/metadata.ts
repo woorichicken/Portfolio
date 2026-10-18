@@ -85,7 +85,8 @@ export function buildDesignMetadata(locale: Locale): Metadata {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f5f6fb' },
-    { media: '(prefers-color-scheme: dark)', color: '#12142a' },
+    // 브라우저 주소창 색 — globals.css 의 --paper(밝은·어두운 화면)와 같은 값
+    { media: '(prefers-color-scheme: light)', color: '#f7ece4' },
+    { media: '(prefers-color-scheme: dark)', color: '#161d26' },
   ],
 };

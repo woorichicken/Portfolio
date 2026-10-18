@@ -25,30 +25,30 @@ export default function DesignWall({ locale }: { locale: Locale }) {
     <>
       <a className="skip-link" href="#main">{t.a11y.skip}</a>
       <Header locale={locale} t={t} altPath={designPath} />
-      <main id="main" className="lab lab4-case">
-        <header className="lab4-case-head">
+      <main id="main" className="case">
+        <header className="case-head">
           <div className="wrap">
             <a className="detail-back" href={`${localePath(locale)}#design`}>{t.design.back}</a>
-            <div className="lab4-case-title">
+            <div className="case-title">
               <div>
                 <p className="pill">{t.design.title}</p>
                 <h1 className="project-name">{t.design.pageTitle}</h1>
               </div>
-              <dl className="lab4-case-facts">
+              <dl className="case-facts">
                 {kinds.map((k) => <div key={k}><dt>{t.design.kinds[k]}</dt><dd>{visible.filter(({ a }) => a.kind === k).length}</dd></div>)}
               </dl>
             </div>
           </div>
         </header>
-        <div className="wrap lab5-design">
+        <div className="wrap design-body">
           <KindFilter kinds={kinds.map((k) => ({ key: k, label: t.design.kinds[k] }))} allLabel={t.design.all} label={t.design.filter}>
-            <div className="lab6-wall">
+            <div className="art-wall">
               {all.map(({ a, project }, i) => (
                 <ArtifactTile key={`${project ?? ''}-${a.title}`} a={a} projectName={project} size={tileSize(a, i)} sizes="(max-width: 700px) 100vw, 50vw" exampleLabel={t.design.example} openLabel={t.a11y.openImage} />
               ))}
             </div>
           </KindFilter>
-          <p className="lab5-note" data-example="">{t.design.note}</p>
+          <p className="design-note" data-example="">{t.design.note}</p>
         </div>
       </main>
       <footer className="contact contact-compact">
