@@ -28,15 +28,15 @@ export default function ArtifactTile({ a, sizes, projectName, size, exampleLabel
 }) {
   if ('example' in a) {
     return (
-      <figure className="lab-art lab-art-ex" data-kind={a.kind} data-size={size} data-example="">
-        <div className="lab-art-media"><span>{exampleLabel}</span></div>
+      <figure className="art art-ex" data-kind={a.kind} data-size={size} data-example="">
+        <div className="art-media"><span>{exampleLabel}</span></div>
         <figcaption><b>{a.title}</b>{projectName && <span>{projectName}</span>}</figcaption>
       </figure>
     );
   }
   return (
-    <figure className="lab-art" data-kind={a.kind} data-size={size}>
-      <a className="lab-art-media" href={a.shot.src} data-lightbox="" data-alt={a.shot.alt} data-caption={a.title} aria-label={`${openLabel}: ${a.title}`}>
+    <figure className="art" data-kind={a.kind} data-size={size}>
+      <a className="art-media" href={a.shot.src} data-lightbox="" data-alt={a.shot.alt} data-caption={a.title} aria-label={`${openLabel}: ${a.title}`}>
         <Image src={a.shot.src} alt={a.shot.alt} width={a.shot.width} height={a.shot.height} sizes={sizes} />
       </a>
       <figcaption><b>{a.title}</b>{projectName && <span>{projectName}</span>}</figcaption>
@@ -48,7 +48,7 @@ export default function ArtifactTile({ a, sizes, projectName, size, exampleLabel
 // 좁은 화면에서는 CSS 가 아래쪽으로 돌린다.
 export function ChangeArrow() {
   return (
-    <span className="lab-change" aria-hidden="true">
+    <span className="ba-arrow" aria-hidden="true">
       <svg viewBox="0 0 32 32" width="32" height="32">
         <circle cx="16" cy="16" r="16" />
         <path d="M9 16h13M17 10.5l5.5 5.5-5.5 5.5" />

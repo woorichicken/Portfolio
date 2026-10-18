@@ -1,0 +1,123 @@
+<!doctype html>
+<!--
+  임시 자리 그림(stand-in) — 기록계.
+  진짜 그림은 /anatomy 로 그리는 중이고(task-anatomy-brand-1018 S2), 오면 이 파일을 그대로 바꿔 넣는다.
+  넘겨주기 계약만 같게 맞춰 두었다: ?t=0.42 로 정지 · window.setPose(t) 결정적 · 부품마다 <g data-part>.
+  부품: drum(두루마리 종이) · needle(바늘) · stamp(도장)
+  종이의 눈금·시각은 장식이다 — 실제 운영 수치가 아니다.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>기록계 — 자리 그림</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #f7ece4; }
+  main { height: 100%; display: grid; place-items: center; }
+  svg { width: 100%; height: 100%; display: block; }
+  .ln { fill: none; stroke: #1e2834; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .top { fill: #fcf7f2; } .side { fill: #edddca; } .dark { fill: #d9c6b1; }
+  .moss { fill: #4b6250; } .ink { fill: #1e2834; }
+  .grid { stroke: #d9c6b1; stroke-width: 1; }
+  .trace { fill: none; stroke: #4b6250; stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+  .stub { font: 600 12px ui-monospace, Menlo, monospace; fill: #5a6270; }
+</style>
+</head>
+<body>
+<main>
+<svg id="fig" viewBox="0 0 640 440" role="img" aria-label="기록계 자리 그림">
+  <defs><clipPath id="paperclip"><rect x="150" y="214" width="420" height="96" /></clipPath></defs>
+  <!-- 받침 -->
+  <g data-part="base">
+    <path class="ln side" d="M40 330 L600 330 L600 360 L40 360 Z" />
+    <path class="ln top" d="M80 300 L620 300 L600 330 L40 330 Z" />
+  </g>
+  <!-- 두루마리 종이: 왼쪽 통에서 풀려 오른쪽으로 흐른다 -->
+  <g data-part="drum">
+    <rect class="ln side" x="70" y="200" width="80" height="124" rx="40" />
+    <ellipse class="ln top" cx="110" cy="208" rx="40" ry="12" />
+    <g id="spokes"></g>
+    <path class="ln top" d="M150 214 L570 214 L570 310 L150 310 Z" />
+    <g clip-path="url(#paperclip)"><g id="grid"></g><path id="trace" class="trace" d="" /></g>
+    <path class="ln" d="M150 214 L570 214 M150 310 L570 310" />
+  </g>
+  <!-- 바늘: 기둥에 매달려 종이 위를 흔들린다 -->
+  <g data-part="needle">
+    <path class="ln dark" d="M452 120 L466 120 L466 214 L452 214 Z" />
+    <g id="arm">
+      <path class="ln" stroke-width="3" d="M459 128 L380 262" />
+      <circle class="ink" cx="380" cy="262" r="4.5" />
+      <circle class="ln top" cx="459" cy="128" r="9" />
+    </g>
+  </g>
+  <!-- 도장: 크게 튄 자리에 「눈만」 마크를 찍는다 -->
+  <g data-part="stamp">
+    <g id="stamp">
+      <path class="ln moss" d="M-8 -86 L8 -86 L8 -40 L-8 -40 Z" />
+      <ellipse class="ln moss" cx="0" cy="-92" rx="16" ry="7" />
+      <path class="ln side" d="M-26 -40 L26 -40 L26 -16 L-26 -16 Z" />
+    </g>
+    <g id="print" opacity="0">
+      <circle cx="0" cy="0" r="17" fill="none" stroke="#a63f2a" stroke-width="2.2" />
+      <ellipse cx="-6" cy="1" rx="3.4" ry="4" fill="#a63f2a" /><ellipse cx="6" cy="1" rx="3.4" ry="4" fill="#a63f2a" />
+      <path d="M-11 -7 l7 -1.8 M11 -7 l-7 -1.8" stroke="#a63f2a" stroke-width="2.2" stroke-linecap="round" />
+    </g>
+  </g>
+  <text class="stub" x="16" y="430">임시 자리 그림 · 기록계(S2) 도착 전 · 눈금은 장식</text>
+</svg>
+</main>
+<script>
+(() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const span = (t, a, b) => { const x = clamp((t - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); };
+  const PEN_X = 380, MID = 262, SPEED = 300; // 한 바퀴 동안 종이가 흐르는 거리(px)
+  const SPIKE_T = 0.5;
+  // 흔들림 — 결정적인 함수 합. 0.5 근처에서 크게 튄다(깨진 지점)
+  const wobble = (t) => 6 * Math.sin(t * 61) + 3 * Math.sin(t * 173 + 1.3) - 34 * Math.exp(-(((t - SPIKE_T) / 0.02) ** 2));
+  const grid = document.getElementById('grid');
+  const trace = document.getElementById('trace');
+  const spokes = document.getElementById('spokes');
+  for (let i = 0; i < 6; i++) { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', 'ln'); p.setAttribute('stroke-width', 1.2); spokes.appendChild(p); }
+  function setPose(t) {
+    t = clamp(Number(t) || 0, 0, 1);
+    const shift = t * SPEED;
+    // 눈금은 종이와 같이 흐른다(반복 무늬라 길이가 늘어도 이어진다)
+    let g = '';
+    for (let x = 150 - (shift % 30); x < 580; x += 30) g += `M${x} 214 L${x} 310 `;
+    for (let y = 226; y < 310; y += 12) g += `M150 ${y} L570 ${y} `;
+    grid.innerHTML = `<path class="grid" d="${g}" />`;
+    // 펜 뒤쪽(오른쪽)으로 지금까지 그린 선이 흘러간다
+    let d = '';
+    for (let x = PEN_X; x <= 570; x += 3) {
+      const tt = t - (x - PEN_X) / SPEED;
+      if (tt < 0) break;
+      d += `${d ? 'L' : 'M'}${x} ${(MID + wobble(tt)).toFixed(1)} `;
+    }
+    trace.setAttribute('d', d);
+    const tip = MID + wobble(t);
+    document.getElementById('arm').setAttribute('transform', `rotate(${((tip - MID) * 0.32).toFixed(2)} 459 128)`);
+    [...spokes.children].forEach((p, i) => {
+      const a = i * Math.PI / 3 + t * 14;
+      p.setAttribute('d', `M110 262 L${110 + Math.cos(a) * 34} ${262 + Math.sin(a) * 34}`);
+    });
+    // 튄 자리를 종이가 실어 와 도장 밑에 오면 쿵 — 그 뒤 도장 자국이 종이와 함께 흘러간다
+    const spikeX = PEN_X + (t - SPIKE_T) * SPEED;
+    const STAMP_X = 470;
+    const hitT = SPIKE_T + (STAMP_X - PEN_X) / SPEED;
+    const down = span(t, hitT - 0.03, hitT) * (1 - span(t, hitT + 0.01, hitT + 0.05));
+    document.getElementById('stamp').setAttribute('transform', `translate(${STAMP_X} ${214 - 70 + down * 70})`);
+    const print = document.getElementById('print');
+    print.setAttribute('opacity', t >= hitT ? 1 : 0);
+    print.setAttribute('transform', `translate(${spikeX.toFixed(1)} 262)`);
+  }
+  window.setPose = setPose;
+  const q = new URLSearchParams(location.search).get('t');
+  if (q !== null) { setPose(Number(q)); return; }
+  const start = performance.now();
+  const loop = (now) => { setPose(((now - start) / 10000) % 1); requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

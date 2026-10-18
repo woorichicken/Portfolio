@@ -7,7 +7,7 @@ import { useState, type ReactNode } from 'react';
 export default function KindFilter({ kinds, allLabel, label, children }: { kinds: { key: string; label: string }[]; allLabel: string; label: string; children: ReactNode }) {
   const [kind, setKind] = useState('all');
   return (
-    <div className="lab-filter">
+    <div className="kind-filter">
       <div className="seg" role="group" aria-label={label}>
         <button type="button" aria-pressed={kind === 'all'} onClick={() => setKind('all')}>{allLabel}</button>
         {kinds.map((k) => (
@@ -15,7 +15,7 @@ export default function KindFilter({ kinds, allLabel, label, children }: { kinds
         ))}
       </div>
       {children}
-      <style>{kind === 'all' ? '' : `.lab-filter [data-kind]:not([data-kind="${kind}"]) { display: none; }`}</style>
+      <style>{kind === 'all' ? '' : `.kind-filter [data-kind]:not([data-kind="${kind}"]) { display: none; }`}</style>
     </div>
   );
 }

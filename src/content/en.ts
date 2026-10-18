@@ -24,6 +24,11 @@ const en: Content = {
       { label: 'GitHub', href: 'https://github.com/woorichicken' },
       { label: 'Email', href: 'mailto:solhun.jeong@gmail.com' },
     ],
+    // 첫 화면 스크롤 문장 — 검수대: 직접 돌려 봄 → 한 번 더 확인 → 근거 표 · 기록계: 운영에 붙임 → 흔들림 기록 → 깨진 곳에 도장
+    steps: {
+      bench: ['I run what I build, myself.', "“It ran” isn’t done — I check once more.", 'Then I bring back the evidence, in a table.'],
+      recorder: ['I put agents into real operations.', 'I record every wobble as it happens.', 'Where it breaks, I leave numbers and proof.'],
+    },
   },
   stats: {
     title: 'The past year in numbers',

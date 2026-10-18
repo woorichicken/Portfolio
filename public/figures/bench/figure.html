@@ -1,0 +1,115 @@
+<!doctype html>
+<!--
+  임시 자리 그림(stand-in) — 검수대.
+  진짜 그림은 /anatomy 로 그리는 중이고(task-anatomy-brand-1018 S1), 오면 이 파일을 그대로 바꿔 넣는다.
+  넘겨주기 계약만 같게 맞춰 두었다: ?t=0.42 로 정지 · window.setPose(t) 결정적 · 부품마다 <g data-part>.
+  부품: cart(대차) · gauge(게이지) · printer(근거 표 출력)
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>검수대 — 자리 그림</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #f7ece4; }
+  main { height: 100%; display: grid; place-items: center; }
+  svg { width: 100%; height: 100%; display: block; }
+  .ln { fill: none; stroke: #1e2834; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .top { fill: #fcf7f2; } .side { fill: #edddca; } .dark { fill: #d9c6b1; }
+  .moss { fill: #4b6250; } .ink { fill: #1e2834; }
+  .stub { font: 600 12px ui-monospace, Menlo, monospace; fill: #5a6270; }
+</style>
+</head>
+<body>
+<main>
+<svg id="fig" viewBox="0 0 640 440" role="img" aria-label="검수대 자리 그림">
+  <!-- 받침 -->
+  <g data-part="base">
+    <path class="ln dark" d="M70 330 l0 70 l14 0 l0 -62 M546 330 l0 70 l-14 0 l0 -62" />
+    <path class="ln side" d="M60 300 L580 300 L580 330 L60 330 Z" />
+    <path class="ln top" d="M110 240 L620 240 L580 300 L60 300 Z" />
+    <path class="ln" d="M140 270 L560 270" stroke-dasharray="2 10" />
+  </g>
+  <!-- 대차: 레일 위를 지나가며 물건을 싣고 온다 -->
+  <g data-part="cart"><g id="cart">
+    <path class="ln side" d="M0 -46 L96 -46 L96 0 L0 0 Z" />
+    <path class="ln top" d="M14 -64 L110 -64 L96 -46 L0 -46 Z" />
+    <path class="ln side" d="M96 -46 L110 -64 L110 -18 L96 0 Z" />
+    <rect class="ln moss" x="22" y="-36" width="34" height="22" rx="3" />
+    <circle class="ln ink" cx="18" cy="6" r="8" /><circle class="ln ink" cx="80" cy="6" r="8" />
+  </g></g>
+  <!-- 게이지: 한 번 더 확인 -->
+  <g data-part="gauge">
+    <path class="ln dark" d="M356 262 L368 262 L368 168 L356 168 Z" />
+    <circle class="ln top" cx="362" cy="130" r="48" />
+    <g id="ticks"></g>
+    <path id="needle" class="ln" stroke-width="3" d="M362 130 L362 92" />
+    <circle class="ink" cx="362" cy="130" r="5" />
+  </g>
+  <!-- 근거 표: 종이가 나오며 줄이 채워지고, 끝에 「눈만」 도장 -->
+  <g data-part="printer">
+    <path class="ln side" d="M450 236 L560 236 L560 196 L450 196 Z" />
+    <path class="ln top" d="M462 180 L572 180 L560 196 L450 196 Z" />
+    <g id="sheet">
+      <path class="ln top" d="M462 236 L548 236 L548 236 L462 236 Z" id="paper" />
+      <g id="rows"></g>
+      <g id="stamp" opacity="0">
+        <circle cx="0" cy="0" r="15" fill="none" stroke="#a63f2a" stroke-width="2" />
+        <ellipse cx="-5" cy="1" rx="3" ry="3.6" fill="#a63f2a" /><ellipse cx="5" cy="1" rx="3" ry="3.6" fill="#a63f2a" />
+        <path d="M-9 -6 l6 -1.5 M9 -6 l-6 -1.5" stroke="#a63f2a" stroke-width="2" stroke-linecap="round" />
+      </g>
+    </g>
+  </g>
+  <text class="stub" x="16" y="430">임시 자리 그림 · 검수대(S1) 도착 전</text>
+</svg>
+</main>
+<script>
+(() => {
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  // 구간 [a,b] 안에서 0→1 로 가는 값(바깥은 0 또는 1) — 같은 t 면 같은 그림
+  const span = (t, a, b) => { const x = clamp((t - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); };
+  const ticks = document.getElementById('ticks');
+  for (let i = 0; i <= 10; i++) {
+    const a = (-120 + i * 24) * Math.PI / 180;
+    const l = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    l.setAttribute('class', 'ln'); l.setAttribute('stroke-width', i % 5 ? 1.2 : 2);
+    l.setAttribute('d', `M${362 + Math.sin(a) * 40} ${130 - Math.cos(a) * 40} L${362 + Math.sin(a) * 46} ${130 - Math.cos(a) * 46}`);
+    ticks.appendChild(l);
+  }
+  const rows = document.getElementById('rows');
+  const ROWS = 5;
+  for (let i = 0; i < ROWS; i++) {
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    r.setAttribute('class', 'ln'); r.setAttribute('stroke-width', 1.4); r.setAttribute('d', '');
+    rows.appendChild(r);
+  }
+  function setPose(t) {
+    t = clamp(Number(t) || 0, 0, 1);
+    // 인트로 0~0.3 대차가 들어오고, 0.3~0.62 게이지가 흔들렸다 멈추고, 0.6~0.9 근거 표가 나온다. 0.9~1 은 조용히 머문다
+    const cx = 120 + span(t, 0, 0.32) * 150;
+    document.getElementById('cart').setAttribute('transform', `translate(${cx} 300)`);
+    const k = span(t, 0.3, 0.62);
+    const swing = k <= 0 ? -100 : -100 + 130 * k + 26 * Math.sin(k * Math.PI * 3) * (1 - k);
+    document.getElementById('needle').setAttribute('transform', `rotate(${swing} 362 130)`);
+    const len = span(t, 0.6, 0.86) * 110;
+    document.getElementById('paper').setAttribute('d', `M462 236 L548 236 L${548 - len * 0.35} ${236 + len} L${462 - len * 0.35} ${236 + len} Z`);
+    [...rows.children].forEach((r, i) => {
+      const y = 18 + i * 18;
+      r.setAttribute('d', len > y + 6 ? `M${470 - y * 0.35} ${236 + y} L${530 - y * 0.35} ${236 + y}` : '');
+    });
+    const st = span(t, 0.86, 0.92);
+    const stamp = document.getElementById('stamp');
+    stamp.setAttribute('opacity', st.toFixed(3));
+    stamp.setAttribute('transform', `translate(${508 - 92 * 0.35} ${236 + 92}) scale(${1.4 - 0.4 * st})`);
+  }
+  window.setPose = setPose;
+  const q = new URLSearchParams(location.search).get('t');
+  if (q !== null) { setPose(Number(q)); return; }
+  // ?t 가 없으면 한 바퀴를 6초에 돌린다
+  const start = performance.now();
+  const loop = (now) => { setPose(((now - start) / 6000) % 1); requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
