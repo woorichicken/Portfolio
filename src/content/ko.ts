@@ -135,8 +135,10 @@ const ko: Content = {
         gallery: [
           shot('efm_stages_c', '진행 단계 화면', '진행 단계 — 계약 → 진단 → 설계 → 실행 → 변화관리 → 평가'),
           shot('efm_diag_c', 'AS-IS 진단 화면', 'AS-IS 진단 — 영역별 문제와 중요도'),
-          shot('efm_kpi_c', '성과관리 화면', '성과관리 — KPI 변경을 승인 요청으로'),
-          shot('efm_att', '공개 사이트 근태 데모', '공개 사이트의 근태 데모'),
+          {
+            ...shot('efm_kpi_c', '성과관리 화면', '성과관리 — KPI 변경을 승인 요청으로'),
+            modalCaption: '예시 데이터 · 성과관리 — KPI 변경을 승인 요청으로',
+          },
         ],
       },
       {
@@ -152,7 +154,7 @@ const ko: Content = {
           { label: '플랫폼', value: 'macOS (Electron)' },
           { label: '라이선스', value: 'MIT 오픈소스' },
         ],
-        cover: shot('cli_main', 'CLI Manager 메인 화면'),
+        cover: shot('cli_green', 'CLI Manager 화면 — AI 세션은 녹색'),
         improvements: [
           {
             badge: 'v1.9 – v1.10 · 2026.09',
@@ -296,7 +298,6 @@ const ko: Content = {
           },
         ],
         gallery: [
-          shot('ncd_ux', '화면 위에 남긴 수정 피드백', '화면 위에 남긴 수정 피드백(GNB)'),
           shot('ncd_plan', '케어 플랜 선택 화면', '케어 플랜 선택'),
         ],
       },

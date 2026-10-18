@@ -28,9 +28,6 @@ export const PROJECT_ARTIFACTS: Record<string, ArtifactDef[]> = {
     { kind: 'tool', title: t('요소 지목 제보 위젯', 'Point-and-report widget', 'Widget para señalar y reportar'), image: 'kits_picker_top' },
     { kind: 'screen', title: t('인터랙션 규칙', 'Interaction rules', 'Reglas de interacción'), example: true },
   ],
-  fair: [
-    { kind: 'system', title: t('토큰·컴포넌트 표', 'Tokens & components', 'Tokens y componentes'), example: true },
-  ],
   'cli-manager': [
     { kind: 'screen', title: t('AI 세션은 녹색', 'AI sessions in green', 'Sesiones de IA en verde'), image: 'cli_green' },
   ],
@@ -47,7 +44,6 @@ export const PROJECT_ARTIFACTS: Record<string, ArtifactDef[]> = {
     { kind: 'screen', title: t('미션 매칭 흐름', 'Mission matching flow', 'Flujo de emparejamiento'), example: true },
   ],
   ncdigitec: [
-    { kind: 'tool', title: t('화면 위 수정 피드백', 'On-screen fix feedback', 'Comentarios sobre la pantalla'), image: 'ncd_ux' },
     { kind: 'screen', title: t('리디자인 전후', 'Redesign before/after', 'Rediseño antes y después'), example: true },
   ],
   // content(콘텐츠 자동화)는 콘텐츠 파일에서 주석 처리돼 있다. 다시 켤 때 아래도 함께 푼다.
