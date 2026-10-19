@@ -33,7 +33,6 @@ const PREVIEW = [
   { project: 'kits', index: 0 },         // 리뷰 보드
   { project: 'kits', index: 1 },         // 요소 지목 제보 위젯
   { project: 'cli-manager', index: 0 },  // AI 세션은 녹색
-  { project: 'ncdigitec', index: 0 },    // 화면 위 수정 피드백
 ];
 
 export default function Portfolio({ locale }: { locale: Locale }) {
@@ -51,15 +50,15 @@ export default function Portfolio({ locale }: { locale: Locale }) {
           labelledBy="hero-title"
           head={
             <>
+              <h1 id="hero-title" className="stage-title">
+                <span>JEONG</span> <span>(SOLHUN)</span>
+                <span className="visually-hidden"> — {t.hero.name}</span>
+              </h1>
               <p className="stage-role">
                 <span lang={locale}>{t.hero.name}</span>
                 <span aria-hidden="true" className="stage-sep" />
                 {t.hero.role}
               </p>
-              <h1 id="hero-title" className="stage-title">
-                <span>JEONG</span> <span>(SOLHUN)</span>
-                <span className="visually-hidden"> — {t.hero.name}</span>
-              </h1>
             </>
           }
           foot={

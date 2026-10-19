@@ -134,8 +134,10 @@ const en: Content = {
         gallery: [
           shot('efm_stages_c', 'Project stage screen', 'Stages — contract → diagnosis → design → execution → change management → evaluation'),
           shot('efm_diag_c', 'AS-IS diagnosis screen', 'AS-IS diagnosis — issues and priority by area'),
-          shot('efm_kpi_c', 'Performance management screen', 'Performance management — KPI changes become approval requests'),
-          shot('efm_att', 'Attendance demo on the public site', 'Attendance demo on the public site'),
+          {
+            ...shot('efm_kpi_c', 'Performance management screen', 'Performance management — KPI changes become approval requests'),
+            modalCaption: 'Example data · Performance management — KPI changes become approval requests',
+          },
         ],
       },
       {
@@ -151,7 +153,7 @@ const en: Content = {
           { label: 'Platform', value: 'macOS (Electron)' },
           { label: 'License', value: 'MIT, open source' },
         ],
-        cover: shot('cli_main', 'CLI Manager main screen'),
+        cover: shot('cli_green', 'CLI Manager screen — AI sessions shown in green'),
         improvements: [
           {
             badge: 'v1.9 – v1.10 · Sep 2026',
@@ -295,7 +297,6 @@ const en: Content = {
           },
         ],
         gallery: [
-          shot('ncd_ux', 'Feedback left on the screen', 'Feedback left directly on the screen (navigation bar)'),
           shot('ncd_plan', 'Care plan picker', 'Choosing a care plan'),
         ],
       },

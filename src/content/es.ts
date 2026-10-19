@@ -134,8 +134,10 @@ const es: Content = {
         gallery: [
           shot('efm_stages_c', 'Pantalla de etapas', 'Etapas: contrato → diagnóstico → diseño → ejecución → gestión del cambio → evaluación'),
           shot('efm_diag_c', 'Pantalla de diagnóstico AS-IS', 'Diagnóstico AS-IS: problemas y prioridad por área'),
-          shot('efm_kpi_c', 'Pantalla de gestión del desempeño', 'Gestión del desempeño: los cambios de KPI pasan a ser solicitudes de aprobación'),
-          shot('efm_att', 'Demo de asistencia en la web pública', 'Demo de control de asistencia en la web pública'),
+          {
+            ...shot('efm_kpi_c', 'Pantalla de gestión del desempeño', 'Gestión del desempeño: los cambios de KPI pasan a ser solicitudes de aprobación'),
+            modalCaption: 'Datos de ejemplo · Gestión del desempeño: cambios de KPI para aprobación',
+          },
         ],
       },
       {
@@ -151,7 +153,7 @@ const es: Content = {
           { label: 'Plataforma', value: 'macOS (Electron)' },
           { label: 'Licencia', value: 'MIT, código abierto' },
         ],
-        cover: shot('cli_main', 'Pantalla principal de CLI Manager'),
+        cover: shot('cli_green', 'Pantalla de CLI Manager: sesiones de IA en verde'),
         improvements: [
           {
             badge: 'v1.9 – v1.10 · sep. 2026',
@@ -295,7 +297,6 @@ const es: Content = {
           },
         ],
         gallery: [
-          shot('ncd_ux', 'Feedback dejado sobre la pantalla', 'Feedback dejado directamente sobre la pantalla (barra de navegación)'),
           shot('ncd_plan', 'Selección de plan de cuidado', 'Elegir un plan de cuidado'),
         ],
       },

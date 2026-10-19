@@ -10,7 +10,7 @@ export default function Figure({ shot, sizes, className, priority, openLabel }: 
         href={shot.src}
         data-lightbox=""
         data-alt={shot.alt}
-        data-caption={shot.caption ?? ''}
+        data-caption={shot.modalCaption ?? shot.caption ?? ''}
         aria-label={`${openLabel}: ${shot.alt}`}
       >
         <Image src={shot.src} alt={shot.alt} width={shot.width} height={shot.height} sizes={sizes} priority={priority} />

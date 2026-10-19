@@ -13,8 +13,6 @@ const DIMENSIONS = {
   efm_stages_c: [1400, 734],
   efm_diag_c: [1400, 593],
   efm_kpi_c: [1400, 688],
-  efm_att: [1400, 875],
-  cli_main: [1400, 933],
   cli_ph: [1400, 787],
   cli_green: [1400, 910],
   cli_loop: [1400, 933],
@@ -26,7 +24,6 @@ const DIMENSIONS = {
   ptx_credit: [647, 1400],
   ptx_comm: [647, 1400],
   ncd_kv: [1400, 612],
-  ncd_ux: [1400, 787],
   ncd_plan: [706, 1400],
   // 6회차 — ct_coord 에서 저작권 미확인 캐릭터(위쪽)를 잘라 낸 판. 파이프라인이 만든 카드 그대로
   ct_cover_v2: [1120, 840],
@@ -55,6 +52,7 @@ export type Shot = {
   height: number;
   alt: string;
   caption?: string;
+  modalCaption?: string;
 };
 
 export function shot(id: ImageId, alt: string, caption?: string): Shot {

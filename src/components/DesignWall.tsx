@@ -43,12 +43,11 @@ export default function DesignWall({ locale }: { locale: Locale }) {
         <div className="wrap design-body">
           <KindFilter kinds={kinds.map((k) => ({ key: k, label: t.design.kinds[k] }))} allLabel={t.design.all} label={t.design.filter}>
             <div className="art-wall">
-              {all.map(({ a, project }, i) => (
+              {visible.map(({ a, project }, i) => (
                 <ArtifactTile key={`${project ?? ''}-${a.title}`} a={a} projectName={project} size={tileSize(a, i)} sizes="(max-width: 700px) 100vw, 50vw" exampleLabel={t.design.example} openLabel={t.a11y.openImage} />
               ))}
             </div>
           </KindFilter>
-          <p className="design-note" data-example="">{t.design.note}</p>
         </div>
       </main>
       <footer className="contact contact-compact">

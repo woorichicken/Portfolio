@@ -57,6 +57,130 @@ export default function ScrollStage({ steps, head, foot, labelledBy }: {
     };
   }, [update]);
 
+  useEffect(() => {
+    if (reduced) return;
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const distance = spec.end - spec.start;
+    const breakpointOffset = 0.02;
+    const stops = [
+      0,
+      clamp01((spec.steps[0] - spec.start) / distance + breakpointOffset),
+      clamp01((spec.steps[1] - spec.start) / distance + breakpointOffset),
+      1,
+    ];
+    let targetProgress: number | null = null;
+    let targetDeadline = 0;
+    let unlockAt = 0;
+    let settleTimer: number | undefined;
+    let touchStartY: number | null = null;
+    let touchConsumed = false;
+
+    const currentProgress = () => {
+      const run = el.offsetHeight - window.innerHeight;
+      return run > 0 ? clamp01(-el.getBoundingClientRect().top / run) : 0;
+    };
+
+    const settleAtTarget = () => {
+      if (targetProgress === null) return;
+      if (performance.now() >= targetDeadline || Math.abs(currentProgress() - targetProgress) < 0.015) {
+        targetProgress = null;
+        unlockAt = performance.now() + 220;
+        return;
+      }
+      settleTimer = window.setTimeout(settleAtTarget, 50);
+    };
+
+    const moveOneStop = (direction: 'forward' | 'backward', event: WheelEvent | KeyboardEvent | TouchEvent) => {
+      const rect = el.getBoundingClientRect();
+      const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height ?? 0;
+      const stageIsVisible = rect.top <= headerHeight + window.innerHeight * 0.2
+        && rect.bottom > headerHeight + window.innerHeight * 0.2;
+      if (!stageIsVisible) return false;
+
+      if (targetProgress !== null || performance.now() < unlockAt) {
+        event.preventDefault();
+        return true;
+      }
+
+      const current = currentProgress();
+      const next = direction === 'forward'
+        ? stops.find((stop) => stop > current + 0.015)
+        : stops.slice().reverse().find((stop) => stop < current - 0.015);
+      if (next === undefined) return false;
+
+      event.preventDefault();
+      targetProgress = next;
+      targetDeadline = performance.now() + 2500;
+      const run = el.offsetHeight - window.innerHeight;
+      const top = window.scrollY + rect.top + run * next;
+      window.scrollTo({ top, behavior: 'smooth' });
+      settleTimer = window.setTimeout(settleAtTarget, 50);
+      return true;
+    };
+
+    const onWheel = (event: WheelEvent) => {
+      if (event.ctrlKey || Math.abs(event.deltaY) < 4) return;
+      moveOneStop(event.deltaY > 0 ? 'forward' : 'backward', event);
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.target instanceof HTMLElement && event.target.closest('a, button, input, textarea, select, [contenteditable="true"]')) return;
+      if (event.key === 'ArrowDown' || event.key === 'PageDown' || (event.code === 'Space' && !event.shiftKey)) {
+        moveOneStop('forward', event);
+      } else if (event.key === 'ArrowUp' || event.key === 'PageUp' || (event.code === 'Space' && event.shiftKey)) {
+        moveOneStop('backward', event);
+      }
+    };
+
+    const onTouchStart = (event: TouchEvent) => {
+      touchStartY = event.touches.length === 1 ? event.touches[0].clientY : null;
+      touchConsumed = targetProgress !== null;
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (touchStartY === null || event.touches.length !== 1) return;
+      if (touchConsumed) {
+        event.preventDefault();
+        return;
+      }
+      const delta = touchStartY - event.touches[0].clientY;
+      if (Math.abs(delta) < 24) return;
+      touchConsumed = moveOneStop(delta > 0 ? 'forward' : 'backward', event);
+    };
+
+    const onTouchEnd = () => {
+      touchStartY = null;
+      touchConsumed = false;
+    };
+
+    const onHashChange = () => {
+      targetProgress = null;
+      unlockAt = 0;
+      if (settleTimer !== undefined) window.clearTimeout(settleTimer);
+    };
+
+    // One wheel/touch gesture advances one illustration beat; page links and scrolling outside this stage stay native.
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('touchcancel', onTouchEnd);
+    window.addEventListener('hashchange', onHashChange);
+    return () => {
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
+      window.removeEventListener('hashchange', onHashChange);
+      if (settleTimer !== undefined) window.clearTimeout(settleTimer);
+    };
+  }, [reduced, spec]);
+
   const onApi = useCallback((api: FigureApi | null) => {
     apiRef.current = api;
     if (api) update();
@@ -75,10 +199,6 @@ export default function ScrollStage({ steps, head, foot, labelledBy }: {
               <li key={s} aria-current={i === step ? 'step' : undefined}>{s}</li>
             ))}
           </ol>
-          <p className="stage-ticks" aria-hidden="true">
-            {steps[fig].map((s, i) => <span key={s} data-on={i <= step ? '' : undefined} />)}
-            <b>{String(step + 1).padStart(2, '0')} / {String(STEP_COUNT).padStart(2, '0')}</b>
-          </p>
           {foot}
         </div>
       </div>
