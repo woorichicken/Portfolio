@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation';
+import JsonLd from '@/components/JsonLd';
 import Portfolio from '@/components/Portfolio';
 import { isLocale } from '@/i18n/config';
 import { buildMetadata } from '@/lib/metadata';
+import { buildPersonJsonLd } from '@/lib/structured-data';
 
 export { viewport } from '@/lib/metadata';
 
@@ -16,5 +18,10 @@ export async function generateMetadata({ params }: Props) {
 export default async function LocalizedHome({ params }: Props) {
   const { locale } = await params;
   if (!isLocale(locale) || locale === 'ko') notFound();
-  return <Portfolio locale={locale} />;
+  return (
+    <>
+      <JsonLd data={buildPersonJsonLd(locale)} />
+      <Portfolio locale={locale} />
+    </>
+  );
 }
