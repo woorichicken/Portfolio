@@ -120,6 +120,14 @@ curl -s "$P/en" | grep -oE '<html lang="[a-z]+"|hrefLang="[^"]+"'               
 #   각 파일에서 grep -c dp-agentation-ingest / dp_ingest_  → 합계 1 이상
 ```
 
+AI 검색용 구조화 데이터·llms.txt(2026-10-30 추가)는 화면에 안 보여서 눌러 보는 검증으로는 빠진 걸 못 센다. 배포본에서 직접 센다:
+
+```bash
+curl -s -o /dev/null -w "llms.txt %{http_code}\n" "$P/llms.txt"                       # 200
+for p in / /en /es; do echo "$p $(curl -s "$P$p" | grep -o '"@type":"Person"' | wc -l | tr -d ' ')"; done   # 각 1
+node ~/Downloads/geo-tracker/audit.mjs "$P"                                             # GEO 의 구조화 데이터·sameAs·llms.txt·갱신 시점 통과
+```
+
 실전송 검증을 했으면 시험 제보는 근거 코멘트를 달고 닫는다(`dp add-annotation-comment` → `dp set-annotation --status resolved --resolved-by <PR/커밋 링크>`).
 링크가 없으면 resolved 는 서버가 거부한다 — 그때는 `dismissed`.
 
