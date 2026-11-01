@@ -93,9 +93,11 @@ export const HIDDEN: string[] = [];
 /** 화면 글 — 콘텐츠 파일(ko·en·es.ts)에 없는 리브랜딩 화면의 말. 세 언어를 한 줄에 둔다 */
 export const SCREEN = {
   pickerTitle: t('어떤 정경훈을 볼까요?', 'Which side of me would you like to see?', '¿Qué faceta mía quieres ver?'),
-  pickerLead: t('역할을 고르면 그 일에 맞는 작업부터 보여 드립니다. 다음 화면 오른쪽 위에서 언제든 바꿀 수 있습니다.', 'Pick a role and I’ll start with the work that fits it. You can switch any time from the top right of the next screen.', 'Elige un rol y empiezo por el trabajo que encaja con él. Puedes cambiarlo cuando quieras arriba a la derecha de la siguiente pantalla.'),
   pickerAll: t('전부 볼게요', 'Show me everything', 'Quiero verlo todo'),
   pickerRecent: t('최근에 본 역할', 'Last viewed', 'Visto la última vez'),
+  aboutMe: t('정경훈 소개', 'About me', 'Sobre mí'),
+  close: t('닫기', 'Close', 'Cerrar'),
+  proof: t('숫자 근거', 'The numbers', 'Las cifras'),
   switchRole: t('역할 바꾸기', 'Switch role', 'Cambiar de rol'),
   viewingAs: t('보는 중', 'Viewing as', 'Viendo como'),
   featured: t('대표작', 'Featured', 'Destacado'),

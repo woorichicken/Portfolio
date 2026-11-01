@@ -146,7 +146,7 @@ node ~/Downloads/geo-tracker/audit.mjs "$P"                                     
 
 | 옛 경로 | 켜졌을 때 |
 |---|---|
-| `/changelog`, `/docs`, `/gallery`, `/roadmap`, `/feedback`, `/compare/*`, `/admin/*`, `/products/*` | 301 → `climanager.solhun.com` 같은 경로(쿼리 유지). `/changelog` 는 구버전 앱이 계속 연다 — **지우지 않는다** |
+| `/changelog`, `/docs`, `/gallery`, `/roadmap`, `/feedback`, `/compare/*`, `/products/*` (`/admin/*` 는 2026-11-01 뺐다 — 포트폴리오 어드민 자리, CLI Manager 쪽은 404) | 301 → `climanager.solhun.com` 같은 경로(쿼리 유지). `/changelog` 는 구버전 앱이 계속 연다 — **지우지 않는다** |
 | `/api/*` | 308 (메서드·본문 유지) |
 | `/privacy`, `/terms`, `/apps/fair-social-ops` | rewrite 프록시 — 주소 유지(Google OAuth 동의 화면 등록 URL) |
 | Portfolio 에 없는 이미지·영상 | fallback 프록시 |

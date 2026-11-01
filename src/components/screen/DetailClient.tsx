@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { IconInfo } from './icons';
 
-// 상세 페이지의 탭.
+// 상세 페이지의 탭과 제목 옆 툴팁.
 
 export type TabPanel = { id: string; label: string; content: ReactNode };
 
@@ -85,5 +86,28 @@ export function DetailTabs({ panels, label }: { panels: TabPanel[]; label: strin
       {/* JS 가 꺼져 있으면 숨김을 풀어 패널을 전부 이어서 보여 준다 */}
       <noscript><style>{'.tab-panel[hidden]{display:block}'}</style></noscript>
     </>
+  );
+}
+
+/**
+ * 제목 옆 작은 ⓘ — 마우스를 올리거나 초점을 주면 숫자 근거가 말풍선으로 뜬다(5회차 리뷰 D6: 아래 태그가 디자인을 해친다 → 툴팁).
+ * 말풍선 글은 aria-describedby 로 묶여 화면 읽기 프로그램은 단추에서 바로 읽는다. Esc 로 닫힌다(WCAG 1.4.13).
+ */
+export function Tip({ id, label, children }: { id: string; label: string; children: ReactNode }) {
+  const [dismissed, setDismissed] = useState(false);
+  return (
+    <span className="ep-tip" data-dismissed={dismissed ? '' : undefined} onMouseLeave={() => setDismissed(false)}>
+      <button
+        type="button"
+        className="ep-tip-btn"
+        aria-label={label}
+        aria-describedby={id}
+        onKeyDown={(e) => { if (e.key === 'Escape') setDismissed(true); }}
+        onBlur={() => setDismissed(false)}
+      >
+        <IconInfo />
+      </button>
+      <span role="tooltip" id={id} className="ep-tip-bubble">{children}</span>
+    </span>
   );
 }

@@ -10,7 +10,7 @@ import { projectPath, type Locale } from '@/i18n/config';
 import Figure from '../Figure';
 import Rich from '../Rich';
 import { ArtifactTileCard, SimilarCard } from './Cards';
-import { DetailTabs, type TabPanel } from './DetailClient';
+import { DetailTabs, Tip, type TabPanel } from './DetailClient';
 import { IconClose, IconExternal } from './icons';
 import { BackToList } from './RoleClient';
 import Shell from './Shell';
@@ -112,12 +112,12 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
 
   // 맡은 일 — 넷플릭스 회차 목록처럼 「이 프로젝트에서 제가 한 부분」을 번호로 훑게 하고,
   // 전후가 있는 개선(바꾼 것)은 그 아래 「특별편」으로 내린다(3회차 리뷰 D6)
-  const episode = (num: string, title: string, body: ReactNode, badge?: string) => (
+  const episode = (num: string, title: string, body: ReactNode, badge?: string, tip?: ReactNode) => (
     <li key={title} className="episode">
       <span className="ep-num">{num}</span>
-      <div>
+      <div className="ep-main">
         {badge && <p className="ep-badge">{badge}</p>}
-        <h3 className="ep-title">{title}</h3>
+        <h3 className="ep-title">{title}{tip}</h3>
         {body}
       </div>
     </li>
@@ -148,9 +148,13 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
                       <div><span>{t.work.labels.before}</span><p>{it.before}</p></div>
                       <div><span>{t.work.labels.after}</span><p><Rich text={it.after} /></p></div>
                     </div>
-                    {it.metric && <p className="ep-metric"><strong>{it.metric.value}</strong>{it.metric.label}</p>}
                   </>,
                   it.badge,
+                  it.metric && (
+                    <Tip id={`tip-${m.slug}-${i}`} label={`${it.title} — ${s.proof}`}>
+                      <strong>{it.metric.value}</strong> {it.metric.label}
+                    </Tip>
+                  ),
                 ))}
               </ol>
             </section>
