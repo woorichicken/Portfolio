@@ -27,38 +27,64 @@ export function Row({ id, title, more, size, prevLabel, nextLabel, children }: {
   );
 }
 
-/** 프로젝트 카드 — 그림 + 작은 줄(맥락·기간) + 이름. 누르면 상세(/projects/<slug>) */
+/** 프로젝트 카드 — 16:9 그림 위에 맥락·이름을 얹는다. 누르면 상세(/projects/<slug>)
+ *  그림 설명(alt)은 비운다 — 링크 이름이 「맥락 · 이름」으로 읽혀야 화면 읽기 프로그램이 카드마다 긴 그림 설명을 되풀이하지 않는다. */
 export function TitleCard({ card, locale, sizes, priority, tag }: { card: TitleCardData; locale: Locale; sizes: string; priority?: boolean; tag?: string }) {
   const portrait = card.shot.height > card.shot.width;
   return (
     <a className="card" href={projectPath(locale, card.slug)}>
       <span className={`card-media${portrait ? ' is-portrait' : ''}`}>
-        <Image src={card.shot.src} alt={card.shot.alt} width={card.shot.width} height={card.shot.height} sizes={sizes} priority={priority} />
+        <Image src={card.shot.src} alt="" width={card.shot.width} height={card.shot.height} sizes={sizes} priority={priority} />
         {tag && <span className="card-tag">{tag}</span>}
+        <span className="card-label">
+          <span className="card-kicker">{card.kicker}</span>
+          <span className="card-name">{card.name}</span>
+        </span>
       </span>
-      <span className="card-kicker">{card.kicker}</span>
-      <span className="card-name">{card.name}</span>
     </a>
   );
 }
 
-/** 결과물 카드 — 그림을 누르면 크게(Lightbox). 「예시」 칸은 피드백 모드에서만 보인다 */
+/** 결과물 카드 — 같은 16:9 카드. 누르면 크게(Lightbox). 「예시」 칸은 피드백 모드에서만 보인다 */
 export function ArtifactTileCard({ item, sizes, exampleLabel, openLabel }: { item: ArtifactCard; sizes: string; exampleLabel: string; openLabel: string }) {
   const a = item.artifact;
   if ('example' in a) {
     return (
-      <figure className="art art-ex" data-kind={a.kind} data-example="">
-        <div className="art-media"><span>{exampleLabel}</span></div>
-        <figcaption><b>{a.title}</b>{item.projectName && <span>{item.projectName}</span>}</figcaption>
-      </figure>
+      <div className="card art-ex" data-kind={a.kind} data-example="">
+        <span className="card-media"><span>{exampleLabel}</span></span>
+      </div>
     );
   }
   return (
-    <figure className="art" data-kind={a.kind}>
-      <a className="art-media" href={a.shot.src} data-lightbox="" data-alt={a.shot.alt} data-caption={item.projectName ? `${a.title} · ${item.projectName}` : a.title} aria-label={`${openLabel}: ${a.title}`}>
-        <Image src={a.shot.src} alt={a.shot.alt} width={a.shot.width} height={a.shot.height} sizes={sizes} />
-      </a>
-      <figcaption><b>{a.title}</b>{item.projectName && <span>{item.projectName}</span>}</figcaption>
-    </figure>
+    <a
+      className="card art-media"
+      data-kind={a.kind}
+      href={a.shot.src}
+      data-lightbox=""
+      data-alt={a.shot.alt}
+      data-caption={item.projectName ? `${a.title} · ${item.projectName}` : a.title}
+      aria-label={`${openLabel}: ${a.title}${item.projectName ? ` · ${item.projectName}` : ''}`}
+    >
+      <span className="card-media">
+        <Image src={a.shot.src} alt="" width={a.shot.width} height={a.shot.height} sizes={sizes} />
+        <span className="card-label">
+          {item.projectName && <span className="card-kicker">{item.projectName}</span>}
+          <span className="card-name">{a.title}</span>
+        </span>
+      </span>
+    </a>
+  );
+}
+
+/** 비슷한 작품 카드 — 넷플릭스 「함께 시청된 콘텐츠」처럼 그림 아래 회색 칸에 글 */
+export function SimilarCard({ card, locale, sizes }: { card: TitleCardData; locale: Locale; sizes: string }) {
+  return (
+    <a className="sim" href={projectPath(locale, card.slug)}>
+      <span className="sim-media"><Image src={card.shot.src} alt="" width={card.shot.width} height={card.shot.height} sizes={sizes} /></span>
+      <span className="sim-body">
+        <span className="sim-kicker">{card.kicker}</span>
+        <span className="sim-name">{card.name}</span>
+      </span>
+    </a>
   );
 }

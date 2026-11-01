@@ -93,7 +93,7 @@ export const HIDDEN: string[] = [];
 /** 화면 글 — 콘텐츠 파일(ko·en·es.ts)에 없는 리브랜딩 화면의 말. 세 언어를 한 줄에 둔다 */
 export const SCREEN = {
   pickerTitle: t('어떤 정경훈을 볼까요?', 'Which side of me would you like to see?', '¿Qué faceta mía quieres ver?'),
-  pickerLead: t('고른 역할에 맞는 작업부터 보여 드립니다. 위쪽 아이콘으로 언제든 바꿀 수 있습니다.', 'I’ll start with the work that fits the role you pick. You can switch any time from the icon at the top.', 'Empiezo por el trabajo que encaja con el rol que elijas. Puedes cambiarlo cuando quieras desde el icono de arriba.'),
+  pickerLead: t('역할을 고르면 그 일에 맞는 작업부터 보여 드립니다. 다음 화면 오른쪽 위에서 언제든 바꿀 수 있습니다.', 'Pick a role and I’ll start with the work that fits it. You can switch any time from the top right of the next screen.', 'Elige un rol y empiezo por el trabajo que encaja con él. Puedes cambiarlo cuando quieras arriba a la derecha de la siguiente pantalla.'),
   pickerAll: t('전부 볼게요', 'Show me everything', 'Quiero verlo todo'),
   pickerRecent: t('최근에 본 역할', 'Last viewed', 'Visto la última vez'),
   switchRole: t('역할 바꾸기', 'Switch role', 'Cambiar de rol'),
@@ -112,6 +112,9 @@ export const SCREEN = {
   backToList: t('목록으로', 'Back to list', 'Volver a la lista'),
   copyLink: t('링크 복사', 'Copy link', 'Copiar enlace'),
   copied: t('복사했습니다', 'Copied', 'Copiado'),
+  copyFailed: t('복사가 안 됐어요 — 주소를 길게 눌러 복사하세요', 'Couldn’t copy — press and hold the address to copy it', 'No se pudo copiar: mantén pulsada la dirección para copiarla'),
+  newTab: t('(새 탭)', '(opens in a new tab)', '(se abre en una pestaña nueva)'),
+  openOriginal: t('원본 열기', 'Open original', 'Abrir original'),
   emailMe: t('메일 보내기', 'Email me', 'Escríbeme'),
   tabsLabel: t('프로젝트 정보', 'Project sections', 'Secciones del proyecto'),
   tabOverview: t('개요', 'Overview', 'Resumen'),
@@ -123,6 +126,7 @@ export const SCREEN = {
   voices: t('함께 일한 사람들의 말', 'What people said', 'Lo que dijeron'),
   lesson: t('배운 점', 'What I learned', 'Lo que aprendí'),
   links: t('링크', 'Links', 'Enlaces'),
+  aboutOf: t('{name} 상세 정보', 'About {name}', 'Sobre {name}'),
   history: t('지나온 일', 'History', 'Historia'),
   devhoonNote: t('대학생 개발팀 시절', 'Student dev team', 'Equipo de estudiantes'),
 } as const;

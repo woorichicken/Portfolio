@@ -5,7 +5,8 @@ import { screenCopy, type RoleId } from '@/content/roles';
 import { LANGUAGE_NAMES, LOCALES, designPath, type Locale } from '@/i18n/config';
 import FeedbackGate from '../feedback/FeedbackGate';
 import Lightbox from '../Lightbox';
-import { HeaderSolid, RoleChip, RoleHomeLink, TabBar, type TabKey } from './RoleClient';
+import { IconMail } from './icons';
+import { CarryHash, HeaderSolid, RoleChip, RoleHomeLink, TabBar, type TabKey } from './RoleClient';
 
 // 리브랜딩 화면의 공통 뼈대 — 머리(로고 · 메뉴 · 언어 · 역할 아이콘) + 본문 + 연락 띠 + 모바일 아래 탭.
 // altPath: 언어를 바꿀 때 같은 화면의 다른 언어판 주소. role: 지금 역할을 아는 화면(역할 화면)이면 넘긴다.
@@ -32,7 +33,7 @@ export default function Shell({ locale, altPath, role, tab, children, contact = 
             SOLHUN
           </RoleHomeLink>
           <nav aria-label={t.a11y.primaryNav} className="sx-nav">
-            <RoleHomeLink locale={locale}>{s.tabHome}</RoleHomeLink>
+            <RoleHomeLink locale={locale} current={tab === 'home'}>{s.tabHome}</RoleHomeLink>
             <a href={designPath(locale)} aria-current={tab === 'work' ? 'page' : undefined}>{s.tabWork}</a>
             <RoleHomeLink locale={locale} hash="#timeline">{t.timeline.title}</RoleHomeLink>
             <RoleHomeLink locale={locale} hash="#contact">{s.tabContact}</RoleHomeLink>
@@ -51,20 +52,23 @@ export default function Shell({ locale, altPath, role, tab, children, contact = 
         </div>
       </header>
       <HeaderSolid />
+      <CarryHash />
 
       <main id="main">{children}</main>
 
       {contact && (
         <footer className="contact-band" id="contact" aria-labelledby="contact-title">
-          <div className="wrap">
-            <h2 id="contact-title" className="sec-title">{t.contact.title}</h2>
+          {/* 넷플릭스에는 없는 칸 — 포트폴리오의 끝은 「연락」이라 빌보드와 같은 둥근 카드로 한 번 더 세운다 */}
+          <div className="contact-card" data-role={role ?? 'all'}>
+            <h2 id="contact-title" className="contact-title">{t.contact.title}</h2>
             <p className="contact-body">{t.contact.body}</p>
-            <a className="contact-email" href={`mailto:${t.contact.email}`}>{t.contact.email}</a>
-            <p className="contact-links">
-              {t.contact.links.map((l) => <a key={l.href} href={l.href} target="_blank" rel="noreferrer">{l.label}</a>)}
-            </p>
-            <p className="footer-note">© 2026 {t.hero.name} · {t.footer.note}</p>
+            <div className="contact-actions">
+              <a className="btn btn-primary btn-lg" href={`mailto:${t.contact.email}`}><IconMail />{s.emailMe}</a>
+              {t.contact.links.map((l) => <a key={l.href} className="btn btn-ghost btn-lg" href={l.href} target="_blank" rel="noreferrer">{l.label}<span className="visually-hidden"> {s.newTab}</span></a>)}
+            </div>
+            <p className="contact-email-line"><a href={`mailto:${t.contact.email}`}>{t.contact.email}</a></p>
           </div>
+          <p className="footer-note">© 2026 {t.hero.name} · {t.footer.note}</p>
         </footer>
       )}
 
@@ -76,7 +80,7 @@ export default function Shell({ locale, altPath, role, tab, children, contact = 
         workHref={designPath(locale)}
         labels={{ home: s.tabHome, work: s.tabWork, contact: s.tabContact, role: s.tabRole }}
       />
-      <Lightbox closeLabel={t.a11y.closeImage} prevLabel={t.a11y.prevImage} nextLabel={t.a11y.nextImage} />
+      <Lightbox closeLabel={t.a11y.closeImage} prevLabel={t.a11y.prevImage} nextLabel={t.a11y.nextImage} originalLabel={s.openOriginal} />
       <FeedbackGate copy={t.feedback} />
     </div>
   );

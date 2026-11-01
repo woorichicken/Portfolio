@@ -33,6 +33,8 @@ export default function RolePicker({ locale }: { locale: Locale }) {
       </div>
 
       <main id="main" className="picker-main">
+        {/* 처음 온 사람이 10초 안에 「누구 사이트인지」 알게 — 사용성 점검 U01 */}
+        <p className="picker-who"><b>{t.hero.name}</b> · {t.hero.role}</p>
         <h1 className="picker-title">{s.pickerTitle}</h1>
         <p className="picker-lead">{s.pickerLead}</p>
         <ul className="picker-grid">
@@ -48,13 +50,12 @@ export default function RolePicker({ locale }: { locale: Locale }) {
           ))}
         </ul>
         <div>
-          <a className="picker-all" href={browsePath(locale, 'all')} data-pick-role="all">{s.pickerAll}</a>
+          <a className="btn btn-outline picker-all" href={browsePath(locale, 'all')} data-pick-role="all">{s.pickerAll}</a>
         </div>
       </main>
 
       <footer className="picker-about">
         <div className="picker-about-inner">
-          <p><b>{t.hero.name} (SOLHUN)</b> · {t.hero.role}</p>
           <p><Rich text={t.hero.lead} /></p>
           <p className="picker-links">
             {t.hero.links.map((l) =>

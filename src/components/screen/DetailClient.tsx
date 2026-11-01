@@ -31,7 +31,13 @@ export function DetailTabs({ panels, label }: { panels: TabPanel[]; label: strin
   function select(id: string, focus = false) {
     setActive(id);
     history.replaceState(null, '', `#tab-${id}`);
-    if (focus) tabRefs.current[id]?.focus();
+    const tab = tabRefs.current[id];
+    if (focus) tab?.focus({ preventScroll: true });
+    // 좁은 폭(영어·스페인어)에서 탭 줄이 넘치면 고른 탭을 가로로만 보이게 당긴다 — 세로 스크롤은 건드리지 않는다(U13)
+    const list = tab?.parentElement;
+    if (tab && list && (tab.offsetLeft < list.scrollLeft || tab.offsetLeft + tab.offsetWidth > list.scrollLeft + list.clientWidth)) {
+      list.scrollTo({ left: tab.offsetLeft - 16, behavior: 'smooth' });
+    }
   }
 
   function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
@@ -80,11 +86,12 @@ export function DetailTabs({ panels, label }: { panels: TabPanel[]; label: strin
 }
 
 /** 링크 공유 — 휴대폰은 기기 공유 창, 그 밖은 주소 복사 + 알림 */
-export function ShareButton({ label, copiedLabel, title }: { label: string; copiedLabel: string; title: string }) {
+export function ShareButton({ label, copiedLabel, failedLabel, title }: { label: string; copiedLabel: string; failedLabel: string; title: string }) {
   const [toast, setToast] = useState<string | null>(null);
 
   async function share() {
-    const url = location.href.split('#')[0];
+    // 보던 탭(#tab-…)까지 함께 보낸다 — 받은 사람이 같은 탭에서 연다(U15)
+    const url = location.href;
     const coarse = window.matchMedia('(pointer: coarse)').matches;
     if (coarse && navigator.share) {
       try {
@@ -98,15 +105,15 @@ export function ShareButton({ label, copiedLabel, title }: { label: string; copi
       await navigator.clipboard.writeText(url);
       setToast(copiedLabel);
     } catch {
-      // 복사 권한이 없으면 주소를 그대로 보여 준다 — 길게 눌러 복사할 수 있게
-      setToast(url);
+      // 복사 권한이 없으면 무슨 일인지 말하고 주소를 보여 준다 — 길게 눌러 복사할 수 있게
+      setToast(`${failedLabel} ${url}`);
     }
     setTimeout(() => setToast(null), TOAST_MS);
   }
 
   return (
     <>
-      <button type="button" className="btn btn-ghost" onClick={share}><IconLink />{label}</button>
+      <button type="button" className="btn btn-ghost btn-lg" onClick={share}><IconLink />{label}</button>
       {toast && <p className="toast" role="status">{toast}</p>}
     </>
   );

@@ -23,7 +23,7 @@ export default function DesignWall({ locale }: { locale: Locale }) {
   return (
     <Shell locale={locale} altPath={designPath} tab="work">
       <div className="wrap wall-head">
-        <p className="billboard-kicker">{t.design.title}</p>
+        <p className="wall-kicker">{t.design.title}</p>
         <h1 className="wall-title">{t.design.pageTitle}</h1>
         <p className="wall-note">{t.design.note}</p>
       </div>

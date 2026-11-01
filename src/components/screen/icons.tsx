@@ -105,3 +105,12 @@ export function IconDown() {
 export function IconComment() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" /></svg>;
 }
+export function IconCaret() {
+  return <svg className="caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4z" fill="currentColor" /></svg>;
+}
+export function IconClose() {
+  return <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke}><path d="M6 6l12 12M18 6L6 18" /></svg>;
+}
+export function IconExpand() {
+  return <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke}><path d="M14 4h6v6M10 20H4v-6M20 4l-6.5 6.5M4 20l6.5-6.5" /></svg>;
+}

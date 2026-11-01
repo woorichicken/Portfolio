@@ -9,15 +9,16 @@ import type { Fact, Link, Project, Quote } from '@/content/types';
 import { projectPath, type Locale } from '@/i18n/config';
 import Figure from '../Figure';
 import Rich from '../Rich';
-import { ArtifactTileCard, TitleCard } from './Cards';
+import { ArtifactTileCard, SimilarCard } from './Cards';
 import { DetailTabs, ShareButton, type TabPanel } from './DetailClient';
-import { IconArrowRight, IconChevron, IconExternal, IconMail } from './icons';
-import { RoleHomeLink } from './RoleClient';
+import { IconClose, IconExternal, IconMail } from './icons';
+import { BackToList } from './RoleClient';
 import Shell from './Shell';
 
 // 작품 상세(/projects/<slug>) — 큰 프로젝트와 「그 외」·「이전」을 같은 틀로 그린다.
-// 위: 대표 그림(흐린 배경 위에 잘리지 않게) → 이름 · 사실 칩 → 버튼(사이트 열기 · 링크 복사) → 한 줄 · 요약 · 함께한 사람
-// 아래: 탭 — 개요(결과·말·배운 점) · 바꾼 것 · 화면 · 비슷한 작품 · 자세히. 빈 탭은 만들지 않는다.
+// 넷플릭스 상세 창(882px 시트 · 위 16:9 · 정보 2:1 칸)을 페이지로 옮겼다: 주소가 있어 링크로 보내고 검색엔진도 읽는다.
+// 위: 16:9 그림 + 이름 · 버튼(사이트 열기/메일 · 링크 복사 · 크게 보기) → 정보(왼쪽 사실 · 한 줄 · 요약 / 오른쪽 함께 · 링크)
+// 아래: 탭 — 개요(결과·말·배운 점) · 바꾼 것(회차 목록) · 화면 · 비슷한 작품 · 자세히. 빈 탭은 만들지 않는다.
 
 type Model = {
   slug: string;
@@ -130,7 +131,6 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
                 <h3 className="ep-title">{it.title}</h3>
                 <div className="ep-ba">
                   <div><span>{t.work.labels.before}</span><p>{it.before}</p></div>
-                  <span className="ep-arrow" aria-hidden="true"><IconArrowRight /></span>
                   <div><span>{t.work.labels.after}</span><p><Rich text={it.after} /></p></div>
                 </div>
                 {it.metric && <p className="ep-metric"><strong>{it.metric.value}</strong>{it.metric.label}</p>}
@@ -154,7 +154,7 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
             <ul className="similar" {...(visibleArtifacts.length === 0 ? { 'data-example': '' } : {})}>
               {artifacts.map((item) => (
                 <li key={item.artifact.title} {...('example' in item.artifact ? { 'data-example': '' } : {})}>
-                  <ArtifactTileCard item={item} sizes="(max-width: 640px) 50vw, 240px" exampleLabel={t.design.example} openLabel={t.a11y.openImage} />
+                  <ArtifactTileCard item={item} sizes="(max-width: 760px) 50vw, 300px" exampleLabel={t.design.example} openLabel={t.a11y.openImage} />
                 </li>
               ))}
             </ul>
@@ -175,7 +175,7 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
       label: s.tabSimilar,
       content: (
         <ul className="similar">
-          {similar.map((c) => <li key={c.slug}><TitleCard card={c} locale={locale} sizes="(max-width: 640px) 50vw, 240px" /></li>)}
+          {similar.map((c) => <li key={c.slug}><SimilarCard card={c} locale={locale} sizes="(max-width: 760px) 50vw, 300px" /></li>)}
         </ul>
       ),
     });
@@ -185,46 +185,57 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
     id: 'details',
     label: s.tabDetails,
     content: (
-      <dl className="details">
-        {m.facts.map((f) => <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
-        {m.links.length > 0 && (
-          <div><dt>{s.links}</dt><dd>{m.links.map((l, i) => <span key={l.href}>{i > 0 && ' · '}<a href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a></span>)}</dd></div>
-        )}
-      </dl>
+      <>
+        <h2 className="details-h">{s.aboutOf.replace('{name}', m.name)}</h2>
+        <dl className="details">
+          {m.facts.map((f) => <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+          {m.links.length > 0 && (
+            <div><dt>{s.links}</dt><dd>{m.links.map((l, i) => <span key={l.href}>{i > 0 && ' · '}<a href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a></span>)}</dd></div>
+          )}
+        </dl>
+      </>
     ),
   });
 
+  const portrait = m.cover.height > m.cover.width;
   return (
     <Shell locale={locale} altPath={(l) => projectPath(l, m.slug)}>
-      <article className="title-page">
+      {/* 시트 뒤 바탕 — 대표 그림을 흐리게 깔아 「목록 위에 열린 창」처럼 보이게 한다 */}
+      <div className="title-backdrop" aria-hidden="true">
+        <Image src={m.cover.src} alt="" width={m.cover.width} height={m.cover.height} sizes="10vw" />
+      </div>
+      <article className="title-sheet">
         <div className="title-hero">
-          <div className="title-hero-bg" aria-hidden="true">
-            <Image src={m.cover.src} alt="" width={m.cover.width} height={m.cover.height} sizes="10vw" />
+          <a className={`title-hero-media${portrait ? ' is-portrait' : ''}`} href={m.cover.src} data-lightbox="" data-alt={m.cover.alt} data-caption={m.cover.caption ?? m.name} aria-label={`${t.a11y.openImage}: ${m.cover.alt}`}>
+            <Image src={m.cover.src} alt={m.cover.alt} width={m.cover.width} height={m.cover.height} sizes="(max-width: 1000px) 100vw, 960px" priority />
+          </a>
+          <BackToList locale={locale} className="round title-close" label={s.backToList}><IconClose /></BackToList>
+          <div className="title-head">
+            <p className="title-kicker">{m.kicker}</p>
+            <h1 className="title-name">{m.name}</h1>
+            <div className="title-actions">
+              {site ? (
+                <a className="btn btn-primary btn-lg" href={site.href} target="_blank" rel="noreferrer"><IconExternal />{s.openSite}<span className="visually-hidden"> {s.newTab}</span></a>
+              ) : (
+                <a className="btn btn-primary btn-lg" href={`mailto:${t.contact.email}?subject=${encodeURIComponent(m.name)}`}><IconMail />{s.emailMe}</a>
+              )}
+              <ShareButton label={s.copyLink} copiedLabel={s.copied} failedLabel={s.copyFailed} title={`${m.name} — SOLHUN`} />
+            </div>
           </div>
-          <div className="title-hero-fg">
-            <Image src={m.cover.src} alt={m.cover.alt} width={m.cover.width} height={m.cover.height} sizes="(max-width: 1040px) 100vw, 1040px" priority />
-          </div>
-          <a className="title-hero-open" href={m.cover.src} data-lightbox="" data-alt={m.cover.alt} data-caption={m.cover.caption ?? m.name} aria-label={`${t.a11y.openImage}: ${m.cover.alt}`} />
-          <RoleHomeLink locale={locale} className="title-back"><IconChevron dir="left" />{s.backToList}</RoleHomeLink>
         </div>
 
-        <div className="title-body">
-          <p className="title-kicker">{m.kicker}</p>
-          <h1 className="title-name">{m.name}</h1>
-          {chips.length > 0 && <ul className="title-meta">{chips.map((f) => <li key={f.label}>{f.value}</li>)}</ul>}
-          <div className="title-actions">
-            {site ? (
-              <a className="btn btn-primary" href={site.href} target="_blank" rel="noreferrer"><IconExternal />{s.openSite}</a>
-            ) : (
-              <a className="btn btn-primary" href={`mailto:${t.contact.email}?subject=${encodeURIComponent(m.name)}`}><IconMail />{s.emailMe}</a>
-            )}
-            <ShareButton label={s.copyLink} copiedLabel={s.copied} title={`${m.name} — SOLHUN`} />
+        <div className="title-info">
+          <div>
+            {chips.length > 0 && <ul className="dot-list title-meta">{chips.map((f) => <li key={f.label}>{f.value}</li>)}</ul>}
+            {m.tagline && <p className="title-tagline">{m.tagline}</p>}
+            <p className="title-summary"><Rich text={m.summary} /></p>
           </div>
-          {m.tagline && <p className="title-tagline">{m.tagline}</p>}
-          <p className="title-summary"><Rich text={m.summary} /></p>
-          {credits.length > 0 && (
-            <dl className="title-credits">
+          {(credits.length > 0 || m.links.length > 0) && (
+            <dl className="title-tags">
               {credits.map((f) => <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+              {m.links.length > 0 && (
+                <div><dt>{s.links}</dt><dd>{m.links.map((l, i) => <span key={l.href}>{i > 0 && ', '}<a href={l.href} target="_blank" rel="noreferrer">{l.label}</a></span>)}</dd></div>
+              )}
             </dl>
           )}
         </div>
