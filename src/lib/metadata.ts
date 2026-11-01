@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { plain } from '@/components/Rich';
 import { getContent, getProject, getWorkEntry } from '@/content';
-import { LOCALES, OG_LOCALES, SITE_URL, designPath, localePath, projectPath, type Locale } from '@/i18n/config';
+import { ROLES, type RoleId } from '@/content/roles';
+import { LOCALES, OG_LOCALES, SITE_URL, browsePath, designPath, localePath, projectPath, type Locale } from '@/i18n/config';
 
 // 세 언어가 서로를 hreflang 으로 가리키게 한다. 검색엔진이 언어별 페이지를 같은 문서의 번역으로 묶는 근거다.
 export function buildMetadata(locale: Locale): Metadata {
@@ -83,10 +84,30 @@ export function buildDesignMetadata(locale: Locale): Metadata {
   };
 }
 
+// 역할 화면(/as/<역할>) — 제목에 역할 이름을 붙이고, 미리보기 그림은 그 역할의 대표작 표지
+export function buildBrowseMetadata(locale: Locale, role: RoleId): Metadata {
+  const t = getContent(locale);
+  const def = ROLES[role];
+  const featured = getProject(locale, def.featured);
+  const title = `${def.name[locale]} — ${t.hero.name} (SOLHUN)`;
+  const description = `${def.blurb[locale]}. ${t.meta.description}`;
+  const languages = Object.fromEntries(LOCALES.map((l) => [l, browsePath(l, role)]));
+  return {
+    metadataBase: new URL(SITE_URL),
+    title,
+    description,
+    alternates: { canonical: browsePath(locale, role), languages: { ...languages, 'x-default': browsePath('ko', role) } },
+    openGraph: {
+      type: 'website', url: browsePath(locale, role), title, description, siteName: 'SOLHUN', locale: OG_LOCALES[locale],
+      images: featured ? [{ url: featured.cover.src, width: featured.cover.width, height: featured.cover.height }] : undefined,
+    },
+    twitter: { card: 'summary_large_image', title, description },
+    robots: { index: true, follow: true },
+  };
+}
+
 export const viewport: Viewport = {
-  themeColor: [
-    // 브라우저 주소창 색 — globals.css 의 --paper(밝은·어두운 화면)와 같은 값
-    { media: '(prefers-color-scheme: light)', color: '#f7ece4' },
-    { media: '(prefers-color-scheme: dark)', color: '#161d26' },
-  ],
+  // 브라우저 주소창 색 — globals.css 의 --bg 와 같은 값(리브랜딩 화면은 어두운 화면 하나다)
+  themeColor: '#0b0f14',
+  colorScheme: 'dark',
 };

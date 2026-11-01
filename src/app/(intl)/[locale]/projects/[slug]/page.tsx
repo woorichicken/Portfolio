@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
-import ProjectCase from '@/components/ProjectCase';
-import WorkDetail from '@/components/WorkDetail';
+import TitlePage from '@/components/screen/TitlePage';
 import { PROJECT_IDS, WORK_SLUGS, getProject, getWorkEntry } from '@/content';
 import { PREFIXED_LOCALES, isLocale } from '@/i18n/config';
 import { buildDetailMetadata } from '@/lib/metadata';
@@ -25,8 +24,8 @@ export default async function LocalizedProjectDetail({ params }: Props) {
   const { locale, slug } = await params;
   if (!isLocale(locale) || locale === 'ko') notFound();
   const project = getProject(locale, slug);
-  if (project) return <ProjectCase locale={locale} project={project} />;
+  if (project) return <TitlePage locale={locale} project={project} />;
   const entry = getWorkEntry(locale, slug);
   if (!entry) notFound();
-  return <WorkDetail locale={locale} entry={entry} />;
+  return <TitlePage locale={locale} entry={entry} />;
 }

@@ -1,0 +1,236 @@
+import Image from 'next/image';
+import type { ReactNode } from 'react';
+import { projectArtifacts } from '@/content/artifacts';
+import { getContent, type WorkEntry } from '@/content';
+import type { Shot } from '@/content/images';
+import { screenCopy } from '@/content/roles';
+import { similarTitles } from '@/content/screen-data';
+import type { Fact, Link, Project, Quote } from '@/content/types';
+import { projectPath, type Locale } from '@/i18n/config';
+import Figure from '../Figure';
+import Rich from '../Rich';
+import { ArtifactTileCard, TitleCard } from './Cards';
+import { DetailTabs, ShareButton, type TabPanel } from './DetailClient';
+import { IconArrowRight, IconChevron, IconExternal, IconMail } from './icons';
+import { RoleHomeLink } from './RoleClient';
+import Shell from './Shell';
+
+// 작품 상세(/projects/<slug>) — 큰 프로젝트와 「그 외」·「이전」을 같은 틀로 그린다.
+// 위: 대표 그림(흐린 배경 위에 잘리지 않게) → 이름 · 사실 칩 → 버튼(사이트 열기 · 링크 복사) → 한 줄 · 요약 · 함께한 사람
+// 아래: 탭 — 개요(결과·말·배운 점) · 바꾼 것 · 화면 · 비슷한 작품 · 자세히. 빈 탭은 만들지 않는다.
+
+type Model = {
+  slug: string;
+  name: string;
+  kicker: string;
+  cover: Shot;
+  tagline?: string;
+  summary: string;
+  facts: Fact[];
+  links: Link[];
+  improvements: Project['improvements'];
+  metrics: Project['metrics'];
+  quotes: Quote[];
+  lesson?: Project['lesson'];
+  paragraphs: string[];
+  gallery: Shot[];
+  isProject: boolean;
+};
+
+function fromProject(p: Project): Model {
+  return {
+    slug: p.id, name: p.name, kicker: p.context, cover: p.cover, tagline: p.tagline, summary: p.summary, facts: p.facts,
+    links: p.links ?? [], improvements: p.improvements, metrics: p.metrics, quotes: p.quotes ?? [], lesson: p.lesson,
+    paragraphs: [], gallery: p.gallery ?? [], isProject: true,
+  };
+}
+
+function fromEntry(e: WorkEntry): Model {
+  return {
+    slug: e.slug, name: e.name, kicker: e.meta, cover: e.shot, summary: e.body, facts: e.detail.facts,
+    links: e.detail.links ?? [], improvements: undefined, metrics: undefined, quotes: [], lesson: undefined,
+    paragraphs: e.detail.paragraphs, gallery: [], isProject: false,
+  };
+}
+
+/** 인용 출처 「누가 — 어디서」를 둘로 나눈다 */
+function splitWho(q: Quote) {
+  const [speaker, ...rest] = q.who.split(' — ');
+  return { speaker, context: rest.join(' — ') };
+}
+
+// 사실 표의 첫 칸(기간)과 둘째 칸(역할)은 머리 칩으로, 「함께」는 이름 아래 한 줄로 올린다
+const CREDIT_LABELS = ['함께', 'With', 'Con', '팀', 'Team', 'Equipo'];
+
+export default function TitlePage({ locale, project, entry }: { locale: Locale; project?: Project; entry?: WorkEntry }) {
+  const t = getContent(locale);
+  const s = screenCopy(locale);
+  const m = project ? fromProject(project) : fromEntry(entry!);
+  const site = m.links[0];
+  const artifacts = m.isProject ? projectArtifacts(m.slug, locale).map((artifact) => ({ artifact })) : [];
+  // 결과물로 이미 나온 사진은 「화면」 아래 갤러리에서 빼서 같은 사진이 두 번 나오지 않게 한다
+  const used = new Set(artifacts.flatMap(({ artifact }) => ('shot' in artifact ? [artifact.shot.src] : [])));
+  const gallery = m.gallery.filter((g) => !used.has(g.src));
+  const similar = similarTitles(locale, m.slug);
+  const credits = m.facts.filter((f) => CREDIT_LABELS.includes(f.label));
+  const chips = m.facts.filter((f) => !CREDIT_LABELS.includes(f.label)).slice(0, 3);
+
+  const panels: TabPanel[] = [];
+  const overview: ReactNode[] = [];
+  if (m.metrics?.length) {
+    overview.push(
+      <section key="results">
+        <h2 className="panel-h">{s.results}</h2>
+        <div className="metrics">{m.metrics.map((x) => <p key={x.label}><strong>{x.value}</strong><span>{x.label}</span></p>)}</div>
+      </section>,
+    );
+  }
+  if (m.quotes.length) {
+    overview.push(
+      <section key="voices">
+        <h2 className="panel-h">{s.voices}</h2>
+        <div className="quotes">
+          {m.quotes.map((q) => {
+            const { speaker, context } = splitWho(q);
+            return (
+              <figure key={q.text} className="quote">
+                <blockquote><p>{q.text}</p></blockquote>
+                <figcaption><b>{speaker}</b>{context && <> · {context}</>}</figcaption>
+              </figure>
+            );
+          })}
+        </div>
+      </section>,
+    );
+  }
+  if (m.paragraphs.length) {
+    overview.push(<div key="paras" className="paras">{m.paragraphs.map((p) => <p key={p}><Rich text={p} /></p>)}</div>);
+  }
+  if (m.lesson) {
+    overview.push(
+      <section key="lesson">
+        <h2 className="panel-h">{s.lesson}</h2>
+        <div className="lesson"><h3>{m.lesson.title}</h3><p><Rich text={m.lesson.body} /></p></div>
+      </section>,
+    );
+  }
+  if (overview.length) panels.push({ id: 'overview', label: s.tabOverview, content: <>{overview}</> });
+
+  if (m.improvements?.length) {
+    panels.push({
+      id: 'changes',
+      label: s.tabChanges,
+      content: (
+        <ol className="episodes">
+          {m.improvements.map((it, i) => (
+            <li key={it.title} className="episode">
+              <span className="ep-num">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                {it.badge && <p className="ep-badge">{it.badge}</p>}
+                <h3 className="ep-title">{it.title}</h3>
+                <div className="ep-ba">
+                  <div><span>{t.work.labels.before}</span><p>{it.before}</p></div>
+                  <span className="ep-arrow" aria-hidden="true"><IconArrowRight /></span>
+                  <div><span>{t.work.labels.after}</span><p><Rich text={it.after} /></p></div>
+                </div>
+                {it.metric && <p className="ep-metric"><strong>{it.metric.value}</strong>{it.metric.label}</p>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      ),
+    });
+  }
+
+  const visibleArtifacts = artifacts.filter(({ artifact }) => !('example' in artifact));
+  if (artifacts.length || gallery.length || !m.isProject) {
+    const shots = m.isProject ? gallery : [m.cover];
+    panels.push({
+      id: 'screens',
+      label: s.tabScreens,
+      content: (
+        <>
+          {artifacts.length > 0 && (
+            <ul className="similar" {...(visibleArtifacts.length === 0 ? { 'data-example': '' } : {})}>
+              {artifacts.map((item) => (
+                <li key={item.artifact.title} {...('example' in item.artifact ? { 'data-example': '' } : {})}>
+                  <ArtifactTileCard item={item} sizes="(max-width: 640px) 50vw, 240px" exampleLabel={t.design.example} openLabel={t.a11y.openImage} />
+                </li>
+              ))}
+            </ul>
+          )}
+          {shots.length > 0 && (
+            <div className="shots" style={artifacts.length ? { marginTop: 24 } : undefined}>
+              {shots.map((g) => <Figure key={g.src} shot={g} className={g.height > g.width ? 'tall' : undefined} sizes="(max-width: 640px) 100vw, 320px" openLabel={t.a11y.openImage} />)}
+            </div>
+          )}
+        </>
+      ),
+    });
+  }
+
+  if (similar.length) {
+    panels.push({
+      id: 'similar',
+      label: s.tabSimilar,
+      content: (
+        <ul className="similar">
+          {similar.map((c) => <li key={c.slug}><TitleCard card={c} locale={locale} sizes="(max-width: 640px) 50vw, 240px" /></li>)}
+        </ul>
+      ),
+    });
+  }
+
+  panels.push({
+    id: 'details',
+    label: s.tabDetails,
+    content: (
+      <dl className="details">
+        {m.facts.map((f) => <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+        {m.links.length > 0 && (
+          <div><dt>{s.links}</dt><dd>{m.links.map((l, i) => <span key={l.href}>{i > 0 && ' · '}<a href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a></span>)}</dd></div>
+        )}
+      </dl>
+    ),
+  });
+
+  return (
+    <Shell locale={locale} altPath={(l) => projectPath(l, m.slug)}>
+      <article className="title-page">
+        <div className="title-hero">
+          <div className="title-hero-bg" aria-hidden="true">
+            <Image src={m.cover.src} alt="" width={m.cover.width} height={m.cover.height} sizes="10vw" />
+          </div>
+          <div className="title-hero-fg">
+            <Image src={m.cover.src} alt={m.cover.alt} width={m.cover.width} height={m.cover.height} sizes="(max-width: 1040px) 100vw, 1040px" priority />
+          </div>
+          <a className="title-hero-open" href={m.cover.src} data-lightbox="" data-alt={m.cover.alt} data-caption={m.cover.caption ?? m.name} aria-label={`${t.a11y.openImage}: ${m.cover.alt}`} />
+          <RoleHomeLink locale={locale} className="title-back"><IconChevron dir="left" />{s.backToList}</RoleHomeLink>
+        </div>
+
+        <div className="title-body">
+          <p className="title-kicker">{m.kicker}</p>
+          <h1 className="title-name">{m.name}</h1>
+          {chips.length > 0 && <ul className="title-meta">{chips.map((f) => <li key={f.label}>{f.value}</li>)}</ul>}
+          <div className="title-actions">
+            {site ? (
+              <a className="btn btn-primary" href={site.href} target="_blank" rel="noreferrer"><IconExternal />{s.openSite}</a>
+            ) : (
+              <a className="btn btn-primary" href={`mailto:${t.contact.email}?subject=${encodeURIComponent(m.name)}`}><IconMail />{s.emailMe}</a>
+            )}
+            <ShareButton label={s.copyLink} copiedLabel={s.copied} title={`${m.name} — SOLHUN`} />
+          </div>
+          {m.tagline && <p className="title-tagline">{m.tagline}</p>}
+          <p className="title-summary"><Rich text={m.summary} /></p>
+          {credits.length > 0 && (
+            <dl className="title-credits">
+              {credits.map((f) => <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+            </dl>
+          )}
+        </div>
+
+        <DetailTabs panels={panels} label={s.tabsLabel} />
+      </article>
+    </Shell>
+  );
+}
