@@ -20,7 +20,7 @@ function siblingLinks(link: HTMLAnchorElement): HTMLAnchorElement[] {
   return Array.from(group.querySelectorAll<HTMLAnchorElement>(LINK_SELECTOR));
 }
 
-export default function Lightbox({ closeLabel, prevLabel, nextLabel }: { closeLabel: string; prevLabel: string; nextLabel: string }) {
+export default function Lightbox({ closeLabel, prevLabel, nextLabel, originalLabel }: { closeLabel: string; prevLabel: string; nextLabel: string; originalLabel?: string }) {
   const [open, setOpen] = useState<Open | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -74,6 +74,8 @@ export default function Lightbox({ closeLabel, prevLabel, nextLabel }: { closeLa
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={shot.src} alt={shot.alt} />
         {shot.caption && <figcaption>{shot.caption}</figcaption>}
+        {/* 폰에서는 넓은 화면 캡처가 작게 뜬다 — 원본을 새 탭으로 열면 손가락으로 키워 볼 수 있다 */}
+        {originalLabel && <p className="lightbox-original"><a href={shot.src} target="_blank" rel="noreferrer">{originalLabel} ↗</a></p>}
         {hasMany && (
           <p className="lightbox-count">
             {open.index + 1} / {open.shots.length}

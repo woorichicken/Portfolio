@@ -58,6 +58,11 @@ const en: Content = {
           { label: 'With', value: 'Designer · developers · CEO · client' },
         ],
         cover: shot('lw_kits-hero-phones', 'Several phones showing the KITS app'),
+        parts: [
+          { title: 'Front end', body: 'I built the React Native app plus the mobile web, desktop web, teacher web and admin web. The client ran the back end, so we worked out the APIs and request flow together from the front-end side.' },
+          { title: 'Matching screens', body: 'I was the go-between for the designer and the client. One screen spread across five surfaces, so this took more of my time than the coding did.' },
+          { title: 'QA', body: 'I led QA from the responsive checks through the second review. The review board and report widget I built for it are in the specials below.' },
+        ],
         improvements: [
           {
             title: 'Responsive review',
@@ -111,6 +116,11 @@ const en: Content = {
           { label: 'With', value: 'Labor attorneys · users in each role' },
         ],
         cover: shot('efm_v4', 'A frame from the FAIR product video I made'),
+        parts: [
+          { title: 'Planning', body: 'After the contract I did the requirements analysis, the functional spec (v2–v2.2) and the diagnostic checklist myself.' },
+          { title: 'Build · run', body: 'I built the CRM, the public site and the staff app, and I still run all three.' },
+          { title: 'Handoff', body: 'I organized the design system for handoff and made the user guides, the intro video and the card news.' },
+        ],
         improvements: [
           {
             title: 'Everything around the code',
@@ -154,6 +164,11 @@ const en: Content = {
           { label: 'License', value: 'MIT, open source' },
         ],
         cover: shot('cli_green', 'CLI Manager screen — AI sessions shown in green'),
+        parts: [
+          { title: 'Plan · build', body: 'I planned and built this macOS app (Electron) on my own to keep all my terminals in one place.' },
+          { title: 'Releases', body: 'Over 60 releases since the first one in December 2025. It started as a paid app and later went open source.' },
+          { title: 'Getting the word out', body: 'I made the landing page and introduced it on Product Hunt and Reddit myself.' },
+        ],
         improvements: [
           {
             badge: 'v1.9 – v1.10 · Sep 2026',
@@ -198,6 +213,11 @@ const en: Content = {
           { label: 'With', value: 'CEO · in-house developers' },
         ],
         cover: shot('sym_flow', 'Flow view in the internal docs and QA platform'),
+        parts: [
+          { title: 'Symphony', body: 'I designed and built, on my own, a daemon that takes an issue, develops from the docs and calls a person on Slack when it gets stuck.' },
+          { title: 'Lassorun · feedback widget', body: 'I built Lassorun, which ties docs, test cases and reports into one flow, and the widget for leaving feedback right on the screen.' },
+          { title: 'Spreading it in-house', body: 'I ran the internal demo in 2026.07 and turned Claude Code tips sharing into a regular session.' },
+        ],
         improvements: [
           {
             title: 'Issue handling',
@@ -226,6 +246,11 @@ const en: Content = {
           { label: 'With', value: 'Team lead · developers · client · designer' },
         ],
         cover: shot('pur_class', 'Purple admin class screen'),
+        parts: [
+          { title: 'Admin web', body: 'I owned the create and edit screens for 17 quiz types and the curriculum and class admin.' },
+          { title: 'Data structure', body: 'I redesigned the quiz and question tables and handled the production data migration.' },
+          { title: 'QA', body: 'I verified create, read, update and delete round trips for every type and shared the AI QA tool I had tried first with the team.' },
+        ],
         improvements: [
           {
             title: 'Data model redesign',
@@ -265,6 +290,11 @@ const en: Content = {
           { label: 'With', value: 'Developer · CEO · client' },
         ],
         cover: shot('ptx_home', 'PorterX home — mission matching'),
+        parts: [
+          { title: 'App features', body: 'I worked on features for the iOS and Android app and the admin.' },
+          { title: 'Payments · refunds', body: 'I made the call on switching payment gateways and dealt with refund abuse.' },
+          { title: 'After launch', body: 'I handled review and payment issues after launch. A teammate took care of deployment and store submission.' },
+        ],
         improvements: [
           { title: 'Payments', before: 'Settlement broke every time payment gateway rules changed', after: 'Switched gateways four times, redesigned settlement, and landed on in-app purchases.' },
           { title: 'Refunds', before: 'Users spent credits and then got refunds (refund events weren’t received)', after: 'Within 3 days: a refund webhook plus automatic credit clawback.' },
@@ -289,6 +319,10 @@ const en: Content = {
           { label: 'With', value: 'Designer · CEO · client' },
         ],
         cover: shot('ncd_kv', 'Main key visual of the store'),
+        parts: [
+          { title: 'Redesign', body: 'I led the redesign of the home, product and subscription consultation pages.' },
+          { title: 'Feedback loop', body: 'I set things up so the designer could install the feedback tool on their own, then collected the reports, shipped the fixes and shared them as a list.' },
+        ],
         improvements: [
           {
             title: 'Applying feedback',

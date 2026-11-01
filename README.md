@@ -17,16 +17,17 @@ pnpm verify:feedback-gate   # 피드백 관문 허용/차단 호스트·비밀�
 | 경로 | 무엇 |
 |---|---|
 | `src/content/{ko,en,es}.ts` | 본문 전부. 셋은 `types.ts` 의 같은 모양이라 한 언어에서 항목을 빠뜨리면 타입체크가 잡는다 |
-| `src/content/images.ts` | 사진 경로·크기(`public/work/`) |
-| `src/app/(ko)/` | 한국어 `/` — 언어마다 루트 레이아웃을 따로 둬서 `<html lang>` 이 정확하다 |
-| `src/app/(intl)/[locale]/` | `/en`, `/es` (그 밖은 404) |
-| `src/components/Portfolio.tsx` | 홈(서버 컴포넌트) — 스크롤 첫 화면 → 소개·숫자 → 프로젝트 카드(크기가 섞인 배치) → 디자인 엔지니어로서 미리보기 → 연표 → 연락 |
-| `src/components/scroll/` · `public/figures/<bench\|recorder>/figure.html` | 홈 스크롤 그림. 첫 화면은 내리는 만큼 그림이 한 바퀴(`ScrollStage` → `setPose(t)`), 섹션 머리마다 부품 하나가 확대돼 다시 나온다(`PartSlot`). `?fig=bench\|recorder` 로 바꾼다(기본 bench). 어느 부품·t 구간을 쓸지는 `figures.ts` 한 곳. 그림 파일은 anatomy 로 그린 단독 HTML(같은 출처 iframe) — 바꿀 때는 파일만 덮고 `figures.ts` 의 부품 이름을 맞춘다 |
-| `src/components/ProjectCase.tsx` | 큰 프로젝트 상세 `/projects/<id>` — 머리 띠 + 따라오는 목차(`CaseToc`) + 장(개요·디자인 엔지니어링·바꾼 것·결과·말·화면·배운 점) |
-| `src/components/WorkDetail.tsx` | 「그 외」·「이전」 프로젝트 상세 — 같은 `/projects/<slug>` 주소, 홈에는 링크가 없다(2026-10 개편에서 뺐다) |
-| `src/components/DesignWall.tsx` · `src/content/artifacts.ts` | 「디자인 엔지니어로서」 결과물 화면 `/design` 과 결과물 목록(3개 언어 이름). **영상은 공개 권리 확인 전이라 넣지 않았다** |
-| `src/app/globals.css` | 색 토큰(채널 색 — 글자로 쓰는 쌍은 대비 비율을 주석에) · 머리 · 공통 조각 · 라이트박스 · 연락 띠 · 피드백 관문. **색 글자(#…)는 `:root` 토큰 블록에만** |
-| `src/app/portfolio.css` | 화면별 배치 — 홈(무대·섹션·카드 격자·결과물 칸) · 상세 · 결과물 화면. 색 글자 없이 토큰만 쓴다(2026-10-18 회차 클래스 `lab*` 를 정리했다) |
+| `src/content/roles.ts` | **역할 4개(+전체)와 역할마다의 순서** — 대표작(`featured`) · 큰 프로젝트 순서 · 「그 외」 순서 · 숨김(`HIDDEN`), 리브랜딩 화면의 새 문구(세 언어 한 줄씩). 어드민의 「변경안」을 여기 옮긴다 |
+| `src/content/screen-data.ts` | 역할 화면의 행·비슷한 작품 계산(화면은 이 결과만 그린다) |
+| `src/content/images.ts` · `artifacts.ts` | 사진 경로·크기(`public/work/`) · 결과물 목록 |
+| `src/app/(ko)/` · `src/app/(intl)/[locale]/` | 한국어 `/` · `/en`·`/es` — 언어마다 루트 레이아웃을 따로 둬서 `<html lang>` 이 정확하다 |
+| `/` → `src/components/screen/RolePicker.tsx` | 첫 화면 「어떤 정경훈을 볼까요?」 — 역할 타일 4개 + 「전부 볼게요」. 고르면 `/as/<역할>` |
+| `/as/<역할>` → `screen/Browse.tsx` | 역할 화면 — 대표작 빌보드 → 가로 행(그 역할의 프로젝트 · 숫자 · 만든 화면과 도구 · 그 외 · 이전) → 연표 → 연락 |
+| `/projects/<slug>` → `screen/TitlePage.tsx` | 작품 상세(큰 프로젝트 · 그 외 · 이전 공통) — 그림 → 이름·칩 → 사이트 열기/메일 · 링크 복사 → 탭(개요 · 바꾼 것 · 화면 · 비슷한 작품 · 자세히, `#tab-<id>`) |
+| `/design` → `DesignWall.tsx` | 결과물 화면(모바일 아래 탭 「결과물」) — 종류로 거르기 |
+| `/admin` → `admin/Admin.tsx` | 나를 위한 화면(검색 제외). 비밀번호 = 피드백 모드. 역할별 순서·숨김을 바꿔 보고 「변경안」 코드로 내보낸다(바로 반영되지 않는다). 항목별 코멘트는 브라우저에 쌓고 배포본에서는 라쏘런에도 보낸다(`admin/send-comment.ts`) |
+| `src/components/screen/Shell.tsx` · `RoleClient.tsx` | 공통 뼈대(머리 · 연락 띠 · 모바일 아래 탭) · 마지막 역할 기억(`localStorage` `solhun:role`) |
+| `src/app/globals.css` | **리브랜딩 디자인 시스템 전부** — 어두운 화면 하나, 채널 네 색 = 역할 네 색, 대비 비율은 주석에. 색 글자(#…)는 `:root` 토큰 블록에만 |
 | `src/components/feedback/` · `src/lib/feedback-gate.ts` | `?feedback` 관문 + feedback-kit 위젯 |
 | `next.config.ts` | CLI Manager 옛 경로 301/프록시 — 기본 꺼짐(`CLI_MANAGER_ROUTES=1`) |
 | `docs/DEPLOY.md` | Vercel·env·도메인 이전·피드백 운영 — **배포 전에 읽을 것** |
@@ -38,7 +39,26 @@ pnpm verify:feedback-gate   # 피드백 관문 허용/차단 호스트·비밀�
 (`?feedback` 통과 → `<html data-feedback="on">`)에서만 점선 칸으로 보인다 — 피드백 위젯으로 그 자리에 무엇을 넣을지 남기면 된다.
 채울 때는 사진을 `public/work/` 와 `images.ts` 에 넣고 그 항목의 `example: true` 를 `image: '<id>'` 로 바꾼다.
 
-## 디자인 결정 (2026-10 개편, 시안 A 4~7회차 · 2026-10-18 채널 색)
+## 디자인 결정 — 2026-11 리브랜딩 (스탠드업 메모 「solhun rebranding」)
+
+- **2회차(2026-11-01): 치수는 넷플릭스에서 재 왔다.** 사용자 「실제 aside 로 들어가서 디자인 시스템 가져왔으면」. Aside 로 로그인한 넷플릭스 웹(2026 화면)에서
+  프로필 선택 · 홈 · 상세 창의 `getComputedStyle` 을 390/768/1024/1440 폭으로 재서(원자료 `~/Downloads/_batches/task-portfolio-gaps-1101/r2/netflix/*.json`)
+  `globals.css` 토큰으로 옮겼다 — 머리 80px · 알약 메뉴 · 둥근 카드 빌보드(반지름 24, 2.18:1, 작은 화면 세로) · 행 제목 500 굵기 · 카드 16:9 간격 8 · 한 줄 2~6장 ·
+  알약 버튼 48/40px · 상세는 가운데 시트(16:9 위 · 정보 2:1 · 회차 목록 · 3열 비슷한 작품). 빨강·넷플릭스 글꼴·아이콘·문구는 여전히 안 옮긴다.
+  회색은 넷플릭스와 같은 중성 회색으로 바꿨고(남색 바탕 → `#141414`), 넷플릭스의 라벨 회색 `#777` 은 14px 에서 AA 가 안 돼 `#8c8c8c` 로 올렸다.
+- **4회차(2026-11-01): 움직임도 넷플릭스에서 재 왔다.** Aside 숨은 탭에서 `document.getAnimations()` 로 길이·곡선을 읽었다(`~/Downloads/_batches/task-portfolio-gaps-1101/r4/netflix-motion/`).
+  페이지 사이는 브라우저 문서 간 View Transitions(`src/components/view-transitions.ts`) — 누른 카드 그림이 상세 큰 그림으로 이어지고(0.34초) 닫으면 되돌아간다.
+  줄 넘김 0.75초 cubic-bezier(.4,0,.2,1) · 메뉴 0.25초 · 탭·사진 크게 보기 0.2초대. 「움직임 줄이기」와 미지원 브라우저(파이어폭스)는 지금처럼 바로 넘어간다.
+- **3회차(2026-11-01): 좁은 화면도 넷플릭스 웹에서 재 왔다.** 사용자 「모바일 반응형은 실제 반응형 넷플릭스랑 다르다는 느낌」. Aside 숨은 탭에서
+  390·768 화면 9장을 찍어(`~/Downloads/_batches/task-portfolio-gaps-1101/r3/netflix/`) 맞췄다 — 아래 탭 막대(앱 방식)를 빼고 머리 「메뉴 ▾」 하나로 접기,
+  머리 80px, 프로필 화면처럼 그림 72·이름 14px·한 줄 세 칸, 상세는 양옆 4px 만 남긴 카드에 이름을 그림 위로. 같은 회차 리뷰로 빌보드 숫자 칩 · 「숫자로 본 지난 1년」 행 ·
+  상세의 결과 숫자 · 메일 보내기 · 링크 복사를 뺐고, 결과물 행은 프로젝트마다 한 장만 둔다. 상세 둘째 탭은 「맡은 일」(회차 목록) + 「특별편 — 바꾼 것」.
+- **넷플릭스 같은 구조, 우리 모양.** 계정 대신 역할을 고르고(`/`), 역할마다 대표작 빌보드와 가로 행, 상세는 탭. 넷플릭스의 빨강·얼굴 아이콘·문구는 옮기지 않았다 — 구조만 빌렸다(근거 그림: `~/Downloads/_batches/task-portfolio-gaps-1101/mobbin/`).
+- **어두운 화면 하나.** 작업 사진이 주인공이라 바탕이 빛을 먹는 쪽이 낫다. 채널 네 색(이끼·남색·도장·얼굴)은 역할 타일 네 개에 한 색씩 준다.
+- **모바일이 먼저.** 행은 손가락으로 넘기고(scroll-snap), 760px 이하에서는 아래 탭(홈 · 결과물 · 연락 · 역할)이 생긴다. 가로 넘침 0 을 검사한다.
+- 아래 「2026-10 개편」 결정 중 홈의 비대칭 격자·스크롤 그림(검수대·기록계)은 이번에 행·빌보드로 바뀌었다. `public/figures/` 는 쓰는 곳이 없어졌다(지우지 않고 둠 — 백로그).
+
+## 디자인 결정 (2026-10 개편, 시안 A 4~7회차 · 2026-10-18 채널 색) — 일부는 리브랜딩으로 바뀜
 
 사용자가 회차 리뷰에서 정한 것이다. 바꾸기 전에 그 회차 코멘트를 먼저 본다 — 근거는 `src/app/portfolio.css` 의 부품별 주석과 git 이력(커밋 `1dc66c3`·`1539a9d` 의 회차 주석)에 있다.
 

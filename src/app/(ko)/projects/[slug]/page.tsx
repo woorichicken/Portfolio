@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
-import ProjectCase from '@/components/ProjectCase';
-import WorkDetail from '@/components/WorkDetail';
+import TitlePage from '@/components/screen/TitlePage';
 import { PROJECT_IDS, WORK_SLUGS, getProject, getWorkEntry } from '@/content';
 import { buildDetailMetadata } from '@/lib/metadata';
 
@@ -23,8 +22,8 @@ export async function generateMetadata({ params }: Props) {
 export default async function KoreanProjectDetail({ params }: Props) {
   const { slug } = await params;
   const project = getProject('ko', slug);
-  if (project) return <ProjectCase locale="ko" project={project} />;
+  if (project) return <TitlePage locale="ko" project={project} />;
   const entry = getWorkEntry('ko', slug);
   if (!entry) notFound();
-  return <WorkDetail locale="ko" entry={entry} />;
+  return <TitlePage locale="ko" entry={entry} />;
 }

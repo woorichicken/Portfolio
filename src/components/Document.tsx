@@ -2,7 +2,7 @@ import { Unbounded } from 'next/font/google';
 import type { ReactNode } from 'react';
 import type { Locale } from '@/i18n/config';
 import '@/app/globals.css';
-import '@/app/portfolio.css';
+import { VIEW_TRANSITION_SCRIPT } from './view-transitions';
 
 // 참고 배너(JEONG (SOLHUN))의 넓은 기하 대문자 느낌을 내는 서체. 로마자 제목·숫자에만 쓴다.
 const display = Unbounded({ subsets: ['latin', 'latin-ext'], weight: ['500', '700', '800'], variable: '--font-display', display: 'swap' });
@@ -14,6 +14,8 @@ export default function Document({ locale, children }: { locale: Locale; childre
       {/* App Router 루트 레이아웃의 <head> 는 정상 사용이다 — 이 규칙은 pages 라우터용 */}
       {/* eslint-disable-next-line @next/next/no-head-element */}
       <head>
+        {/* 페이지 사이 전환(카드 → 상세 그림 이어짐 등). 첫 그림 전에 받아야 해서 인라인으로 둔다 — view-transitions.ts */}
+        <script dangerouslySetInnerHTML={{ __html: VIEW_TRANSITION_SCRIPT }} />
         {/* 한글·로마자 본문 서체. 쓰는 글자만 받아 오는 dynamic subset 판이라 첫 로딩이 가볍다 */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
-import Portfolio from '@/components/Portfolio';
+import RolePicker from '@/components/screen/RolePicker';
 import { isLocale } from '@/i18n/config';
 import { buildMetadata } from '@/lib/metadata';
 import { buildPersonJsonLd } from '@/lib/structured-data';
@@ -21,7 +21,7 @@ export default async function LocalizedHome({ params }: Props) {
   return (
     <>
       <JsonLd data={buildPersonJsonLd(locale)} />
-      <Portfolio locale={locale} />
+      <RolePicker locale={locale} />
     </>
   );
 }

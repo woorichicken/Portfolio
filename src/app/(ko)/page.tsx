@@ -1,5 +1,5 @@
 import JsonLd from '@/components/JsonLd';
-import Portfolio from '@/components/Portfolio';
+import RolePicker from '@/components/screen/RolePicker';
 import { buildMetadata } from '@/lib/metadata';
 import { buildPersonJsonLd } from '@/lib/structured-data';
 
@@ -10,7 +10,7 @@ export default function KoreanHome() {
   return (
     <>
       <JsonLd data={buildPersonJsonLd('ko')} />
-      <Portfolio locale="ko" />
+      <RolePicker locale="ko" />
     </>
   );
 }

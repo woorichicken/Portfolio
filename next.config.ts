@@ -19,7 +19,8 @@ const MOVED_TO_CLI_MANAGER = [
   "/roadmap",
   "/feedback",
   "/compare/:path*",
-  "/admin/:path*",
+  // "/admin/:path*" 는 뺐다(2026-11-01) — 리브랜딩이 /admin 에 포트폴리오 어드민을 두었고, 옮겨 갈 곳
+  // climanager.solhun.com/admin 은 404 다(실측). 켜 두면 운영의 /admin 이 그 404 로 튕긴다(:path* 는 0개 구간도 맞는다).
   "/products/:path*",
 ];
 

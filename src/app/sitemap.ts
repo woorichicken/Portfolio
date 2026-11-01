@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { PROJECT_IDS, WORK_SLUGS } from '@/content';
-import { LOCALES, SITE_URL, designPath, localePath, projectPath } from '@/i18n/config';
+import { ROLE_IDS } from '@/content/roles';
+import { LOCALES, SITE_URL, browsePath, designPath, localePath, projectPath } from '@/i18n/config';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const languages = Object.fromEntries(LOCALES.map((l) => [l, `${SITE_URL}${localePath(l)}`]));
@@ -27,5 +28,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
     alternates: designAlternates,
   }));
-  return [...home, ...details, ...design];
+  // 역할 화면(/as/<역할>) — 역할마다 언어판끼리 묶는다
+  const browse: MetadataRoute.Sitemap = ROLE_IDS.flatMap((role) => {
+    const alternates = { languages: Object.fromEntries(LOCALES.map((l) => [l, `${SITE_URL}${browsePath(l, role)}`])) };
+    return LOCALES.map((locale) => ({
+      url: `${SITE_URL}${browsePath(locale, role)}`,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+      alternates,
+    }));
+  });
+  return [...home, ...browse, ...details, ...design];
 }
