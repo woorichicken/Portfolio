@@ -114,6 +114,30 @@ html:not([data-feedback]) [data-example] { display: none; }
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
 
+/* ── 움직임 — 넷플릭스 실측(2026-11-01 Aside, r4/netflix-motion/*.json)에서 가져온 길이·곡선 ─────────
+ *   상세 창 0.12초 · 그림 0.3초 cubic-bezier(.25,.1,.35,1) · 메뉴 펼침 0.25초 cubic-bezier(.32,.94,.6,1)(투명도 0.1초)
+ *   · 줄 넘김 0.75초 cubic-bezier(.4,0,.2,1)(RowTrack.tsx) · 카드 미리보기 0.47초 기다린 뒤 · 머리 바탕 0.4초 · 버튼 0.17~0.25초.
+ *   「움직임 줄이기」를 켜면 위 규칙이 길이를 0 으로, 아래 @view-transition 이 페이지 전환을 끈다. */
+:root { --ease-nf: cubic-bezier(0.25, 0.1, 0.35, 1); --ease-menu: cubic-bezier(0.32, 0.94, 0.6, 1); }
+
+/* 페이지 사이 전환 — 같은 이름(title-hero · role-avatar)은 이어서 움직이고 나머지는 짧게 겹쳐 바뀐다(view-transitions.ts) */
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+::view-transition-group(root) { animation-duration: 0.22s; animation-timing-function: linear; }
+::view-transition-group(title-hero), ::view-transition-group(role-avatar) { animation-duration: 0.34s; animation-timing-function: var(--ease-nf); }
+/* 카드 그림과 큰 그림은 비율이 같아(16:9) 늘이기만 하면 된다 — 겹쳐 바뀌는 동안 흐려지지 않게 높이에 맞춘다 */
+::view-transition-old(title-hero), ::view-transition-new(title-hero) { height: 100%; object-fit: cover; }
+/* 상세의 이름·닫기는 큰 그림보다 위 층으로 — 그림이 커지는 동안 그 밑에 묻히지 않고, 그림이 자리 잡을 즈음 떠오른다
+   (넷플릭스 상세 창: 제목 그림 0.3초 페이드) */
+.title-head { view-transition-name: title-head; }
+.title-close { view-transition-name: title-close; }
+::view-transition-new(title-head), ::view-transition-new(title-close) { animation: vt-rise 0.3s var(--ease-nf) 0.14s both; }
+::view-transition-old(title-head), ::view-transition-old(title-close) { animation: menu-fade 0.12s linear reverse both; }
+@keyframes vt-rise { from { opacity: 0; transform: translateY(8px); } }
+/* 머리는 화면이 바뀌어도 그 자리에 그대로 — 깜빡이지 않게 따로 떼 둔다 */
+.sx-header { view-transition-name: site-header; }
+::view-transition-group(site-header) { animation-duration: 0s; }
+
 /* ── 버튼 — 넷플릭스와 같은 알약. 큰 화면 48px 18px/500, 작은 화면 40px 16px ─────────────── */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -195,6 +219,9 @@ html:not([data-feedback]) [data-example] { display: none; }
   box-shadow: 0 16px 40px var(--shadow);
 }
 .sx-menu-panel[hidden] { display: none; }
+.sx-menu-panel:not([hidden]) { transform-origin: 24px 0; animation: menu-move 0.25s var(--ease-menu) both, menu-fade 0.1s linear both; }
+@keyframes menu-move { from { transform: translateY(-6px) scale(0.97); } }
+@keyframes menu-fade { from { opacity: 0; } }
 .sx-menu-nav { display: grid; gap: 4px; }
 .sx-menu-nav a {
   display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-radius: 8px;
@@ -389,6 +416,8 @@ html:not([data-feedback]) [data-example] { display: none; }
 @media (max-width: 499px) { .card-kicker { display: none; } .card-label { padding: 20px 10px 8px; } .card-name { font-size: 14px; } }
 @media (hover: hover) {
   .card:hover .card-media, .card:focus-visible .card-media { transform: scale(1.04); box-shadow: 0 12px 28px rgb(0 0 0 / 0.55); z-index: 2; }
+  /* 마우스로 줄을 훑기만 할 때 카드가 줄줄이 커지지 않게 들어갈 때만 0.15초 기다린다(넷플릭스 미리보기는 0.47초) */
+  .card:hover .card-media { transition-delay: 0.15s; }
 }
 .card:focus-visible { outline: none; }
 .card:focus-visible .card-media { outline: 3px solid var(--accent); outline-offset: 2px; }
@@ -457,7 +486,7 @@ html:not([data-feedback]) [data-example] { display: none; }
   .title-sheet { margin: 16px auto 56px; border-radius: 12px; box-shadow: 0 24px 64px rgb(0 0 0 / 0.6); width: calc(100% - 2 * var(--gutter)); }
 }
 .title-hero { position: relative; isolation: isolate; }
-.title-hero-media { display: block; position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--bg-deep); }
+.title-hero-media { display: block; position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--bg-deep) center 30% / cover no-repeat; }
 .title-hero-media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
 .title-hero-media img { filter: brightness(0.86); }
 /* 이름·버튼을 그림 위에 얹으니(넷플릭스는 390 에서도 그림 위) 왼쪽 아래를 눌러 흰 캡처 위에서도 읽히게 한다 */
@@ -513,6 +542,8 @@ html:not([data-feedback]) [data-example] { display: none; }
 .tab-panel { padding: 24px 16px 48px; }
 @media (min-width: 760px) { .tab-panel { padding: 32px 48px 56px; } }
 .tab-panel[hidden] { display: none; }
+.tab-panel[data-enter] { animation: panel-in 0.2s var(--ease-nf) both; }
+@keyframes panel-in { from { opacity: 0; transform: translateY(6px); } }
 .panel-h { font-size: 24px; font-weight: 500; margin: 48px 0 20px; line-height: 1.4; }
 .panel-h:first-child { margin-top: 0; }
 .tab-panel > :is(section, .paras) + :is(section, .paras) { margin-top: 44px; }
@@ -603,6 +634,9 @@ html:not([data-feedback]) .wall-note { display: none; }
 /* ── 사진 크게 보기 ───────────────────────────────────── */
 .lightbox { position: fixed; inset: 0; margin: auto; border: 0; padding: 0; background: transparent; width: fit-content; height: fit-content; max-width: none; max-height: none; overflow: visible; }
 .lightbox::backdrop { background: var(--scrim); }
+.lightbox[open] { animation: lightbox-in 0.24s var(--ease-nf) both; }
+.lightbox[open]::backdrop { animation: menu-fade 0.2s linear both; }
+@keyframes lightbox-in { from { opacity: 0; transform: scale(0.96); } }
 .lightbox img { display: block; max-width: min(94vw, 1400px); max-height: 82vh; width: auto; height: auto; margin-inline: auto; border-radius: 6px; background: var(--surface); }
 .lightbox figcaption { color: var(--text); text-align: center; margin-top: 12px; max-width: min(94vw, 1400px); }
 .lightbox-close, .lightbox-nav { font: inherit; border-radius: 999px; border: 2px solid var(--round-line); color: var(--text); cursor: pointer; background: var(--round-bg); }

@@ -12,6 +12,8 @@ export type TabPanel = { id: string; label: string; content: ReactNode };
  */
 export function DetailTabs({ panels, label }: { panels: TabPanel[]; label: string }) {
   const [active, setActive] = useState(panels[0]?.id);
+  // 눌러서 바꾼 탭만 살짝 떠오르게 한다 — 처음 열 때(주소의 #tab-… 포함)는 움직이지 않는다
+  const [entered, setEntered] = useState<string | null>(null);
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   useEffect(() => {
@@ -27,6 +29,7 @@ export function DetailTabs({ panels, label }: { panels: TabPanel[]; label: strin
 
   function select(id: string, focus = false) {
     setActive(id);
+    setEntered(id);
     history.replaceState(null, '', `#tab-${id}`);
     const tab = tabRefs.current[id];
     if (focus) tab?.focus({ preventScroll: true });
@@ -75,7 +78,7 @@ export function DetailTabs({ panels, label }: { panels: TabPanel[]; label: strin
         </div>
       </div>
       {panels.map((p) => (
-        <div key={p.id} role="tabpanel" id={`panel-${p.id}`} aria-labelledby={`tabbtn-${p.id}`} className="tab-panel" hidden={active !== p.id} tabIndex={0}>
+        <div key={p.id} role="tabpanel" id={`panel-${p.id}`} aria-labelledby={`tabbtn-${p.id}`} className="tab-panel" hidden={active !== p.id} data-enter={entered === p.id ? '' : undefined} tabIndex={0}>
           {p.content}
         </div>
       ))}
