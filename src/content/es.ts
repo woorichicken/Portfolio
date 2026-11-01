@@ -58,6 +58,11 @@ const es: Content = {
           { label: 'Con', value: 'Diseñadora · desarrolladores · CEO · cliente' },
         ],
         cover: shot('lw_kits-hero-phones', 'Varios teléfonos con la app de KITS'),
+        parts: [
+          { title: 'Front-end', body: 'Hice la app en React Native y las webs móvil, de escritorio, de docentes y de administración. El back-end lo llevaba el cliente, así que definimos juntos desde el front qué API pedir y cómo.' },
+          { title: 'Ajustar pantallas', body: 'Fui el enlace entre la diseñadora o el diseñador y el cliente. Una pantalla se extendía a cinco superficies, y eso me llevó más tiempo que programar.' },
+          { title: 'QA', body: 'Dirigí el QA desde la revisión responsive hasta la segunda revisión. El tablero de revisión y el widget de reportes que hice para eso están en los especiales de abajo.' },
+        ],
         improvements: [
           {
             title: 'Revisión responsive',
@@ -111,6 +116,11 @@ const es: Content = {
           { label: 'Con', value: 'Abogados laboralistas · usuarios de cada rol' },
         ],
         cover: shot('efm_v4', 'Un fotograma del vídeo de producto de FAIR que hice'),
+        parts: [
+          { title: 'Planificación', body: 'Tras el contrato hice yo el análisis de requisitos, la especificación funcional (v2–v2.2) y la lista de diagnóstico.' },
+          { title: 'Desarrollo · operación', body: 'Construí el CRM, el sitio público y la app para empleados, y sigo operando los tres.' },
+          { title: 'Entrega', body: 'Ordené el sistema de diseño para la entrega y preparé las guías de uso, el video de presentación y las tarjetas informativas.' },
+        ],
         improvements: [
           {
             title: 'Todo lo que rodea al código',
@@ -154,6 +164,11 @@ const es: Content = {
           { label: 'Licencia', value: 'MIT, código abierto' },
         ],
         cover: shot('cli_green', 'Pantalla de CLI Manager: sesiones de IA en verde'),
+        parts: [
+          { title: 'Plan · desarrollo', body: 'Planifiqué y construí yo solo esta app de macOS (Electron) para tener todas mis terminales en un solo lugar.' },
+          { title: 'Versiones', body: 'Más de 60 versiones desde la primera, en diciembre de 2025. Empezó como app de pago y luego pasó a código abierto.' },
+          { title: 'Darlo a conocer', body: 'Hice la página de presentación y lo presenté yo mismo en Product Hunt y Reddit.' },
+        ],
         improvements: [
           {
             badge: 'v1.9 – v1.10 · sep. 2026',
@@ -198,6 +213,11 @@ const es: Content = {
           { label: 'Con', value: 'CEO · desarrolladores internos' },
         ],
         cover: shot('sym_flow', 'Vista de flujo en la plataforma interna de docs y QA'),
+        parts: [
+          { title: 'Symphony', body: 'Diseñé y construí yo solo un daemon que toma un issue, desarrolla a partir de la documentación y avisa a una persona por Slack si se atasca.' },
+          { title: 'Lassorun · widget de feedback', body: 'Construí Lassorun, que une documentación, casos de prueba y reportes en un solo flujo, y el widget para dejar feedback directamente sobre la pantalla.' },
+          { title: 'Difusión interna', body: 'Organicé la demo interna de 2026.07 y convertí en sesión fija el intercambio de trucos de Claude Code.' },
+        ],
         improvements: [
           {
             title: 'Gestión de issues',
@@ -226,6 +246,11 @@ const es: Content = {
           { label: 'Con', value: 'Líder de equipo · desarrolladores · cliente · diseñadora' },
         ],
         cover: shot('pur_class', 'Pantalla de clases del admin de Purple'),
+        parts: [
+          { title: 'Web de administración', body: 'Llevé las pantallas de alta y edición de 17 tipos de cuestionario y la gestión de currículos y clases.' },
+          { title: 'Estructura de datos', body: 'Rediseñé las tablas de cuestionarios y preguntas y me encargué de migrar los datos de producción.' },
+          { title: 'QA', body: 'Verifiqué ida y vuelta de alta, consulta, edición y borrado para cada tipo, y compartí con el equipo la herramienta de QA con IA que probé primero.' },
+        ],
         improvements: [
           {
             title: 'Rediseño de datos',
@@ -265,6 +290,11 @@ const es: Content = {
           { label: 'Con', value: 'Desarrollador · CEO · cliente' },
         ],
         cover: shot('ptx_home', 'Inicio de PorterX: emparejamiento de misiones'),
+        parts: [
+          { title: 'Funciones de la app', body: 'Participé en el desarrollo de funciones de la app para iOS y Android y del panel de administración.' },
+          { title: 'Pagos · reembolsos', body: 'Decidí el cambio de pasarela de pago y respondí al abuso de reembolsos.' },
+          { title: 'Tras el lanzamiento', body: 'Atendí los problemas de revisión y de pagos tras el lanzamiento. El despliegue y el envío a las tiendas los llevó un compañero.' },
+        ],
         improvements: [
           { title: 'Pagos', before: 'La liquidación se rompía cada vez que cambiaban las reglas de la pasarela', after: 'Cambié de pasarela cuatro veces, rediseñé la liquidación y terminé en compras dentro de la app.' },
           { title: 'Reembolsos', before: 'Usuarios que gastaban créditos y pedían el reembolso (no llegaban los avisos)', after: 'En 3 días: webhook de reembolsos y recuperación automática de créditos.' },
@@ -289,6 +319,10 @@ const es: Content = {
           { label: 'Con', value: 'Diseñadora · CEO · cliente' },
         ],
         cover: shot('ncd_kv', 'Visual principal de la tienda'),
+        parts: [
+          { title: 'Rediseño', body: 'Dirigí el rediseño de la portada, las páginas de producto y la consulta de suscripción.' },
+          { title: 'Ciclo de feedback', body: 'Lo dejé preparado para que la persona de diseño instalara sola la herramienta de feedback; luego reuní los reportes, apliqué los cambios y los compartí en una lista.' },
+        ],
         improvements: [
           {
             title: 'Aplicar el feedback',

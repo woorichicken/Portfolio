@@ -54,14 +54,25 @@ export function roleScreen(locale: Locale, role: RoleId): RoleScreen {
   // 대표작이 숨겨졌으면 그 역할의 첫 프로젝트를 올린다
   const featuredId = visible(def.featured) ? def.featured : projects[0]?.slug;
   const featured = t.work.projects.find((p) => p.id === featuredId) ?? t.work.projects[0];
+  const others = pick(cards, def.others);
+  // 행에는 프로젝트마다 한 장만 — 같은 이름(PorterX · KITS)이 한 줄에 두 번 나오지 않게(3회차 리뷰 D3).
+  // 자료가 있는 첫 장을 고르고, 나머지는 상세의 「화면」 탭과 결과물 화면(/design)에 그대로 있다.
+  // 「그 외」 행에 이미 같은 그림이 있으면(디자인 아틀라스) 결과물 행에서는 뺀다 — 한 화면에 같은 그림 두 장을 두지 않는다.
+  const shownElsewhere = new Set(others.map((c) => c.shot.src));
+  const firstShown = (list: Artifact[]) => list.find((a) => !('example' in a)) ?? list[0];
   const artifacts: ArtifactCard[] = [
-    ...(def.standaloneArtifacts ? standaloneArtifacts(locale).map((artifact) => ({ artifact })) : []),
-    ...projects.flatMap((p) => projectArtifacts(p.slug, locale).map((artifact) => ({ artifact, projectName: p.name, projectSlug: p.slug }))),
+    ...(def.standaloneArtifacts
+      ? standaloneArtifacts(locale).filter((a) => !('shot' in a && shownElsewhere.has(a.shot.src))).map((artifact) => ({ artifact }))
+      : []),
+    ...projects.flatMap((p) => {
+      const pick1 = firstShown(projectArtifacts(p.slug, locale));
+      return pick1 ? [{ artifact: pick1, projectName: p.name, projectSlug: p.slug }] : [];
+    }),
   ];
   return {
     featured,
     projects,
-    others: pick(cards, def.others),
+    others,
     early: def.early ? cards.filter((c) => c.kind === 'early') : [],
     artifacts,
   };

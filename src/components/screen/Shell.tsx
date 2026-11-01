@@ -6,9 +6,10 @@ import { LANGUAGE_NAMES, LOCALES, designPath, type Locale } from '@/i18n/config'
 import FeedbackGate from '../feedback/FeedbackGate';
 import Lightbox from '../Lightbox';
 import { IconMail } from './icons';
-import { CarryHash, HeaderSolid, RoleChip, RoleHomeLink, TabBar, type TabKey } from './RoleClient';
+import { CarryHash, HeaderSolid, MenuButton, RoleChip, RoleHomeLink, type TabKey } from './RoleClient';
 
-// 리브랜딩 화면의 공통 뼈대 — 머리(로고 · 메뉴 · 언어 · 역할 아이콘) + 본문 + 연락 띠 + 모바일 아래 탭.
+// 리브랜딩 화면의 공통 뼈대 — 머리(로고 · 메뉴 · 언어 · 역할 아이콘) + 본문 + 연락 띠.
+// 좁은 화면은 메뉴·언어를 「메뉴 ▾」 하나로 접는다(넷플릭스 웹 390px 과 같은 방식). 아래 탭 막대는 3회차에 뺐다.
 // altPath: 언어를 바꿀 때 같은 화면의 다른 언어판 주소. role: 지금 역할을 아는 화면(역할 화면)이면 넘긴다.
 
 export default function Shell({ locale, altPath, role, tab, children, contact = true }: {
@@ -22,8 +23,23 @@ export default function Shell({ locale, altPath, role, tab, children, contact = 
 }) {
   const t = getContent(locale);
   const s = screenCopy(locale);
+  // 머리 메뉴와 좁은 화면의 「메뉴 ▾」 안이 같은 링크를 쓴다
+  const navLinks = (
+    <>
+      <RoleHomeLink locale={locale} current={tab === 'home'}>{s.tabHome}</RoleHomeLink>
+      <a href={designPath(locale)} aria-current={tab === 'work' ? 'page' : undefined}>{s.tabWork}</a>
+      <RoleHomeLink locale={locale} hash="#timeline">{t.timeline.title}</RoleHomeLink>
+      <RoleHomeLink locale={locale} hash="#contact">{s.tabContact}</RoleHomeLink>
+    </>
+  );
+  const langLinks = LOCALES.map((l) => (
+    <a key={l} href={altPath(l)} hrefLang={l} lang={l} aria-current={l === locale ? 'true' : undefined} title={LANGUAGE_NAMES[l]}>
+      <span aria-hidden="true">{l.toUpperCase()}</span>
+      <span className="visually-hidden">{LANGUAGE_NAMES[l]}</span>
+    </a>
+  ));
   return (
-    <div className="has-tabbar">
+    <div className="screen">
       <a className="skip-link" href="#main">{t.a11y.skip}</a>
       <header className="sx-header">
         <div className="sx-header-inner">
@@ -32,21 +48,13 @@ export default function Shell({ locale, altPath, role, tab, children, contact = 
             <Image src="/brand/solhun-sloth-96.png" alt="" width={28} height={28} />
             SOLHUN
           </RoleHomeLink>
-          <nav aria-label={t.a11y.primaryNav} className="sx-nav">
-            <RoleHomeLink locale={locale} current={tab === 'home'}>{s.tabHome}</RoleHomeLink>
-            <a href={designPath(locale)} aria-current={tab === 'work' ? 'page' : undefined}>{s.tabWork}</a>
-            <RoleHomeLink locale={locale} hash="#timeline">{t.timeline.title}</RoleHomeLink>
-            <RoleHomeLink locale={locale} hash="#contact">{s.tabContact}</RoleHomeLink>
-          </nav>
+          <nav aria-label={t.a11y.primaryNav} className="sx-nav">{navLinks}</nav>
+          <MenuButton label={s.menu}>
+            <nav aria-label={t.a11y.primaryNav} className="sx-menu-nav">{navLinks}</nav>
+            <nav aria-label={t.a11y.language} className="lang-switch sx-menu-lang">{langLinks}</nav>
+          </MenuButton>
           <div className="sx-header-end">
-            <nav aria-label={t.a11y.language} className="lang-switch">
-              {LOCALES.map((l) => (
-                <a key={l} href={altPath(l)} hrefLang={l} lang={l} aria-current={l === locale ? 'true' : undefined} title={LANGUAGE_NAMES[l]}>
-                  <span aria-hidden="true">{l.toUpperCase()}</span>
-                  <span className="visually-hidden">{LANGUAGE_NAMES[l]}</span>
-                </a>
-              ))}
-            </nav>
+            <nav aria-label={t.a11y.language} className="lang-switch">{langLinks}</nav>
             <RoleChip locale={locale} role={role} label={s.switchRole} />
           </div>
         </div>
@@ -72,14 +80,6 @@ export default function Shell({ locale, altPath, role, tab, children, contact = 
         </footer>
       )}
 
-      <TabBar
-        locale={locale}
-        role={role}
-        current={tab}
-        navLabel={t.a11y.primaryNav}
-        workHref={designPath(locale)}
-        labels={{ home: s.tabHome, work: s.tabWork, contact: s.tabContact, role: s.tabRole }}
-      />
       <Lightbox closeLabel={t.a11y.closeImage} prevLabel={t.a11y.prevImage} nextLabel={t.a11y.nextImage} originalLabel={s.openOriginal} />
       <FeedbackGate copy={t.feedback} />
     </div>

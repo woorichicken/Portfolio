@@ -7,6 +7,9 @@
  *   머리 80px · 알약 메뉴(10/16 · 반지름 24 · 16px/500, 고른 칸 흰색 20%) · 빌보드는 둥근 카드(반지름 24 · 그림자 10/20/32 45%)
  *   · 행 제목 24/18/16px 500 · 카드 16:9 반지름 12(모바일 8) 간격 8 · 한 줄 2/3/4/5/6장(폭 500/800/1100/1500 경계)
  *   · 버튼 알약 48px 18px/500(작은 화면 40px 16px) · 상세 정보 2:1 칸 · 회차 줄 · 비슷한 작품 3열.
+ * 3회차(같은 날): 390 · 768 화면도 Aside 숨은 탭에서 찍어 맞췄다(r3/netflix/nf-m-*.png · nf-t-*.png).
+ *   좁은 화면도 머리 80px · 메뉴는 「메뉴 ▾」 하나로 접기(아래 탭 막대 없음) · 카드 반지름 8(1280 부터 12)
+ *   · 빌보드 여백 4/16(모바일) · 프로필 화면 그림 72 · 이름 14px/500 · 상세 창은 양옆 4px 만 남긴 카드.
  * 가져오지 않은 것: 빨간 로고색 · 넷플릭스 글꼴 · 아이콘 · 문구. 색은 우리 것(종이 흰색 · 네 역할 색 · 이끼 강조)을 쓴다.
  * 글자 대비(WCAG, #141414 위): 본문 16.4:1 · 보조 #d2d2d2 12.2:1 · 메타 #bcbcbc 9.7:1 · 라벨 #8c8c8c 5.5:1(#232323 위 4.7:1) · 메뉴 70% 흰색 9.3:1.
  * 색 글자(#…)는 이 블록에만 둔다. 아래 규칙은 토큰만 쓴다.
@@ -50,8 +53,7 @@
 
   /* 넷플릭스 바깥 여백: 390 → 24 · 1024 → 36 · 1440 → 48 */
   --gutter: 24px;
-  --header-h: 64px;
-  --tabbar-h: 64px;
+  --header-h: 80px;
   --card-gap: 8px;
   --per-row: 2;
   --radius-card: 8px;
@@ -60,11 +62,10 @@
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   color-scheme: dark;
 }
-@media (min-width: 500px) { :root { --gutter: 36px; --per-row: 3; --radius-card: 12px; --radius-bb: 24px; } }
-@media (min-width: 760px) { :root { --header-h: 80px; } }
+@media (min-width: 500px) { :root { --gutter: 36px; --per-row: 3; --radius-bb: 24px; } }
 @media (min-width: 800px) { :root { --per-row: 4; } }
 @media (min-width: 1100px) { :root { --per-row: 5; } }
-@media (min-width: 1280px) { :root { --gutter: 48px; } }
+@media (min-width: 1280px) { :root { --gutter: 48px; --radius-card: 12px; } }
 @media (min-width: 1500px) { :root { --per-row: 6; } }
 
 /* ── 바탕 ─────────────────────────────────────────── */
@@ -171,6 +172,8 @@ html:not([data-feedback]) [data-example] { display: none; }
 }
 .lang-switch a:hover { color: var(--text); }
 .lang-switch a[aria-current] { background: var(--pill-active); color: var(--text); }
+/* 좁은 화면에서 언어 단추가 보이는 곳은 역할 고르기 머리뿐 — 손가락 칸 44px(2차 백로그로 남긴 U06) */
+@media (max-width: 759px) { .lang-switch a { min-height: 44px; min-width: 44px; } }
 .role-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; font-size: 14px; font-weight: 500; color: rgb(255 255 255 / 0.75); padding: 0 4px; border-radius: 6px; }
 .role-chip .caret { width: 10px; height: 10px; transition: transform .2s; }
 .role-chip:hover .caret { transform: translateY(2px); }
@@ -178,12 +181,35 @@ html:not([data-feedback]) [data-example] { display: none; }
 .role-chip .avatar { width: 32px; height: 32px; border-radius: 4px; }
 .role-chip .avatar svg { width: 20px; height: 20px; }
 @media (max-width: 1099px) { .role-chip-label { display: none; } }
+/* 좁은 화면의 「메뉴 ▾」 — 넷플릭스 390px: 로고 옆 「메뉴」 16px/500 · 펼치면 칸 175px · 항목 48px · 고른 항목 회색(흰색 20%) */
+.sx-menu { display: none; position: relative; }
+.sx-menu-btn {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 10px; margin-left: -10px;
+  border: 0; background: none; color: var(--text); font-size: 16px; font-weight: 500; cursor: pointer; border-radius: 8px;
+}
+.sx-menu-btn .caret { width: 10px; height: 10px; transition: transform .2s; }
+.sx-menu-btn[aria-expanded="true"] .caret { transform: rotate(180deg); }
+.sx-menu-panel {
+  position: absolute; left: -10px; top: calc(100% + 6px); z-index: 40; min-width: 200px; padding: 6px;
+  display: grid; gap: 4px; border-radius: 12px; background: rgb(24 24 24 / 0.97); border: 1px solid var(--line-soft);
+  box-shadow: 0 16px 40px var(--shadow);
+}
+.sx-menu-panel[hidden] { display: none; }
+.sx-menu-nav { display: grid; gap: 4px; }
+.sx-menu-nav a {
+  display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-radius: 8px;
+  font-size: 16px; font-weight: 500; text-decoration: none; color: rgb(255 255 255 / 0.75);
+}
+.sx-menu-nav a:hover { color: var(--text); background: var(--pill-hover); }
+.sx-menu-nav a[aria-current] { color: var(--text); background: var(--pill-active); }
+.sx-menu-lang { margin-top: 4px; padding: 4px; border-top: 1px solid var(--line-soft); border-radius: 0 0 8px 8px; background: none; justify-content: space-between; }
+.sx-menu-lang a { flex: 1; min-height: 44px; }
 @media (max-width: 759px) {
   .sx-nav { display: none; }
+  .sx-menu { display: block; }
+  .sx-header-inner { gap: 16px; }
   .sx-header-end { gap: 10px; }
-  .lang-switch { padding: 0; background: none; }
-  .lang-switch a { min-height: 44px; min-width: 38px; padding: 0 6px; font-size: 12px; }
-  .lang-switch a[aria-current] { background: none; color: var(--text); text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; }
+  .sx-header-end .lang-switch { display: none; }
 }
 
 /* ── 역할 아바타 ───────────────────────────────────── */
@@ -201,7 +227,11 @@ html:not([data-feedback]) [data-example] { display: none; }
 .avatar svg { width: 46%; height: 46%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ── 역할 고르기 — 넷플릭스 프로필 화면: 검정 바탕 · 32px/700 · 타일 반지름 16 · 그림 128(모바일 96) 반지름 12 ── */
-.picker { min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto; background: var(--bg-deep); overflow-x: clip; }
+.picker {
+  min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto; overflow-x: clip;
+  /* 넷플릭스 프로필 화면의 위쪽 빛 — 빨강 대신 이끼색을 아주 옅게 */
+  background: radial-gradient(1600px at 50% -54dvh, color-mix(in srgb, var(--role-design) 55%, transparent) 19%, color-mix(in srgb, var(--role-design) 22%, transparent) 60%, transparent 100%), var(--bg-deep);
+}
 .picker-top { display: flex; align-items: center; justify-content: space-between; height: var(--header-h); padding-inline: var(--gutter); }
 .picker-main { display: grid; place-content: center; text-align: center; padding: 24px var(--gutter) 48px; }
 .picker-who { margin: 0 0 12px; font-size: 15px; line-height: 1.5; color: var(--text-3); }
@@ -231,25 +261,37 @@ html:not([data-feedback]) [data-example] { display: none; }
 .picker-about b { color: var(--text-2); font-weight: 600; }
 .picker-links { display: flex; justify-content: center; gap: 8px; font-weight: 500; }
 .picker-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; color: var(--text-2); text-underline-offset: 4px; }
-@media (max-width: 499px) {
-  .picker-main { align-content: start; padding-top: 4vh; }
-  .picker-title { font-size: 28px; }
-  .picker-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .picker-tile { width: auto; padding: 12px; }
-  .picker-tile .avatar { width: 96px; }
-  .picker-name { margin-top: 12px; font-size: 16px; }
+/* 태블릿(500~899): 타일 200px 네 장이 한 줄에 안 들어가 3+1 로 꺾였다 — 160px · 그림 112 로 줄여 한 줄에 둔다 */
+@media (min-width: 500px) and (max-width: 899px) {
+  .picker-tile { width: 160px; padding: 14px; }
+  .picker-tile .avatar { width: 112px; }
+  .picker-name { margin-top: 16px; font-size: 16px; }
   .picker-blurb { font-size: 13px; }
+}
+@media (max-width: 499px) {
+  .picker-main { place-content: center stretch; text-align: left; padding-top: 8px; }
+  .picker-who { font-size: 14px; }
+  .picker-lead { margin: 8px 0 24px; font-size: 15px; text-wrap: pretty; }
+  .picker-grid { display: grid; grid-template-columns: repeat(3, 96px); justify-content: center; gap: 16px 8px; margin: 0; }
+  .picker-tile { width: 96px; padding: 12px; }
+  .picker-tile .avatar { width: 72px; }
+  .picker-name { margin-top: 12px; font-size: 14px; text-align: center; line-height: 1.35; }
+  .picker-blurb { display: none; }
+  .picker-recent { top: 2px; right: 50%; translate: 50% 0; font-size: 10px; padding: 2px 6px; }
+  .picker-main > div:last-child { text-align: center; }
 }
 
 /* ── 빌보드 — 둥근 카드(반지름 24 · 모바일 12) · 큰 화면 2.18:1 가로, 작은 화면 세로(5:6 · 2:3) ─────── */
 .billboard {
   position: relative; isolation: isolate; overflow: hidden;
-  margin: 8px var(--gutter) 36px; border-radius: var(--radius-bb); box-shadow: 10px 20px 32px var(--shadow);
+  margin: 4px var(--gutter) 48px; border-radius: var(--radius-bb); box-shadow: 10px 20px 32px var(--shadow);
   aspect-ratio: 2 / 3; display: flex; flex-direction: column; justify-content: flex-end;
   background: var(--surface);
 }
 @media (min-width: 500px) { .billboard { aspect-ratio: 5 / 6; } }
-@media (min-width: 1000px) { .billboard { aspect-ratio: 1344 / 617; margin-top: 8px; } }
+/* 넷플릭스 여백: 390·768 → 위 4 · 아래 16(+ 행 위 32) / 1024 → 6 · 26 / 1440 → 8 · 36 */
+@media (min-width: 1000px) { .billboard { aspect-ratio: 1344 / 617; margin-top: 6px; margin-bottom: 26px; } }
+@media (min-width: 1280px) { .billboard { margin-top: 8px; margin-bottom: 36px; } }
 .billboard-media { position: absolute; inset: 0; z-index: -1; }
 /* 우리 대표 그림은 흰 바탕 화면 캡처가 많다(사내 자동화 · FAIR) — 넷플릭스 예고편처럼 어둡지 않아서 한 단계 눌러 둔다 */
 .billboard-media img { width: 100%; height: 100%; object-fit: cover; object-position: center 35%; filter: brightness(0.8) saturate(1.05); }
@@ -289,19 +331,14 @@ html:not([data-feedback]) [data-example] { display: none; }
 }
 .billboard-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
 @media (min-width: 500px) { .billboard-actions { flex-direction: row; flex-wrap: wrap; } }
+/* 768 넷플릭스: 두 버튼이 같은 폭으로 반씩 */
+@media (min-width: 500px) and (max-width: 999px) { .billboard-actions > .btn { flex: 1 1 0; } }
 @media (min-width: 800px) {
   .billboard-meta { font-size: 16px; margin-top: 16px; }
   .billboard-synopsis { font-size: 18px; line-height: 1.4; }
   .billboard-actions { margin-top: 32px; gap: 12px; }
 }
 @media (min-width: 1280px) { .billboard-synopsis { font-size: 20px; } }
-.billboard-callouts { display: none; }
-@media (min-width: 1100px) {
-  .billboard-callouts { position: absolute; right: 36px; bottom: 36px; display: flex; gap: 8px; list-style: none; margin: 0; padding: 0; max-width: 34%; flex-wrap: wrap; justify-content: flex-end; }
-  .billboard-callouts li { display: flex; align-items: baseline; gap: 6px; padding: 8px 10px; border-radius: 8px; background: rgb(0 0 0 / 0.5); font-size: 14px; line-height: 1.3; color: var(--text-2); max-width: 280px; }
-  .billboard-callouts b { color: var(--text); font-weight: 700; white-space: nowrap; }
-}
-
 /* ── 행 — 제목 24/18/16px 500 · 카드 16:9 · 간격 8 · 한 줄 2~6장, 오른쪽 여백에 다음 카드가 비친다 ─────── */
 .rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; padding-bottom: 56px; }
 @media (min-width: 800px) { .rows { gap: 44px; } }
@@ -357,18 +394,6 @@ html:not([data-feedback]) [data-example] { display: none; }
 .card:focus-visible .card-media { outline: 3px solid var(--accent); outline-offset: 2px; }
 .card-tag { position: absolute; left: 8px; top: 8px; font-size: 11px; font-weight: 700; background: var(--text); color: var(--on-light); padding: 2px 7px; border-radius: 4px; }
 
-/* 숫자 칸 — 넷플릭스 「TOP 10」 숫자처럼 속이 빈 큰 숫자 + 뜻 */
-.stat {
-  margin: 0; aspect-ratio: 4 / 3; display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
-  padding: 14px 16px; border-radius: var(--radius-card); background: var(--surface-2); overflow: hidden;
-}
-.stat strong {
-  font-family: var(--font-display-stack); font-size: clamp(28px, 3vw, 46px); font-weight: 800; letter-spacing: -0.02em; line-height: 1; white-space: nowrap;
-  color: transparent; -webkit-text-stroke: 1.5px var(--text-3); paint-order: stroke;
-}
-.stat span { font-size: 13px; line-height: 1.45; color: var(--text-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-@media (min-width: 1100px) { .stat span { font-size: 14px; } .stat { padding: 18px 20px; aspect-ratio: 16 / 9; } }
-
 /* 결과물 카드 — 같은 16:9 카드. 누르면 크게(Lightbox) */
 .art-media { cursor: zoom-in; }
 .art-ex .card-media { display: grid; place-items: center; cursor: default; border: 2px dashed var(--mark); background: transparent; color: var(--mark); font-weight: 700; }
@@ -377,10 +402,34 @@ html:not([data-feedback]) [data-example] { display: none; }
 .sec { padding-block: 40px; }
 .sec-title { font-size: 18px; font-weight: 500; margin: 0 0 16px; }
 @media (min-width: 1100px) { .sec-title { font-size: 24px; } }
-.timeline { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 0 32px; }
-.timeline li { display: grid; grid-template-columns: 5em 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line-soft); font-size: 15px; line-height: 1.5; }
-.timeline time { font-size: 14px; font-weight: 500; color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.timeline p { margin: 0; color: var(--text-2); }
+/* 연표 — 해마다 큰 숫자 하나, 그 아래 세로 줄 위에 달마다 점. 최근 해가 위.
+   넓은 화면은 해 숫자를 왼쪽 칸에 세워 두고 줄이 오른쪽으로 내려간다 */
+.tl { display: grid; gap: 28px; max-width: 980px; }
+.tl-year { display: grid; gap: 8px; }
+.tl-y {
+  margin: 0; font-family: var(--font-display-stack); font-size: 40px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; white-space: nowrap;
+  color: transparent; -webkit-text-stroke: 1.5px var(--text-3); paint-order: stroke; font-variant-numeric: tabular-nums;
+}
+.tl-list { list-style: none; margin: 0; padding: 0 0 0 22px; position: relative; display: grid; gap: 0; }
+.tl-list::before { content: ''; position: absolute; left: 5px; top: 10px; bottom: 10px; width: 2px; border-radius: 2px; background: var(--line); }
+.tl-item { position: relative; display: grid; grid-template-columns: 4.6em 1fr; gap: 12px; padding: 10px 0; font-size: 15px; line-height: 1.55; }
+.tl-item::before {
+  content: ''; position: absolute; left: -22px; top: 15px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--text-3);
+}
+.tl-year:first-child .tl-item:first-child::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent); }
+.tl-item time { font-size: 14px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tl-item p { margin: 0; color: var(--text-2); }
+@media (max-width: 499px) {
+  .tl-item { grid-template-columns: 1fr; gap: 2px; }
+  .tl-y { font-size: 32px; }
+}
+@media (min-width: 800px) {
+  .tl { gap: 8px; }
+  .tl-year { grid-template-columns: 200px 1fr; gap: 24px; align-items: start; }
+  .tl-y { font-size: 52px; position: sticky; top: calc(var(--header-h) + 16px); padding-top: 4px; }
+  .tl-list { padding-bottom: 20px; }
+}
 .contact-band { padding: 8px var(--gutter) calc(32px + env(safe-area-inset-bottom)); }
 .contact-card {
   border-radius: var(--radius-bb); padding: 28px 20px; background:
@@ -396,29 +445,13 @@ html:not([data-feedback]) [data-example] { display: none; }
 .contact-email-line a { display: inline-flex; align-items: center; min-height: 44px; color: var(--text-2); text-underline-offset: 4px; }
 .footer-note { margin: 20px 0 0; font-size: 13px; color: var(--text-4); }
 
-/* ── 모바일 아래 탭(넷플릭스 앱처럼) ───────────────────── */
-.tabbar { display: none; }
-@media (max-width: 759px) {
-  html { scroll-padding-bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom)); }
-  .has-tabbar { padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom)); }
-  .tabbar {
-    display: grid; grid-template-columns: repeat(4, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
-    height: calc(var(--tabbar-h) + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom);
-    background: rgb(10 10 10 / 0.94); backdrop-filter: blur(12px); border-top: 1px solid var(--line-soft);
-  }
-  .tabbar a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; font-size: 11px; font-weight: 500; color: var(--text-4); }
-  .tabbar a[aria-current] { color: var(--text); }
-  .tabbar svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-  .tabbar .avatar { width: 24px; height: 24px; border-radius: 4px; }
-  .tabbar .avatar svg { width: 15px; height: 15px; }
-}
-
 /* ── 작품 상세 — 넷플릭스 상세 창을 페이지로: 가운데 시트(바탕 #181818) · 위 16:9 · 정보 2:1 · 탭 ───────── */
 .title-backdrop { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 .title-backdrop img { width: 100%; height: 100%; object-fit: cover; filter: blur(48px) saturate(1.1); opacity: 0.32; transform: scale(1.1); }
 .title-backdrop::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgb(20 20 20 / 0.3), var(--bg) 70%); }
 .title-sheet {
-  max-width: 960px; margin: 0 auto 0; background: var(--surface); overflow: clip;
+  max-width: 960px; margin: 8px 4px 32px; border-radius: 6px; background: var(--surface); overflow: clip;
+  box-shadow: 0 16px 48px rgb(0 0 0 / 0.55);
 }
 @media (min-width: 760px) {
   .title-sheet { margin: 16px auto 56px; border-radius: 12px; box-shadow: 0 24px 64px rgb(0 0 0 / 0.6); width: calc(100% - 2 * var(--gutter)); }
@@ -426,31 +459,32 @@ html:not([data-feedback]) [data-example] { display: none; }
 .title-hero { position: relative; isolation: isolate; }
 .title-hero-media { display: block; position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--bg-deep); }
 .title-hero-media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
-.title-hero-media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, var(--surface) 0%, rgb(24 24 24 / 0) 50%); pointer-events: none; }
-/* 큰 화면은 이름·버튼을 그림 위에 얹으니 왼쪽 아래를 더 눌러 흰 캡처 위에서도 읽히게 한다 */
-@media (min-width: 760px) {
-  .title-hero-media img { filter: brightness(0.86); }
-  .title-hero-media::after {
-    background:
-      linear-gradient(0deg, var(--surface) 0%, rgb(24 24 24 / 0.75) 22%, rgb(24 24 24 / 0) 58%),
-      linear-gradient(to right, rgb(0 0 0 / 0.6) 0%, rgb(0 0 0 / 0) 60%);
-  }
+.title-hero-media img { filter: brightness(0.86); }
+/* 이름·버튼을 그림 위에 얹으니(넷플릭스는 390 에서도 그림 위) 왼쪽 아래를 눌러 흰 캡처 위에서도 읽히게 한다 */
+.title-hero-media::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(0deg, var(--surface) 0%, rgb(24 24 24 / 0.82) 26%, rgb(24 24 24 / 0) 66%),
+    linear-gradient(to right, rgb(0 0 0 / 0.6) 0%, rgb(0 0 0 / 0) 64%);
 }
 .title-hero-media.is-portrait img { object-fit: contain; }
-.title-close { position: absolute; top: 16px; right: 16px; z-index: 3; background: var(--surface); border-color: transparent; }
+.title-close { position: absolute; top: 12px; right: 12px; z-index: 3; background: var(--surface); border-color: transparent; }
+@media (min-width: 760px) { .title-close { top: 16px; right: 16px; } }
 .title-close:hover { border-color: var(--text); }
-.title-head { position: relative; z-index: 2; padding: 4px 16px 0; }
-.title-kicker { font-size: 14px; color: var(--text-3); margin: 0 0 6px; }
-.title-name { font-family: var(--font-display-stack); font-size: clamp(32px, 5vw, 56px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; margin: 0; text-wrap: balance; }
-.title-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
-@media (min-width: 500px) { .title-actions { flex-direction: row; flex-wrap: wrap; } }
-@media (min-width: 760px) {
-  .title-head { position: absolute; left: 48px; right: 48px; bottom: 32px; padding: 0; }
-  .title-head .title-kicker { color: var(--text-2); text-shadow: 0 1px 8px rgb(0 0 0 / 0.6); }
-  .title-name { text-shadow: 0 2px 24px rgb(0 0 0 / 0.45); }
-  .title-actions { margin-top: 20px; align-items: center; }
+.title-head { position: absolute; z-index: 2; left: 16px; right: 16px; bottom: 12px; }
+.title-kicker { font-size: 13px; color: var(--text-2); margin: 0 0 4px; text-shadow: 0 1px 8px rgb(0 0 0 / 0.6); }
+.title-name {
+  font-family: var(--font-display-stack); font-size: clamp(28px, 5vw, 56px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05;
+  margin: 0; text-wrap: balance; text-shadow: 0 2px 24px rgb(0 0 0 / 0.45);
 }
-.title-info { display: grid; gap: 16px; padding: 24px 16px 0; }
+.title-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+@media (max-width: 499px) { .title-actions .btn-lg { min-height: 40px; font-size: 15px; padding: 0 16px; } .title-actions .btn-lg svg { width: 20px; height: 20px; } }
+@media (min-width: 760px) {
+  .title-head { left: 48px; right: 48px; bottom: 32px; }
+  .title-kicker { font-size: 14px; margin-bottom: 6px; }
+  .title-actions { margin-top: 20px; }
+}
+.title-info { display: grid; gap: 16px; padding: 16px 16px 0; }
 @media (min-width: 760px) { .title-info { grid-template-columns: 2fr 1fr; gap: 32px; padding: 20px 48px 0; } }
 .title-meta { font-size: 16px; color: var(--text-3); }
 .title-tagline { margin: 12px 0 0; font-size: 18px; font-weight: 600; line-height: 1.45; color: var(--text); }
@@ -464,6 +498,7 @@ html:not([data-feedback]) [data-example] { display: none; }
 
 /* 탭 — 머리 메뉴와 같은 알약. 패널은 서버가 다 그려 두고 숨김만 바꾼다(검색엔진·JS 꺼짐에도 내용이 있다) */
 .tabs { position: sticky; top: var(--header-h); z-index: 10; background: var(--surface); margin-top: 24px; border-bottom: 1px solid var(--line-soft); }
+.tab-anchor { position: absolute; top: 0; left: 0; width: 1px; height: 1px; pointer-events: none; }
 .tabs-list { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 10px 16px; }
 @media (min-width: 760px) { .tabs-list { padding: 12px 44px; } }
 .tabs-list::-webkit-scrollbar { display: none; }
@@ -483,10 +518,6 @@ html:not([data-feedback]) [data-example] { display: none; }
 .tab-panel > :is(section, .paras) + :is(section, .paras) { margin-top: 44px; }
 @media (max-width: 499px) { .panel-h { font-size: 20px; margin: 36px 0 14px; } }
 
-.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; }
-.metrics p { margin: 0; padding: 16px; border-radius: 8px; background: var(--surface-2); display: grid; gap: 8px; align-content: start; }
-.metrics strong { font-family: var(--font-display-stack); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
-.metrics span { font-size: 14px; color: var(--text-2); line-height: 1.5; }
 .quotes { display: grid; gap: 8px; }
 .quote { margin: 0; padding: 20px; border-radius: 8px; background: var(--surface-2); }
 .quote blockquote { margin: 0; font-size: 17px; line-height: 1.6; color: var(--text); }
@@ -503,10 +534,12 @@ html:not([data-feedback]) [data-example] { display: none; }
 /* 바꾼 것 — 넷플릭스 회차 목록: 번호(24px) · 제목(16/500) · 줄거리(14/20) · 줄 사이 #404040 */
 .episodes { list-style: none; margin: 0; padding: 0; display: grid; }
 .episode { display: grid; grid-template-columns: 48px 1fr; gap: 4px 12px; padding: 20px 16px; border-bottom: 1px solid var(--line); border-radius: 4px; transition: background-color .2s; }
-.episode:first-child { background: var(--surface-3); border-bottom-color: transparent; }
+.episodes:not(.is-specials) .episode:first-child { background: var(--surface-3); border-bottom-color: transparent; }
 .episode:hover { background: var(--surface-3); }
 .ep-num { font-size: 24px; font-weight: 400; color: var(--text-2); line-height: 1.4; text-align: center; }
 .ep-title { margin: 0; font-size: 16px; font-weight: 500; line-height: 1.4; }
+.ep-body { margin: 6px 0 0; font-size: 14px; line-height: 20px; color: var(--text-2); max-width: 44em; }
+.is-specials .ep-num { color: var(--accent); }
 .ep-badge { display: inline-block; margin: 0 0 4px; font-size: 12px; font-weight: 700; color: var(--accent); }
 .ep-ba { display: grid; gap: 6px; margin-top: 8px; }
 .ep-ba > div { display: grid; grid-template-columns: 3.4em 1fr; gap: 8px; }
@@ -598,14 +631,6 @@ html:not([data-feedback]) .wall-note { display: none; }
 }
 .email-tip em { font-style: normal; }
 .email-link:hover .email-tip, .email-link:focus-visible .email-tip, .email-tip[data-open] { opacity: 1; transform: none; }
-
-/* 링크 복사 알림 */
-.toast {
-  position: fixed; left: 50%; bottom: calc(var(--tabbar-h) + 20px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 70;
-  background: var(--text); color: var(--on-light); font-weight: 500; font-size: 14px; padding: 10px 16px; border-radius: 999px; box-shadow: 0 10px 30px var(--shadow);
-  max-width: calc(100vw - 32px); overflow-wrap: anywhere;
-}
-@media (min-width: 760px) { .toast { bottom: 32px; } }
 
 /* ── 피드백 관문 ─────────────────────────────────────── */
 .fb-gate-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px; background: var(--scrim-soft); }

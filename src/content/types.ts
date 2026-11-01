@@ -32,6 +32,8 @@ export type Project = {
   summary: string;
   facts: Fact[];
   cover: Shot;
+  /** 「맡은 일」 — 이 프로젝트에서 제가 맡은 부분을 대략 나눈 줄. 상세의 회차 목록이 된다(바꾼 것은 그 아래 특별편) */
+  parts?: { title: string; body: string }[];
   improvements?: Improvement[];
   metrics?: Metric[];
   quotes?: Quote[];

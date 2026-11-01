@@ -10,15 +10,16 @@ import { projectPath, type Locale } from '@/i18n/config';
 import Figure from '../Figure';
 import Rich from '../Rich';
 import { ArtifactTileCard, SimilarCard } from './Cards';
-import { DetailTabs, ShareButton, type TabPanel } from './DetailClient';
-import { IconClose, IconExternal, IconMail } from './icons';
+import { DetailTabs, type TabPanel } from './DetailClient';
+import { IconClose, IconExternal } from './icons';
 import { BackToList } from './RoleClient';
 import Shell from './Shell';
 
 // 작품 상세(/projects/<slug>) — 큰 프로젝트와 「그 외」·「이전」을 같은 틀로 그린다.
 // 넷플릭스 상세 창(882px 시트 · 위 16:9 · 정보 2:1 칸)을 페이지로 옮겼다: 주소가 있어 링크로 보내고 검색엔진도 읽는다.
-// 위: 16:9 그림 + 이름 · 버튼(사이트 열기/메일 · 링크 복사 · 크게 보기) → 정보(왼쪽 사실 · 한 줄 · 요약 / 오른쪽 함께 · 링크)
-// 아래: 탭 — 개요(결과·말·배운 점) · 바꾼 것(회차 목록) · 화면 · 비슷한 작품 · 자세히. 빈 탭은 만들지 않는다.
+// 위: 16:9 그림 + 그 위 이름 · 사이트 열기(있을 때만) → 정보(왼쪽 사실 · 한 줄 · 요약 / 오른쪽 함께 · 링크)
+// 아래: 탭 — 개요(함께 일한 사람들의 말 · 배운 점) · 맡은 일(회차 목록 + 특별편 「바꾼 것」) · 화면 · 비슷한 작품 · 자세히.
+// 빈 탭은 만들지 않는다. 3회차 리뷰: 결과 숫자 · 메일 보내기 · 링크 복사는 뺐다(D4 · D5).
 
 type Model = {
   slug: string;
@@ -29,8 +30,8 @@ type Model = {
   summary: string;
   facts: Fact[];
   links: Link[];
+  parts: NonNullable<Project['parts']>;
   improvements: Project['improvements'];
-  metrics: Project['metrics'];
   quotes: Quote[];
   lesson?: Project['lesson'];
   paragraphs: string[];
@@ -41,7 +42,7 @@ type Model = {
 function fromProject(p: Project): Model {
   return {
     slug: p.id, name: p.name, kicker: p.context, cover: p.cover, tagline: p.tagline, summary: p.summary, facts: p.facts,
-    links: p.links ?? [], improvements: p.improvements, metrics: p.metrics, quotes: p.quotes ?? [], lesson: p.lesson,
+    links: p.links ?? [], parts: p.parts ?? [], improvements: p.improvements, quotes: p.quotes ?? [], lesson: p.lesson,
     paragraphs: [], gallery: p.gallery ?? [], isProject: true,
   };
 }
@@ -49,7 +50,7 @@ function fromProject(p: Project): Model {
 function fromEntry(e: WorkEntry): Model {
   return {
     slug: e.slug, name: e.name, kicker: e.meta, cover: e.shot, summary: e.body, facts: e.detail.facts,
-    links: e.detail.links ?? [], improvements: undefined, metrics: undefined, quotes: [], lesson: undefined,
+    links: e.detail.links ?? [], parts: [], improvements: undefined, quotes: [], lesson: undefined,
     paragraphs: e.detail.paragraphs, gallery: [], isProject: false,
   };
 }
@@ -78,14 +79,6 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
 
   const panels: TabPanel[] = [];
   const overview: ReactNode[] = [];
-  if (m.metrics?.length) {
-    overview.push(
-      <section key="results">
-        <h2 className="panel-h">{s.results}</h2>
-        <div className="metrics">{m.metrics.map((x) => <p key={x.label}><strong>{x.value}</strong><span>{x.label}</span></p>)}</div>
-      </section>,
-    );
-  }
   if (m.quotes.length) {
     overview.push(
       <section key="voices">
@@ -117,27 +110,52 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
   }
   if (overview.length) panels.push({ id: 'overview', label: s.tabOverview, content: <>{overview}</> });
 
-  if (m.improvements?.length) {
+  // 맡은 일 — 넷플릭스 회차 목록처럼 「이 프로젝트에서 제가 한 부분」을 번호로 훑게 하고,
+  // 전후가 있는 개선(바꾼 것)은 그 아래 「특별편」으로 내린다(3회차 리뷰 D6)
+  const episode = (num: string, title: string, body: ReactNode, badge?: string) => (
+    <li key={title} className="episode">
+      <span className="ep-num">{num}</span>
+      <div>
+        {badge && <p className="ep-badge">{badge}</p>}
+        <h3 className="ep-title">{title}</h3>
+        {body}
+      </div>
+    </li>
+  );
+  if (m.parts.length || m.improvements?.length) {
     panels.push({
       id: 'changes',
       label: s.tabChanges,
       content: (
-        <ol className="episodes">
-          {m.improvements.map((it, i) => (
-            <li key={it.title} className="episode">
-              <span className="ep-num">{String(i + 1).padStart(2, '0')}</span>
-              <div>
-                {it.badge && <p className="ep-badge">{it.badge}</p>}
-                <h3 className="ep-title">{it.title}</h3>
-                <div className="ep-ba">
-                  <div><span>{t.work.labels.before}</span><p>{it.before}</p></div>
-                  <div><span>{t.work.labels.after}</span><p><Rich text={it.after} /></p></div>
-                </div>
-                {it.metric && <p className="ep-metric"><strong>{it.metric.value}</strong>{it.metric.label}</p>}
-              </div>
-            </li>
-          ))}
-        </ol>
+        <>
+          {m.parts.length > 0 && (
+            <section>
+              <h2 className="panel-h">{s.tabChanges}</h2>
+              <ol className="episodes">
+                {m.parts.map((part, i) => episode(String(i + 1), part.title, <p className="ep-body">{part.body}</p>))}
+              </ol>
+            </section>
+          )}
+          {m.improvements && m.improvements.length > 0 && (
+            <section>
+              <h2 className="panel-h">{s.specials}</h2>
+              <ol className="episodes is-specials">
+                {m.improvements.map((it, i) => episode(
+                  String(i + 1),
+                  it.title,
+                  <>
+                    <div className="ep-ba">
+                      <div><span>{t.work.labels.before}</span><p>{it.before}</p></div>
+                      <div><span>{t.work.labels.after}</span><p><Rich text={it.after} /></p></div>
+                    </div>
+                    {it.metric && <p className="ep-metric"><strong>{it.metric.value}</strong>{it.metric.label}</p>}
+                  </>,
+                  it.badge,
+                ))}
+              </ol>
+            </section>
+          )}
+        </>
       ),
     });
   }
@@ -213,14 +231,11 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
           <div className="title-head">
             <p className="title-kicker">{m.kicker}</p>
             <h1 className="title-name">{m.name}</h1>
-            <div className="title-actions">
-              {site ? (
+            {site && (
+              <div className="title-actions">
                 <a className="btn btn-primary btn-lg" href={site.href} target="_blank" rel="noreferrer"><IconExternal />{s.openSite}<span className="visually-hidden"> {s.newTab}</span></a>
-              ) : (
-                <a className="btn btn-primary btn-lg" href={`mailto:${t.contact.email}?subject=${encodeURIComponent(m.name)}`}><IconMail />{s.emailMe}</a>
-              )}
-              <ShareButton label={s.copyLink} copiedLabel={s.copied} failedLabel={s.copyFailed} title={`${m.name} — SOLHUN`} />
-            </div>
+              </div>
+            )}
           </div>
         </div>
 

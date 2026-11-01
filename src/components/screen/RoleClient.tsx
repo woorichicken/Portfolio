@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ROLES, type RoleId } from '@/content/roles';
 import { browsePath, localePath, type Locale } from '@/i18n/config';
-import { Avatar, IconCaret, IconGrid, IconHome, IconMail } from './icons';
+import { Avatar, IconCaret } from './icons';
 import { readRole, writeRole } from './role-memory';
 
 // 역할을 기억하고 그 역할로 돌아가게 하는 작은 조각들. 서버는 기본값(fallback)으로 그리고, 붙은 뒤 기억한 역할로 바꾼다.
@@ -115,34 +115,49 @@ export function HeaderSolid() {
   return null;
 }
 
-export type TabKey = 'home' | 'work' | 'contact' | 'role';
+export type TabKey = 'home' | 'work';
 
-/** 모바일 아래 탭 — 홈(기억한 역할) · 결과물 · 연락 · 역할 바꾸기 */
-export function TabBar({ locale, current, role: known, labels, workHref, navLabel }: {
-  locale: Locale;
-  navLabel: string;
-  current?: TabKey;
-  role?: RoleId;
-  labels: Record<TabKey, string>;
-  workHref: string;
-}) {
-  const stored = useStoredRole('all');
-  const role = known ?? stored;
-  const home = browsePath(locale, role);
-  const items: { key: TabKey; href: string; icon: ReactNode }[] = [
-    { key: 'home', href: home, icon: <IconHome /> },
-    { key: 'work', href: workHref, icon: <IconGrid /> },
-    { key: 'contact', href: `${home}#contact`, icon: <IconMail /> },
-    { key: 'role', href: localePath(locale), icon: <Avatar role={role} /> },
-  ];
+/**
+ * 좁은 화면의 「메뉴 ▾」 — 넷플릭스 웹이 390px 에서 메뉴를 한 단추로 접는 방식(2026-11-01 실측: 머리 80px · 로고 옆 「메뉴」 ·
+ * 펼치면 175px 칸에 항목 48px · 고른 항목 회색 바탕). 아래 탭 막대(앱 방식)를 이걸로 바꿨다(3회차 리뷰 M1 「실제 반응형 넷플릭스와 다르다」).
+ * 바깥을 누르거나 Esc · 항목을 누르면 닫힌다.
+ */
+export function MenuButton({ label, children }: { label: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const boxRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onPointer = (e: MouseEvent) => {
+      if (!boxRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setOpen(false);
+      boxRef.current?.querySelector<HTMLButtonElement>('.sx-menu-btn')?.focus();
+    };
+    document.addEventListener('click', onPointer);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('click', onPointer);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
   return (
-    <nav className="tabbar" aria-label={navLabel}>
-      {items.map((it) => (
-        <a key={it.key} href={it.href} aria-current={current === it.key ? 'page' : undefined}>
-          {it.icon}
-          {labels[it.key]}
-        </a>
-      ))}
-    </nav>
+    <div className="sx-menu" ref={boxRef}>
+      <button type="button" className="sx-menu-btn" aria-expanded={open} aria-controls="sx-menu-panel" onClick={() => setOpen((v) => !v)}>
+        {label}
+        <IconCaret />
+      </button>
+      <div
+        className="sx-menu-panel"
+        id="sx-menu-panel"
+        hidden={!open}
+        onClick={(e) => {
+          if ((e.target as Element).closest('a')) setOpen(false);
+        }}
+      >
+        {children}
+      </div>
+    </div>
   );
 }

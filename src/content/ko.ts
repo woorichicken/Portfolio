@@ -59,6 +59,11 @@ const ko: Content = {
           { label: '함께', value: '디자이너 · 개발자 · 대표 · 고객' },
         ],
         cover: shot('lw_kits-hero-phones', 'KITS 앱 화면이 담긴 휴대폰 여러 대'),
+        parts: [
+          { title: '프론트엔드', body: '앱(React Native)과 모바일웹·데스크톱웹·교사웹·관리자웹 화면을 만들었습니다. 백엔드는 고객사가 맡아서, 필요한 API와 요청 방식을 프론트 쪽에서 함께 정했습니다.' },
+          { title: '화면 맞추기', body: '디자이너·클라이언트와 화면을 맞추는 창구였습니다. 한 화면이 다섯 곳으로 퍼져서 개발보다 이 일이 더 컸습니다.' },
+          { title: 'QA', body: '반응형 검수부터 2차 검수까지 QA를 총괄했습니다. 그때 만든 리뷰 보드와 제보 위젯은 아래 특별편에 있습니다.' },
+        ],
         improvements: [
           {
             title: '반응형 검수',
@@ -112,6 +117,11 @@ const ko: Content = {
           { label: '함께', value: '노무사 · 역할별 사용자' },
         ],
         cover: shot('efm_v4', '직접 만든 FAIR 제품 소개 영상의 한 장면'),
+        parts: [
+          { title: '기획', body: '계약 뒤 요구 분석부터 기능명세서(v2~v2.2)와 진단 체크리스트까지 직접 썼습니다.' },
+          { title: '개발 · 운영', body: 'CRM, 공개 사이트, 직원 앱 세 개를 만들고 지금도 운영합니다.' },
+          { title: '전달', body: '디자인 시스템을 정리해 넘기고 사용 가이드, 소개 영상, 카드뉴스까지 만들었습니다.' },
+        ],
         improvements: [
           {
             title: '개발 밖의 전 과정',
@@ -155,6 +165,11 @@ const ko: Content = {
           { label: '라이선스', value: 'MIT 오픈소스' },
         ],
         cover: shot('cli_green', 'CLI Manager 화면 — AI 세션은 녹색'),
+        parts: [
+          { title: '기획 · 개발', body: '터미널을 한곳에 모아 보는 macOS 앱(Electron)을 혼자 기획하고 만들었습니다.' },
+          { title: '릴리스', body: '2025년 12월 첫 릴리스부터 60번 넘게 내보냈습니다. 처음엔 유료로 팔다가 오픈소스로 돌렸습니다.' },
+          { title: '알리기', body: '랜딩 페이지를 만들고 Product Hunt와 Reddit에 직접 소개했습니다.' },
+        ],
         improvements: [
           {
             badge: 'v1.9 – v1.10 · 2026.09',
@@ -199,6 +214,11 @@ const ko: Content = {
           { label: '함께', value: '대표 · 사내 개발자' },
         ],
         cover: shot('sym_flow', '사내 문서·QA 플랫폼의 흐름 화면'),
+        parts: [
+          { title: 'Symphony', body: '이슈를 받아 문서를 근거로 개발하고, 막히면 슬랙으로 사람을 부르는 데몬을 설계해 혼자 만들었습니다.' },
+          { title: '라쏘런 · 피드백 위젯', body: '문서·테스트케이스·제보를 한 흐름으로 묶는 라쏘런과, 화면 위에서 바로 남기는 피드백 위젯을 만들었습니다.' },
+          { title: '사내 전파', body: '2026.07 사내 데모를 열었고, Claude Code 사용법 공유를 정기 모임으로 만들었습니다.' },
+        ],
         improvements: [
           {
             title: '이슈 처리',
@@ -227,6 +247,11 @@ const ko: Content = {
           { label: '함께', value: '팀 리드 · 개발자 · 고객 · 디자이너' },
         ],
         cover: shot('pur_class', '퍼플 관리자 클래스 화면'),
+        parts: [
+          { title: '관리자 웹', body: '퀴즈 17종의 등록·수정 화면과 커리큘럼·클래스 관리 화면을 맡았습니다.' },
+          { title: '데이터 구조', body: '퀴즈·문항 테이블을 다시 짜고 운영 데이터 이전을 맡았습니다.' },
+          { title: 'QA', body: '타입마다 등록·조회·수정·삭제를 왕복하며 검증했고, 먼저 써 본 AI QA 도구를 팀에 공유했습니다.' },
+        ],
         improvements: [
           {
             title: 'DB 재설계',
@@ -266,6 +291,11 @@ const ko: Content = {
           { label: '함께', value: '개발자 · 대표 · 고객' },
         ],
         cover: shot('ptx_home', 'PorterX 홈 — 미션 매칭'),
+        parts: [
+          { title: '앱 기능', body: 'iOS·Android 앱과 어드민 기능 개발에 참여했습니다.' },
+          { title: '결제 · 환불', body: '결제 PG 전환을 판단하고 환불 악용에 대응했습니다.' },
+          { title: '운영 대응', body: '출시 뒤 심사·결제 이슈를 다뤘습니다. 배포와 스토어 제출은 동료 개발자가 맡았습니다.' },
+        ],
         improvements: [
           { title: '결제', before: 'PG 정책이 바뀔 때마다 정산 구조가 흔들림', after: 'PG를 네 번 바꾸며 정산 구조를 재설계하고 인앱결제로 정리했습니다.' },
           { title: '환불', before: '크레딧을 쓰고 환불받는 악용(환불 알림 미수신)', after: '3일 만에 환불 웹훅과 크레딧 자동 회수를 붙였습니다.' },
@@ -290,6 +320,10 @@ const ko: Content = {
           { label: '함께', value: '디자이너 · 대표 · 고객' },
         ],
         cover: shot('ncd_kv', '엔씨디지텍 자사몰 메인 키비주얼'),
+        parts: [
+          { title: '리디자인', body: '메인·상품·구독 상담 화면의 리디자인을 이끌었습니다.' },
+          { title: '피드백 운영', body: '디자이너가 피드백 도구를 직접 설치하도록 세팅하고, 들어온 제보를 모아 반영한 뒤 목록으로 공유했습니다.' },
+        ],
         improvements: [
           {
             title: '피드백 반영',

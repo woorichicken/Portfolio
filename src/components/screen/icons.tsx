@@ -1,6 +1,6 @@
 import type { RoleId } from '@/content/roles';
 
-// 리브랜딩 화면의 선 아이콘. 굵기·끝 모양은 CSS(.avatar svg · .tabbar svg)가 정한다 — 여기는 모양만.
+// 리브랜딩 화면의 선 아이콘. 굵기·끝 모양은 CSS(.avatar svg · .btn svg)가 정한다 — 여기는 모양만.
 // 남의 서비스 아이콘을 옮기지 않고 기본 도형으로 그렸다.
 
 const ROLE_PATHS: Record<RoleId, React.ReactNode> = {
@@ -63,12 +63,6 @@ export function Avatar({ role, className }: { role: RoleId; className?: string }
 
 const stroke = { fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' } as const;
 
-export function IconHome() {
-  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5L12 4l8 6.5V20h-5v-5.5H9V20H4z" /></svg>;
-}
-export function IconGrid() {
-  return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5" /><rect x="13" y="4" width="7" height="7" rx="1.5" /><rect x="4" y="13" width="7" height="7" rx="1.5" /><rect x="13" y="13" width="7" height="7" rx="1.5" /></svg>;
-}
 export function IconMail() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3.5 6.5L12 13l8.5-6.5" /></svg>;
 }
@@ -77,9 +71,6 @@ export function IconInfo() {
 }
 export function IconExternal() {
   return <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke}><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" /></svg>;
-}
-export function IconLink() {
-  return <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke}><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></svg>;
 }
 export function IconChevron({ dir }: { dir: 'left' | 'right' }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke}>{dir === 'left' ? <path d="M15 5l-7 7 7 7" /> : <path d="M9 5l7 7-7 7" />}</svg>;
@@ -110,7 +101,4 @@ export function IconCaret() {
 }
 export function IconClose() {
   return <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke}><path d="M6 6l12 12M18 6L6 18" /></svg>;
-}
-export function IconExpand() {
-  return <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke}><path d="M14 4h6v6M10 20H4v-6M20 4l-6.5 6.5M4 20l6.5-6.5" /></svg>;
 }

@@ -8,8 +8,18 @@ import { Avatar, IconExternal, IconInfo } from './icons';
 import { RememberRole } from './RoleClient';
 import Shell from './Shell';
 
-// 역할 화면(/as/<역할>) — 대표작 빌보드 → 가로 행들(그 역할의 프로젝트 · 숫자 · 결과물 · 그 외 · 이전) → 연표 → 연락.
+// 역할 화면(/as/<역할>) — 대표작 빌보드 → 가로 행들(그 역할의 프로젝트 · 결과물 · 그 외 · 이전) → 연표 → 연락.
 // 어떤 프로젝트를 몇 번째에 둘지는 content/roles.ts 가 정한다. 여기는 그 순서를 그리기만 한다.
+
+/** 연표를 해마다 묶는다 — 「2026.07」의 앞 네 자리. 최근 해·최근 달이 위로 온다 */
+function timelineByYear(items: { date: string; text: string }[]) {
+  const years = new Map<string, { date: string; text: string }[]>();
+  for (const item of items.slice().reverse()) {
+    const year = item.date.slice(0, 4);
+    years.set(year, [...(years.get(year) ?? []), item]);
+  }
+  return [...years].map(([year, list]) => ({ year, items: list }));
+}
 
 export default function Browse({ locale, role }: { locale: Locale; role: RoleId }) {
   const t = getContent(locale);
@@ -42,24 +52,12 @@ export default function Browse({ locale, role }: { locale: Locale; role: RoleId 
             {site && <a className="btn btn-ghost btn-lg" href={site.href} target="_blank" rel="noreferrer"><IconExternal />{s.openSite}<span className="visually-hidden"> {s.newTab}</span></a>}
           </div>
         </div>
-        {/* 넷플릭스의 「에미상 수상작」 자리 — 우리는 그 프로젝트의 숫자 근거 두 개 */}
-        {f.metrics && f.metrics.length > 0 && (
-          <ul className="billboard-callouts">
-            {f.metrics.slice(0, 2).map((m) => <li key={m.label}><b>{m.value}</b><span>{m.label}</span></li>)}
-          </ul>
-        )}
       </section>
 
       <div className="rows">
         <Row id="row-projects" title={def.rowTitle[locale]} size="lg" {...arrows}>
           {data.projects.map((c) => (
             <li key={c.slug}><TitleCard card={c} locale={locale} sizes="(max-width: 499px) 50vw, (max-width: 1099px) 30vw, 20vw" /></li>
-          ))}
-        </Row>
-
-        <Row id="row-stats" title={t.stats.title} size="md" {...arrows}>
-          {t.stats.items.map((m) => (
-            <li key={m.label}><p className="stat"><strong>{m.value}</strong><span>{m.label}</span></p></li>
           ))}
         </Row>
 
@@ -90,14 +88,25 @@ export default function Browse({ locale, role }: { locale: Locale; role: RoleId 
         )}
       </div>
 
+      {/* 연표 — 해마다 묶어 세로 줄 위에 점을 찍는다. 최근 것이 위(3회차 리뷰 D9 「연표 느낌이 없다」) */}
       <section className="sec" id="timeline" aria-labelledby="timeline-title">
         <div className="wrap">
           <h2 className="sec-title" id="timeline-title">{t.timeline.title}</h2>
-          <ol className="timeline">
-            {t.timeline.items.slice().reverse().map((item) => (
-              <li key={item.date}><time>{item.date}</time><p>{item.text}</p></li>
+          <div className="tl">
+            {timelineByYear(t.timeline.items).map(({ year, items }) => (
+              <section key={year} className="tl-year" aria-label={year}>
+                <p className="tl-y" aria-hidden="true">{year}</p>
+                <ol className="tl-list">
+                  {items.map((item) => (
+                    <li key={item.date} className="tl-item">
+                      <time dateTime={item.date.replace('.', '-')}>{item.date}</time>
+                      <p>{item.text}</p>
+                    </li>
+                  ))}
+                </ol>
+              </section>
             ))}
-          </ol>
+          </div>
         </div>
       </section>
     </Shell>

@@ -1,11 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { IconLink } from './icons';
 
-// 상세 페이지의 탭과 공유 버튼.
-
-const TOAST_MS = 2200;
+// 상세 페이지의 탭.
 
 export type TabPanel = { id: string; label: string; content: ReactNode };
 
@@ -55,6 +52,9 @@ export function DetailTabs({ panels, label }: { panels: TabPanel[]; label: strin
   return (
     <>
       <div className="tabs">
+        {/* 주소 #tab-… 이 닿는 자리. 탭 단추에 그 id 를 두면 브라우저가 들어오자마자 단추에 초점을 줘
+            마우스로 온 사람에게도 초점 테두리가 뜬다(3회차 점검) — 초점이 가지 않는 빈 표식으로 받는다 */}
+        {panels.map((p) => <span key={p.id} id={`tab-${p.id}`} className="tab-anchor" aria-hidden="true" />)}
         <div className="tabs-list" role="tablist" aria-label={label} onKeyDown={onKeyDown}>
           {panels.map((p) => (
             <button
@@ -62,7 +62,7 @@ export function DetailTabs({ panels, label }: { panels: TabPanel[]; label: strin
               ref={(el) => { tabRefs.current[p.id] = el; }}
               type="button"
               role="tab"
-              id={`tab-${p.id}`}
+              id={`tabbtn-${p.id}`}
               className="tab"
               aria-selected={active === p.id}
               aria-controls={`panel-${p.id}`}
@@ -75,46 +75,12 @@ export function DetailTabs({ panels, label }: { panels: TabPanel[]; label: strin
         </div>
       </div>
       {panels.map((p) => (
-        <div key={p.id} role="tabpanel" id={`panel-${p.id}`} aria-labelledby={`tab-${p.id}`} className="tab-panel" hidden={active !== p.id} tabIndex={0}>
+        <div key={p.id} role="tabpanel" id={`panel-${p.id}`} aria-labelledby={`tabbtn-${p.id}`} className="tab-panel" hidden={active !== p.id} tabIndex={0}>
           {p.content}
         </div>
       ))}
       {/* JS 가 꺼져 있으면 숨김을 풀어 패널을 전부 이어서 보여 준다 */}
       <noscript><style>{'.tab-panel[hidden]{display:block}'}</style></noscript>
-    </>
-  );
-}
-
-/** 링크 공유 — 휴대폰은 기기 공유 창, 그 밖은 주소 복사 + 알림 */
-export function ShareButton({ label, copiedLabel, failedLabel, title }: { label: string; copiedLabel: string; failedLabel: string; title: string }) {
-  const [toast, setToast] = useState<string | null>(null);
-
-  async function share() {
-    // 보던 탭(#tab-…)까지 함께 보낸다 — 받은 사람이 같은 탭에서 연다(U15)
-    const url = location.href;
-    const coarse = window.matchMedia('(pointer: coarse)').matches;
-    if (coarse && navigator.share) {
-      try {
-        await navigator.share({ title, url });
-        return;
-      } catch {
-        // 사용자가 닫았거나 막혔으면 복사로 넘어간다
-      }
-    }
-    try {
-      await navigator.clipboard.writeText(url);
-      setToast(copiedLabel);
-    } catch {
-      // 복사 권한이 없으면 무슨 일인지 말하고 주소를 보여 준다 — 길게 눌러 복사할 수 있게
-      setToast(`${failedLabel} ${url}`);
-    }
-    setTimeout(() => setToast(null), TOAST_MS);
-  }
-
-  return (
-    <>
-      <button type="button" className="btn btn-ghost btn-lg" onClick={share}><IconLink />{label}</button>
-      {toast && <p className="toast" role="status">{toast}</p>}
     </>
   );
 }
