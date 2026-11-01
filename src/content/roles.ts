@@ -37,7 +37,7 @@ export type RoleDef = {
 export const ROLES: Record<RoleId, RoleDef> = {
   design: {
     name: t('디자인 엔지니어', 'Design engineer', 'Ingeniero de diseño'),
-    blurb: t('화면을 코드로 맞추고, 검수 도구까지 만듭니다', 'I match screens in code and build the review tools too', 'Ajusto pantallas en código y también hago las herramientas de revisión'),
+    blurb: t('화면을 코드로 맞추고 검수 도구까지 만듭니다', 'I match screens in code and build the review tools too', 'Ajusto pantallas en código y también hago las herramientas de revisión'),
     rowTitle: t('화면과 검수를 맡은 프로젝트', 'Projects where I owned screens and review', 'Proyectos donde llevé pantallas y revisión'),
     featured: 'kits',
     projects: ['kits', 'ncdigitec', 'porterx', 'fair', 'cli-manager', 'purple', 'automation'],
