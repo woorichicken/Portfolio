@@ -82,7 +82,7 @@ vercel env add NEXT_PUBLIC_DP_FEEDBACK_KEY production --scope gyeonghunjeong-700
 | 수집 소스 | `portfolio-web` — `93045b0c-03e3-4f8d-916e-9ed60b127f45` |
 | 소스 허용 호스트 | `solhun.com`, `www.solhun.com`, `portfolio-sage-five-xdfwq9lj38.vercel.app`, `localhost:3427`, `solhun-portfolio.vercel.app`(2026-09-30 추가) |
 | 관문 허용 호스트 | `src/lib/feedback-gate.ts` 의 `FEEDBACK_HOSTS` — **소스와 같게 둔다** |
-| 비밀번호 원문 | `~/.config/portfolio/feedback-password.txt` (0600, 저장소에 없음). 번들엔 솔트+SHA-256 해시만 |
+| 비밀번호 원문 | `~/.config/portfolio/feedback-password.txt` (0600, 저장소에 없음). 번들엔 솔트+SHA-256 해시만. **어드민(`/admin`)도 같은 비밀번호** · 1Password lightsoft 「직원」(Employee) 항목 「solhun.com 포트폴리오 — 피드백·어드민 비밀번호」(2026-11-02 등록 · 값 대조 통과). 바꾸면 두 곳을 같이 고친다 |
 | 키·소스 원본 | `~/.config/portfolio/source.json` (0600) |
 | 로컬 포트 | `3427` (`pnpm dev` / `pnpm start`). 3417 은 다른 저장소 세션이 쓰고 있어 옮겼다 |
 
