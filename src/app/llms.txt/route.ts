@@ -1,6 +1,6 @@
 import { plain } from '@/components/Rich';
 import { PROJECT_IDS, getContent, getProject, getWorkEntries } from '@/content';
-import { SITE_URL, designPath, localePath, projectPath } from '@/i18n/config';
+import { SITE_URL, localePath, projectPath } from '@/i18n/config';
 
 // AI 가 이 사이트를 읽을 때 쓰는 안내 파일(llms.txt). sitemap 처럼 콘텐츠에서 만들어 글과 어긋나지 않게 한다.
 // 2026-10-30 Zecle SCORE 에서 「llms.txt 없음」 경고였다. 파일이 있다고 인용이 보장되지는 않는다.
@@ -29,7 +29,6 @@ export function GET() {
     `- [포트폴리오 (한국어)](${SITE_URL}${localePath('ko')})`,
     `- [Portfolio (English)](${SITE_URL}${localePath('en')}): ${en.meta.description}`,
     `- [Portafolio (Español)](${SITE_URL}${localePath('es')})`,
-    `- [${t.design.title}](${SITE_URL}${designPath('ko')})`,
     '',
     '## 주요 프로젝트',
     ...projects,

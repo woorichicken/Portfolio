@@ -164,7 +164,6 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
     });
   }
 
-  const visibleArtifacts = artifacts.filter(({ artifact }) => !('example' in artifact));
   if (artifacts.length || gallery.length || !m.isProject) {
     const shots = m.isProject ? gallery : [m.cover];
     panels.push({
@@ -173,10 +172,10 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
       content: (
         <>
           {artifacts.length > 0 && (
-            <ul className="similar" {...(visibleArtifacts.length === 0 ? { 'data-example': '' } : {})}>
+            <ul className="similar">
               {artifacts.map((item) => (
-                <li key={item.artifact.title} {...('example' in item.artifact ? { 'data-example': '' } : {})}>
-                  <ArtifactTileCard item={item} sizes="(max-width: 760px) 50vw, 300px" exampleLabel={t.design.example} openLabel={t.a11y.openImage} />
+                <li key={item.artifact.title}>
+                  <ArtifactTileCard item={item} sizes="(max-width: 760px) 50vw, 300px" openLabel={t.a11y.openImage} />
                 </li>
               ))}
             </ul>

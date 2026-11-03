@@ -28,10 +28,18 @@ const MOVED_TO_CLI_MANAGER = [
 // 리디렉트하지 않고 이 주소 그대로 CLI Manager 쪽 내용을 보여 준다.
 const PROXIED_FROM_CLI_MANAGER = ["/privacy", "/terms", "/apps/fair-social-ops"];
 
+// 결과물만 모은 화면(/design)은 없앴다(2026-11-03 리뷰 A안 — 역할 화면의 「만든 화면과 도구」 행과 겹쳤다).
+// 옛 링크·검색 결과는 「디자인 엔지니어」 역할 화면의 그 행으로 보낸다. 이건 도메인 이전과 상관없이 늘 켠다.
+const REMOVED_DESIGN_PAGE = [
+  { source: "/design", destination: "/as/design#row-artifacts", permanent: true },
+  { source: "/:locale(en|es)/design", destination: "/:locale/as/design#row-artifacts", permanent: true },
+];
+
 const nextConfig: NextConfig = {
   async redirects() {
-    if (!CLI_MANAGER_ROUTES_ENABLED) return [];
+    if (!CLI_MANAGER_ROUTES_ENABLED) return REMOVED_DESIGN_PAGE;
     return [
+      ...REMOVED_DESIGN_PAGE,
       ...MOVED_TO_CLI_MANAGER.map((source) => ({
         source,
         destination: `${CLI_MANAGER_URL}${source}`,

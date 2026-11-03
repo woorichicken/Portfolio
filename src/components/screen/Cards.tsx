@@ -6,10 +6,9 @@ import RowTrack from './RowTrack';
 
 // 행 하나와 그 안의 카드들. 서버에서 다 그리고, 넘기는 화살표만 클라이언트(RowTrack)다.
 
-export function Row({ id, title, more, size, prevLabel, nextLabel, children }: {
+export function Row({ id, title, size, prevLabel, nextLabel, children }: {
   id: string;
   title: string;
-  more?: { href: string; label: string };
   size: 'lg' | 'md' | 'sm';
   prevLabel: string;
   nextLabel: string;
@@ -20,7 +19,6 @@ export function Row({ id, title, more, size, prevLabel, nextLabel, children }: {
     <section className="row" data-size={size} id={id} aria-labelledby={headingId}>
       <div className="row-head">
         <h2 className="row-title" id={headingId}>{title}</h2>
-        {more && <a className="row-more" href={more.href}>{more.label} ›</a>}
       </div>
       <RowTrack prevLabel={prevLabel} nextLabel={nextLabel} labelledBy={headingId}>{children}</RowTrack>
     </section>
@@ -45,16 +43,9 @@ export function TitleCard({ card, locale, sizes, priority, tag }: { card: TitleC
   );
 }
 
-/** 결과물 카드 — 같은 16:9 카드. 누르면 크게(Lightbox). 「예시」 칸은 피드백 모드에서만 보인다 */
-export function ArtifactTileCard({ item, sizes, exampleLabel, openLabel }: { item: ArtifactCard; sizes: string; exampleLabel: string; openLabel: string }) {
+/** 결과물 카드 — 같은 16:9 카드. 누르면 크게(Lightbox) */
+export function ArtifactTileCard({ item, sizes, openLabel }: { item: ArtifactCard; sizes: string; openLabel: string }) {
   const a = item.artifact;
-  if ('example' in a) {
-    return (
-      <div className="card art-ex" data-kind={a.kind} data-example="">
-        <span className="card-media"><span>{exampleLabel}</span></span>
-      </div>
-    );
-  }
   return (
     <a
       className="card art-media"
