@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { PROJECT_IDS, WORK_SLUGS } from '@/content';
 import { ROLE_IDS } from '@/content/roles';
-import { LOCALES, SITE_URL, browsePath, designPath, localePath, projectPath } from '@/i18n/config';
+import { LOCALES, SITE_URL, browsePath, localePath, projectPath } from '@/i18n/config';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const languages = Object.fromEntries(LOCALES.map((l) => [l, `${SITE_URL}${localePath(l)}`]));
@@ -21,13 +21,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       alternates,
     }));
   });
-  const designAlternates = { languages: Object.fromEntries(LOCALES.map((l) => [l, `${SITE_URL}${designPath(l)}`])) };
-  const design: MetadataRoute.Sitemap = LOCALES.map((locale) => ({
-    url: `${SITE_URL}${designPath(locale)}`,
-    changeFrequency: 'monthly' as const,
-    priority: 0.6,
-    alternates: designAlternates,
-  }));
   // 역할 화면(/as/<역할>) — 역할마다 언어판끼리 묶는다
   const browse: MetadataRoute.Sitemap = ROLE_IDS.flatMap((role) => {
     const alternates = { languages: Object.fromEntries(LOCALES.map((l) => [l, `${SITE_URL}${browsePath(l, role)}`])) };
@@ -38,5 +31,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       alternates,
     }));
   });
-  return [...home, ...browse, ...details, ...design];
+  return [...home, ...browse, ...details];
 }

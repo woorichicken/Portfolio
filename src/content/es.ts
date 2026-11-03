@@ -365,17 +365,6 @@ const es: Content = {
       // },
     ],
   },
-  design: {
-    title: 'Como ingeniero de diseño',
-    more: 'Ver todo el trabajo →',
-    pageTitle: 'Pantallas, video y productos, con código',
-    back: '← Inicio',
-    all: 'Todo',
-    filter: 'Tipo de trabajo',
-    kinds: { video: 'Video', tool: 'Herramientas', system: 'Sistemas', screen: 'Pantallas' },
-    example: 'Ejemplo',
-    note: 'Las casillas punteadas aún se están completando — solo se ven en modo de comentarios.',
-  },
   others: {
     title: 'Otros proyectos',
     intro: 'Participaciones más cortas y cosas que acaban de empezar.',

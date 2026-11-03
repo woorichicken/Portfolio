@@ -365,17 +365,6 @@ const en: Content = {
       // },
     ],
   },
-  design: {
-    title: 'As a design engineer',
-    more: 'See all work →',
-    pageTitle: 'Screens, video and products, in code',
-    back: '← Home',
-    all: 'All',
-    filter: 'Kind of work',
-    kinds: { video: 'Video', tool: 'Tools', system: 'Systems', screen: 'Screens' },
-    example: 'Example',
-    note: 'Dashed tiles are still being filled in — they only show in feedback mode.',
-  },
   others: {
     title: 'More work',
     intro: 'Shorter stints, and things that have only just started.',

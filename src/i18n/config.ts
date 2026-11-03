@@ -22,11 +22,6 @@ export function projectPath(locale: Locale, slug: string): string {
   return `${locale === DEFAULT_LOCALE ? '' : `/${locale}`}/projects/${slug}`;
 }
 
-/** 「디자인 엔지니어로서」 결과물 화면 주소. 한국어는 /design, 나머지는 /<언어>/design */
-export function designPath(locale: Locale): string {
-  return `${locale === DEFAULT_LOCALE ? '' : `/${locale}`}/design`;
-}
-
 /** 역할별 둘러보기 주소. 한국어는 /as/<역할>, 나머지는 /<언어>/as/<역할> — 링크로 「디자인 엔지니어로서의 나」를 바로 보낼 수 있게 */
 export function browsePath(locale: Locale, role: string): string {
   return `${locale === DEFAULT_LOCALE ? '' : `/${locale}`}/as/${role}`;

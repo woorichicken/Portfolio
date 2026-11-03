@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { ROLES, type RoleId } from '@/content/roles';
 import { browsePath, localePath, type Locale } from '@/i18n/config';
 import { Avatar, IconCaret } from './icons';
@@ -44,10 +44,80 @@ export function PickerMemory() {
   return null;
 }
 
-/** 기억한 역할 화면으로 가는 링크(상세의 「목록으로」 등) */
-export function RoleHomeLink({ locale, hash = '', className, children, label, current, title }: { locale: Locale; hash?: string; className?: string; children: ReactNode; label?: string; current?: boolean; title?: string }) {
-  const role = useStoredRole('all');
-  return <a className={className} href={`${browsePath(locale, role)}${hash}`} aria-label={label} title={title} aria-current={current ? 'page' : undefined}>{children}</a>;
+// ── 머리 메뉴의 선택 표시 따라가기 ─────────────────────────────────────────
+// 역할 화면에서 「연표」·「연락」을 누르거나 거기까지 내려오면 선택 표시(회색 알약)를 그 항목으로 옮긴다.
+// 전에는 늘 「홈」에 붙어 있어서 연표를 눌러도 표시가 남지 않았다(2026-11-02 피드백 「연표 누르면 여기 남아 있어야」).
+const SPY_SECTIONS = ['timeline', 'contact'] as const;
+type SpySection = (typeof SPY_SECTIONS)[number];
+/** 칸의 위 끝이 화면 위에서 이 비율 선을 넘어오면 「보는 중」. 연표를 누르면 위 끝이 머리 바로 아래(92px)에 와서 늘 넘는다 */
+const SPY_LINE_RATIO = 0.4;
+/** 맨 아래로 친다고 볼 남은 거리(px) — 소수점 스크롤 오차 */
+const BOTTOM_SLACK = 2;
+
+const isSpySection = (id: string): id is SpySection => (SPY_SECTIONS as readonly string[]).includes(id);
+
+function readSection(): SpySection | null {
+  let found: SpySection | null = null;
+  for (const id of SPY_SECTIONS) {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top <= innerHeight * SPY_LINE_RATIO) found = id;
+  }
+  // 맨 아래에서는 연락 띠가 선까지 못 올라올 수 있다 — 그때는 「연락」. 단 연표를 눌러 왔는데 화면이 커서 더 못 내려간 경우
+  // (연표 머리가 아직 화면 안에 있다)는 「연표」를 지킨다.
+  const atBottom = innerHeight + scrollY >= document.documentElement.scrollHeight - BOTTOM_SLACK;
+  if (atBottom && document.getElementById('contact')) {
+    const hash = location.hash.slice(1);
+    const timelineTop = document.getElementById('timeline')?.getBoundingClientRect().top ?? -1;
+    found = hash === 'timeline' && timelineTop >= 0 ? 'timeline' : 'contact';
+  }
+  return found;
+}
+
+// 링크마다 따로 재지 않고 한 번 재서 나눠 준다(머리 메뉴와 「메뉴 ▾」 안에 같은 링크가 두 벌 있다)
+let activeSection: SpySection | null = null;
+const sectionListeners = new Set<() => void>();
+function refreshSection() {
+  const next = readSection();
+  if (next === activeSection) return;
+  activeSection = next;
+  sectionListeners.forEach((notify) => notify());
+}
+function subscribeSection(notify: () => void) {
+  sectionListeners.add(notify);
+  if (sectionListeners.size === 1) {
+    window.addEventListener('scroll', refreshSection, { passive: true });
+    window.addEventListener('resize', refreshSection);
+    window.addEventListener('hashchange', refreshSection);
+    refreshSection();
+  }
+  return () => {
+    sectionListeners.delete(notify);
+    if (sectionListeners.size === 0) {
+      window.removeEventListener('scroll', refreshSection);
+      window.removeEventListener('resize', refreshSection);
+      window.removeEventListener('hashchange', refreshSection);
+    }
+  };
+}
+function useActiveSection(): SpySection | null {
+  return useSyncExternalStore(subscribeSection, () => activeSection, () => null);
+}
+
+/**
+ * 기억한 역할 화면으로 가는 링크(머리 메뉴·로고 등).
+ * role: 지금 역할을 아는 화면(역할 화면)이면 넘긴다. 기억한 역할보다 먼저다 — 처음 들어온 /as/ax 에서 「연표」가
+ *   기억값이 아직 없어 /as/all#timeline(다른 화면)으로 넘어가던 것을 막는다(2026-11-03 점검).
+ * spy: 역할 화면의 머리 메뉴일 때 켠다 — 「홈」은 연표·연락을 보고 있지 않을 때만, 「연표」·「연락」은 그 칸을 볼 때 선택 표시를 단다.
+ */
+export function RoleHomeLink({ locale, role: known, hash = '', className, children, label, current, title, spy }: { locale: Locale; role?: RoleId; hash?: string; className?: string; children: ReactNode; label?: string; current?: boolean; title?: string; spy?: boolean }) {
+  const stored = useStoredRole('all');
+  const role = known ?? stored;
+  const active = useActiveSection();
+  const section = hash.slice(1);
+  let ariaCurrent: 'page' | 'location' | undefined;
+  if (spy && isSpySection(section)) ariaCurrent = active === section ? 'location' : undefined;
+  else if (current) ariaCurrent = spy && active ? undefined : 'page';
+  return <a className={className} href={`${browsePath(locale, role)}${hash}`} aria-label={label} title={title} aria-current={ariaCurrent}>{children}</a>;
 }
 
 /** 머리 오른쪽의 역할 아이콘 — 누르면 역할 고르기로. 지금 역할을 아는 화면(역할 화면)은 role 을 넘긴다 */
@@ -115,7 +185,8 @@ export function HeaderSolid() {
   return null;
 }
 
-export type TabKey = 'home' | 'work';
+/** 머리 메뉴에서 선택 표시를 달 화면 — 결과물 화면(/design)을 없애 「홈」(역할 화면) 하나만 남았다 */
+export type TabKey = 'home';
 
 /**
  * 좁은 화면의 「메뉴 ▾」 — 넷플릭스 웹이 390px 에서 메뉴를 한 단추로 접는 방식(2026-11-01 실측: 머리 80px · 로고 옆 「메뉴」 ·

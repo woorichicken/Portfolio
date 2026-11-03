@@ -366,17 +366,6 @@ const ko: Content = {
       // },
     ],
   },
-  design: {
-    title: '디자인 엔지니어로서',
-    more: '결과물 전체 보기 →',
-    pageTitle: '화면·영상·제품을 코드로',
-    back: '← 홈으로',
-    all: '전체',
-    filter: '결과물 종류',
-    kinds: { video: '영상', tool: '도구', system: '시스템', screen: '화면' },
-    example: '예시',
-    note: '점선 칸은 자료를 채우는 중인 자리입니다. 피드백 모드에서만 보입니다.',
-  },
   others: {
     title: '그 외 프로젝트',
     intro: '짧게 참여했거나 지금 막 시작한 일들입니다.',

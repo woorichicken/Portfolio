@@ -2,7 +2,7 @@ import Image from 'next/image';
 import type { ReactNode } from 'react';
 import { getContent } from '@/content';
 import { screenCopy, type RoleId } from '@/content/roles';
-import { LANGUAGE_NAMES, LOCALES, designPath, type Locale } from '@/i18n/config';
+import { LANGUAGE_NAMES, LOCALES, type Locale } from '@/i18n/config';
 import FeedbackGate from '../feedback/FeedbackGate';
 import Lightbox from '../Lightbox';
 import { IconMail } from './icons';
@@ -26,10 +26,9 @@ export default function Shell({ locale, altPath, role, tab, children, contact = 
   // 머리 메뉴와 좁은 화면의 「메뉴 ▾」 안이 같은 링크를 쓴다
   const navLinks = (
     <>
-      <RoleHomeLink locale={locale} current={tab === 'home'}>{s.tabHome}</RoleHomeLink>
-      <a href={designPath(locale)} aria-current={tab === 'work' ? 'page' : undefined}>{s.tabWork}</a>
-      <RoleHomeLink locale={locale} hash="#timeline">{t.timeline.title}</RoleHomeLink>
-      <RoleHomeLink locale={locale} hash="#contact">{s.tabContact}</RoleHomeLink>
+      <RoleHomeLink locale={locale} role={role} current={tab === 'home'} spy={tab === 'home'}>{s.tabHome}</RoleHomeLink>
+      <RoleHomeLink locale={locale} role={role} hash="#timeline" spy={tab === 'home'}>{t.timeline.title}</RoleHomeLink>
+      <RoleHomeLink locale={locale} role={role} hash="#contact" spy={tab === 'home'}>{s.tabContact}</RoleHomeLink>
     </>
   );
   const langLinks = LOCALES.map((l) => (
@@ -43,7 +42,7 @@ export default function Shell({ locale, altPath, role, tab, children, contact = 
       <a className="skip-link" href="#main">{t.a11y.skip}</a>
       <header className="sx-header">
         <div className="sx-header-inner">
-          <RoleHomeLink locale={locale} className="wordmark" label={`SOLHUN — ${s.tabHome}`}>
+          <RoleHomeLink locale={locale} role={role} className="wordmark" label={`SOLHUN — ${s.tabHome}`}>
             {/* 개인 브랜드 캐릭터(나무늘보) — brand 저장소의 승인된 프로필 컷 */}
             <Image src="/brand/solhun-sloth-96.png" alt="" width={28} height={28} />
             SOLHUN

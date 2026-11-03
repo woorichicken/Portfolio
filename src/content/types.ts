@@ -85,8 +85,6 @@ export type Content = {
     caseLabels: { back: string; overview: string; design: string; changes: string; voices: string; screens: string; links: string; prev: string; next: string; toc: string };
     projects: Project[];
   };
-  /** 「디자인 엔지니어로서」 — 홈 미리보기와 결과물 화면(/design) */
-  design: { title: string; more: string; pageTitle: string; back: string; all: string; filter: string; kinds: Record<ArtifactKind, string>; example: string; note: string };
   others: { title: string; intro: string; items: OtherWork[]; contestsTitle: string; contests: string };
   early: {
     title: string;

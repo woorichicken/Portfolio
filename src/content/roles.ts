@@ -92,7 +92,8 @@ export const HIDDEN: string[] = [];
 
 /** 화면 글 — 콘텐츠 파일(ko·en·es.ts)에 없는 리브랜딩 화면의 말. 세 언어를 한 줄에 둔다 */
 export const SCREEN = {
-  pickerTitle: t('어떤 정경훈을 볼까요?', 'Which side of me would you like to see?', '¿Qué faceta mía quieres ver?'),
+  // 「정경훈」보다 브랜드 이름이 더 설득력 있다(2026-11-02 피드백). 사람 소개는 「정경훈 소개」 창이 맡는다
+  pickerTitle: t('어떤 SOLHUN을 볼까요?', 'Which SOLHUN would you like to see?', '¿Qué SOLHUN quieres ver?'),
   pickerAll: t('전부 볼게요', 'Show me everything', 'Quiero verlo todo'),
   pickerRecent: t('최근에 본 역할', 'Last viewed', 'Visto la última vez'),
   aboutMe: t('정경훈 소개', 'About me', 'Sobre mí'),
@@ -104,11 +105,9 @@ export const SCREEN = {
   moreInfo: t('자세히 보기', 'More info', 'Más información'),
   openSite: t('사이트 열기', 'Open site', 'Abrir sitio'),
   artifactsRow: t('만든 화면과 도구', 'Screens and tools I made', 'Pantallas y herramientas que hice'),
-  seeAll: t('전체 보기', 'See all', 'Ver todo'),
   prevRow: t('이전 항목', 'Previous items', 'Anteriores'),
   nextRow: t('다음 항목', 'Next items', 'Siguientes'),
   tabHome: t('홈', 'Home', 'Inicio'),
-  tabWork: t('결과물', 'Work', 'Trabajos'),
   tabContact: t('연락', 'Contact', 'Contacto'),
   menu: t('메뉴', 'Menu', 'Menú'),
   backToList: t('목록으로', 'Back to list', 'Volver a la lista'),

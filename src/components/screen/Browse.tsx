@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { getContent } from '@/content';
 import { ROLES, screenCopy, type RoleId } from '@/content/roles';
 import { roleScreen } from '@/content/screen-data';
-import { browsePath, designPath, projectPath, type Locale } from '@/i18n/config';
+import { browsePath, projectPath, type Locale } from '@/i18n/config';
 import { ArtifactTileCard, Row, TitleCard } from './Cards';
 import { Avatar, IconExternal, IconInfo } from './icons';
 import { RememberRole } from './RoleClient';
@@ -62,10 +62,10 @@ export default function Browse({ locale, role }: { locale: Locale; role: RoleId 
         </Row>
 
         {data.artifacts.length > 0 && (
-          <Row id="row-artifacts" title={s.artifactsRow} size="md" more={{ href: designPath(locale), label: s.seeAll }} {...arrows}>
+          <Row id="row-artifacts" title={s.artifactsRow} size="md" {...arrows}>
             {data.artifacts.map((item) => (
-              <li key={`${item.projectSlug ?? ''}-${item.artifact.title}`} {...('example' in item.artifact ? { 'data-example': '' } : {})}>
-                <ArtifactTileCard item={item} sizes="(max-width: 499px) 50vw, (max-width: 1099px) 30vw, 20vw" exampleLabel={t.design.example} openLabel={t.a11y.openImage} />
+              <li key={`${item.projectSlug ?? ''}-${item.artifact.title}`}>
+                <ArtifactTileCard item={item} sizes="(max-width: 499px) 50vw, (max-width: 1099px) 30vw, 20vw" openLabel={t.a11y.openImage} />
               </li>
             ))}
           </Row>
