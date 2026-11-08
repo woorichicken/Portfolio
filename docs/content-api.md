@@ -21,7 +21,7 @@ curl(Bearer) ───┘    (Worker)          └─ 바뀐 페이지만 무효
 | 이력 · 되돌리기 | D1 `content_history` — 저장(change)마다 문서별 한 줄: 직전 값 `prev_body` · 저장 값 `body` · 누가 · 무엇 · `undone_by` · `undoes` |
 | 사진·영상 | R2 `MEDIA` 버킷 + D1 `media` 표 → 공개 주소 `/media/<키>`(Range 지원) |
 | 페이지 캐시 | R2 `NEXT_INC_CACHE_R2_BUCKET`(OpenNext incremental cache) + D1 `revalidations`(태그 캐시) |
-| 스키마 | `migrations/0001_content.sql` · `0002_history_undoes.sql` |
+| 스키마 | `migrations/0001_content.sql` · `0002_history_undoes.sql` · `0003_version_check.sql`(검사에 쓴 안 바뀐 문서의 버전 가드) |
 | 시드 | `pnpm db:seed:local` — 저장소의 `src/content/*.ts` 를 넣는다(멱등, 이미 있는 문서는 안 덮음) · `--force` 는 다른 것만 덮고 이력을 남김 |
 | 빌드 | `pnpm cf:build` = D1 스냅숏(`scripts/content-snapshot.mjs`) → `next build` 가 그 스냅숏으로 미리 그림 → OpenNext 번들 |
 
@@ -30,6 +30,7 @@ curl(Bearer) ───┘    (Worker)          └─ 바뀐 페이지만 무효
 - **문서 5개(언어마다 통째)** — 세 언어 모양 검사는 문서 전체를 나란히 봐야 한다. 한 문서 35KB 안팎이라 D1 한 줄(2MB 상한)·SQL 한 문(100KB)에 들어간다.
   시드 `--force` 는 문 하나에 본문이 두 번 들어가서 **한 문서가 50KB 를 넘으면 시드 SQL 이 막힌다**(API 쓰기는 바인딩이라 상관없음) — 그때 문서를 쪼갠다.
 - **동시 저장 보호** — 쓰는 쪽은 「읽은 버전 + 1」을 쓰고, 그 사이 누가 먼저 썼으면 트리거(`content_doc_version_guard`)가 batch 전체를 되돌린다 → 409.
+  **안 바꾼 문서도** 검사에 썼으므로 버전을 확인한다(`content_version_check` 트리거) — 추가 되돌리기와 숨김 저장이 겹쳐 숨김이 없는 항목을 가리키던 경합을 막는다.
 - **되돌리기는 내용으로 판정** — 그 저장이 쓴 값이 지금 값과 같을 때만 되돌린다. 뒤의 저장을 조용히 지우지 않는다.
 - **빌드는 스냅숏** — `next build` 가 여러 프로세스에서 동시에 로컬 D1(miniflare)을 열면 `internal error; reference = …` 로 죽는다(실측).
 - **`dynamicParams = true`** — `false` 인 경로는 저장 뒤 캐시가 무효가 되면 OpenNext 가 `NoFallbackError` → 404 를 낸다(실측 `/as/design`). 모르는 값은 `notFound()` 로 그대로 404.
@@ -61,10 +62,10 @@ curl(Bearer) ───┘    (Worker)          └─ 바뀐 페이지만 무효
 | `PUT /api/content/layout` | `{ roles: { <role>: {featured, projects, others} }, hidden, expect? }` | 어드민 「저장」(한 change) |
 | `PATCH /api/content/hidden` | `{ hide?: [id], show?: [id] }` | 숨김 |
 | `GET /api/content/history?limit=20` | – | 최근 change(`changeId` · action · actor · summary · at · keys · undoneBy) |
-| `POST /api/content/undo` | `{ changeId? }` | 되돌리기(없으면 가장 최근의 살아 있는 저장). 되돌리기의 changeId 를 주면 다시 하기 |
+| `POST /api/content/undo` | `{ changeId? }` 또는 빈 본문 | 되돌리기(없으면 가장 최근의 살아 있는 저장). 되돌리기의 changeId 를 주면 다시 하기. 본문이 깨진 JSON·객체가 아니면 400(가장 최근으로 새지 않는다) |
 | `POST /api/content/media` | multipart `file`, `name?` | R2 에 올림 → `{ key, src, contentType, size, shot }` (201) |
 | `GET /api/content/media` | – | 올린 것 목록 |
-| `GET /media/<key>` | `Range: bytes=…` 가능 | 공개 내보내기(200 · 206) |
+| `GET /media/<key>` | `Range: bytes=…` 가능 | 공개 내보내기(200 · 206 — 끝이 크기를 넘으면 파일 끝까지로 줄여 헤더도 그 값 · 시작이 끝을 넘으면 416) |
 
 `path` 는 `work.projects[kits].tagline` 꼴 — `[번호]` 또는 `[id/slug]`. `expect: { roles: 3, hidden: 1 }` 를 주면 그 버전이 아닐 때 409(화면을 오래 열어 둔 어드민이 쓴다).
 
@@ -93,6 +94,7 @@ curl(Bearer) ───┘    (Worker)          └─ 바뀐 페이지만 무효
 | 409 | `exists` | 추가하려는 id 가 이미 있음 | `field` 로 고치기 |
 | 409 | `conflict` | 동시 저장 · `expect` 불일치 · 되돌리려는 저장 뒤에 또 바뀜 · 이미 되돌림 · 시드 되돌리기 · 대표작 빼기 | 다시 읽고 다시 · history 확인 |
 | 413 · 415 | `too_large` · `unsupported` | 미디어 크기·형식 | 줄이거나 형식 바꿈 |
+| 416 | – | `/media/*` 에 채울 수 없는 Range | 구간을 고침 |
 | 422 | `invalid` + `problems[{path, message}]` | zod 검사 · 세 언어 모양 · 참조(없는 id, 겹치는 id) | `problems` 경로를 고침 |
 | 503 | `no_db` · `not_seeded` · `no_r2` · `no_secret` · `no_snapshot` | 바인딩·시드·비밀·빌드 스냅숏 없음 | 아래 로컬 절차 |
 | 500 | `internal` | 그 밖 | `wrangler tail`(운영) · 로컬 로그 |
@@ -110,7 +112,8 @@ pnpm cf:build && scripts/with-workers.sh pnpm exec playwright test e2e/admin-sav
 node scripts/verify-routes.mjs --a https://www.solhun.com --b http://127.0.0.1:8797   # 운영과 경로 대조
 ```
 
-`next dev`(`pnpm dev`)도 `initOpenNextCloudflareForDev()` 로 같은 로컬 D1 을 읽는다. Vercel 빌드(`VERCEL=1`)나 `CONTENT_SOURCE=static` 은 D1 대신 저장소 TS 파일을 읽고, 쓰기 API 는 503 이다 — **운영을 옮기는 동안 지금 Vercel 배포가 깨지지 않게** 둔 길이다.
+`next dev`(`pnpm dev`)도 `initOpenNextCloudflareForDev()` 로 같은 로컬 D1 을 읽는다. Vercel 빌드(`VERCEL=1`)나 `CONTENT_SOURCE=static` 은 D1 대신 저장소 TS 파일을 읽고, `/api/content/*` 는 전부 503 `no_db` 이다 — **운영을 옮기는 동안 지금 Vercel 배포가 깨지지 않게** 둔 길이다.
+어드민도 그때는 API 를 부르지 않고 예전처럼 브라우저 해시로 열려 변경안 코드·코멘트만 쓴다. 확인: `CONTENT_SOURCE=static pnpm build && scripts/with-static.sh pnpm exec playwright test e2e/admin-static.spec.ts --workers=1`.
 
 ## 토큰 받은 뒤 할 일 (운영 전환 — 사람 승인 뒤, 순서대로)
 

@@ -19,7 +19,7 @@ export default async function AdminPage() {
   );
   return (
     <Shell site={site} locale="ko" altPath={() => '/admin'} contact={false}>
-      <Admin items={items} roles={roles} hidden={site.hidden} />
+      <Admin items={items} roles={roles} hidden={site.hidden} staticMode={site.source === 'static'} />
     </Shell>
   );
 }

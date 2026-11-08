@@ -135,7 +135,10 @@ export async function writeSite(
 
   const changeId = meta.changeId ?? newChangeId();
   const at = new Date().toISOString();
-  const statements: D1PreparedStatement[] = [];
+  // 안 바꾼 문서도 검사(validateSite)에 썼다 — 그 사이 바뀌었으면 batch 전체를 막는다(migrations/0003). 바꾼 문서는 아래 트리거가 지킨다
+  const statements: D1PreparedStatement[] = DOC_KEYS.filter((k) => !changed.includes(k) && base.versions[k] !== undefined).map((k) =>
+    db.prepare('INSERT INTO content_version_check (key) SELECT key FROM content_doc WHERE key = ?1 AND version != ?2').bind(k, base.versions[k]!),
+  );
   for (const key of changed) {
     const version = base.versions[key];
     if (version === undefined) throw new OpError(503, 'not_seeded', `${key} 문서가 없습니다 — 시드를 먼저`);

@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isMediaSrc } from '@/content/images';
-import { FEEDBACK_PASSWORD_HASH, UNLOCK_STORAGE_KEY } from '@/lib/feedback-gate';
+import { FEEDBACK_PASSWORD_HASH, UNLOCK_STORAGE_KEY, isCorrectPassword } from '@/lib/feedback-gate';
 import { IconComment, IconDown, IconEye, IconUp } from '../screen/icons';
 import { canSendToLasso, sendComment, type SendResult } from './send-comment';
 
@@ -12,7 +12,8 @@ import { canSendToLasso, sendComment, type SendResult } from './send-comment';
 // 2026-11-08 부터 「저장」은 콘텐츠 API(PUT /api/content/layout)를 부른다 — 에이전트가 `pnpm content` 로 부르는 것과 같은 API 다.
 // 서버가 zod 검사 → D1 에 쓰기(직전 값은 이력) → 바뀐 페이지만 다시 그리기를 한다. 잘못 저장했으면 「마지막 저장 되돌리기」.
 // 비밀번호는 서버가 확인하고 HttpOnly 쿠키를 준다(예전처럼 브라우저 해시 비교가 아니다).
-// D1 이 없는 배포(Vercel · CONTENT_SOURCE=static)에서는 저장할 수 없어서, 예전처럼 변경안 코드만 보여 준다.
+// D1 이 없는 배포(Vercel · CONTENT_SOURCE=static)에서는 저장할 수 없어서, 예전처럼 변경안 코드만 보여 주고 로그인도 예전 그대로
+// 브라우저 해시 비교다(API 를 부르지 않는다 — Vercel 에는 Cloudflare 컨텍스트가 없어 API 가 실패한다. 수정 1회차 P1).
 // 코멘트는 이 브라우저에 쌓고, 수집 주소가 있는 배포본에서는 라쏘런에도 보낸다(바뀐 것 없음).
 
 export type AdminItem = { slug: string; name: string; kicker: string; cover: string; kind: 'project' | 'other' | 'early' };
@@ -57,7 +58,7 @@ async function api<T>(path: string, init?: RequestInit): Promise<{ ok: true; dat
 
 type Summary = { versions: Versions; roles: Record<string, RoleConfig>; hidden: string[] };
 
-export default function Admin({ items, roles, hidden }: { items: AdminItem[]; roles: Record<string, RoleConfig>; hidden: string[] }) {
+export default function Admin({ items, roles, hidden, staticMode = false }: { items: AdminItem[]; roles: Record<string, RoleConfig>; hidden: string[]; staticMode?: boolean }) {
   const initial: Layout = useMemo(() => ({ roles, hidden }), [roles, hidden]);
   const [unlocked, setUnlocked] = useState<boolean | null>(null);
   /** 서버에 저장된 배치(마지막으로 불러온 것) */
@@ -65,7 +66,7 @@ export default function Admin({ items, roles, hidden }: { items: AdminItem[]; ro
   const [draft, setDraft] = useState<Layout>(initial);
   const [versions, setVersions] = useState<Versions>({});
   /** D1 이 없는 배포 — 저장 대신 변경안 코드 */
-  const [readOnly, setReadOnly] = useState(false);
+  const [readOnly, setReadOnly] = useState(staticMode);
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [changes, setChanges] = useState<ChangeRow[]>([]);
   const [comments, setComments] = useState<Record<string, Comment[]>>({});
@@ -90,6 +91,11 @@ export default function Admin({ items, roles, hidden }: { items: AdminItem[]; ro
 
   useEffect(() => {
     setComments(load(COMMENTS_KEY, {}));
+    if (staticMode) {
+      // 정적 배포 — 예전처럼 이 브라우저에 남은 통과 표시로만 연다
+      try { setUnlocked(localStorage.getItem(UNLOCK_STORAGE_KEY) === FEEDBACK_PASSWORD_HASH); } catch { setUnlocked(false); }
+      return;
+    }
     api<{ actor: string }>('/api/content/auth').then((r) => {
       if (r.ok) {
         setUnlocked(true);
@@ -100,14 +106,14 @@ export default function Admin({ items, roles, hidden }: { items: AdminItem[]; ro
         setUnlocked(false);
       } else setUnlocked(false);
     });
-  }, [refresh]);
+  }, [refresh, staticMode]);
 
   const byId = useMemo(() => Object.fromEntries(items.map((i) => [i.slug, i])), [items]);
   const roleIds = Object.keys(draft.roles).filter((r) => r !== 'all');
   const changed = JSON.stringify(draft) !== JSON.stringify(source);
 
   if (unlocked === null) return null;
-  if (!unlocked) return <AdminGate readOnly={readOnly} onUnlock={() => { setUnlocked(true); refresh(); }} />;
+  if (!unlocked) return <AdminGate readOnly={readOnly} staticMode={staticMode} onUnlock={() => { setUnlocked(true); if (!staticMode) refresh(); }} />;
 
   function update(next: Layout) {
     setDraft(next);
@@ -340,7 +346,7 @@ function CommentBox({ item, list, onAdd }: { item: AdminItem; list: Comment[]; o
   );
 }
 
-function AdminGate({ onUnlock, readOnly }: { onUnlock: () => void; readOnly: boolean }) {
+function AdminGate({ onUnlock, readOnly, staticMode }: { onUnlock: () => void; readOnly: boolean; staticMode: boolean }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
@@ -351,6 +357,17 @@ function AdminGate({ onUnlock, readOnly }: { onUnlock: () => void; readOnly: boo
         onSubmit={async (e) => {
           e.preventDefault();
           setBusy(true);
+          if (staticMode) {
+            // 정적 배포 — 서버가 없으니 예전처럼 브라우저에서 해시를 비교한다(가림막 — 저장 권한은 없다)
+            const okPw = await isCorrectPassword(ref.current?.value ?? '');
+            setBusy(false);
+            if (okPw) {
+              try { localStorage.setItem(UNLOCK_STORAGE_KEY, FEEDBACK_PASSWORD_HASH); } catch {}
+              return onUnlock();
+            }
+            setError('비밀번호가 맞지 않습니다.');
+            return ref.current?.select();
+          }
           const r = await api('/api/content/auth', { method: 'POST', body: JSON.stringify({ password: ref.current?.value ?? '' }) });
           setBusy(false);
           if (r.ok) {
@@ -363,7 +380,7 @@ function AdminGate({ onUnlock, readOnly }: { onUnlock: () => void; readOnly: boo
         }}
       >
         <h2>어드민</h2>
-        <p>{readOnly ? '이 배포에는 저장소(D1)가 없습니다 — 로그인해도 저장은 안 됩니다.' : '피드백 모드와 같은 비밀번호입니다.'}</p>
+        <p>{readOnly ? '피드백 모드와 같은 비밀번호입니다. 이 배포에는 저장소(D1)가 없어 변경안 코드로만 내보냅니다.' : '피드백 모드와 같은 비밀번호입니다.'}</p>
         <input ref={ref} type="password" autoComplete="current-password" placeholder="비밀번호" aria-label="비밀번호" aria-invalid={Boolean(error)} autoFocus />
         {error && <p className="fb-gate-error" role="alert">{error}</p>}
         <div className="fb-gate-actions"><button type="submit" className="primary" disabled={busy}>열기</button></div>

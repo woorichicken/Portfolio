@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { editField, placeInRole } from '../ops';
+import { addItem, editField, placeInRole, setHidden } from '../ops';
+import { validateSite } from '../schema';
 import { STATIC_DOCS } from '../static-site';
-import { DOC_KEYS, listChanges, readSite, undoChange, writeSite } from '../store';
+import { DOC_KEYS, contentSource, listChanges, readSite, undoChange, writeSite } from '../store';
 import { FakeD1, asD1 } from './fake-d1';
 
 // 쓰기 · 이력 · 되돌리기를 진짜 SQLite(같은 마이그레이션·트리거)에서 돌린다
@@ -53,6 +54,38 @@ describe('writeSite', () => {
     await expect(writeSite(db, stale, next, { action: 'set', actor: 'agent', summary: '나중' })).rejects.toMatchObject({ status: 409 });
     expect(await tagline()).toBe(STATIC_DOCS.content.ko.work.projects[0].tagline);
     expect((await readSite(db)).roles.design.projects[0]).toBe('fair');
+  });
+});
+
+describe('수정 1회차 P1 — 본문 출처', () => {
+  it('Vercel(VERCEL=1)이면 D1 없이 정적, CONTENT_SOURCE 가 있으면 그게 이긴다', () => {
+    const saved = { v: process.env.VERCEL, c: process.env.CONTENT_SOURCE };
+    try {
+      delete process.env.CONTENT_SOURCE;
+      process.env.VERCEL = '1';
+      expect(contentSource()).toBe('static');
+      delete process.env.VERCEL;
+      expect(contentSource()).toBe('d1');
+      process.env.CONTENT_SOURCE = 'static';
+      expect(contentSource()).toBe('static');
+    } finally {
+      if (saved.v === undefined) delete process.env.VERCEL; else process.env.VERCEL = saved.v;
+      if (saved.c === undefined) delete process.env.CONTENT_SOURCE; else process.env.CONTENT_SOURCE = saved.c;
+    }
+  });
+});
+
+describe('수정 1회차 P2b — 검사에 쓴 다른 문서도 버전을 지킨다', () => {
+  it('추가 되돌리기가 읽은 뒤 그 항목을 숨기는 저장이 끼면 되돌리기는 409 이고 D1 은 늘 검사를 통과한다', async () => {
+    const shot = { src: '/work/design_atlas.jpg', width: 1400, height: 875, alt: 'x' };
+    const item = (name: string) => ({ slug: 'race', name, period: '2026', body: name, shot, detail: { facts: [], paragraphs: [] } });
+    const b0 = await readSite(db);
+    const add = await writeSite(db, b0, addItem(b0, { kind: 'other', item: { ko: item('가'), en: item('A'), es: item('A') } }), { action: 'add-project', actor: 'agent', summary: '추가' });
+    const stale = await readSite(db); // 되돌리기가 읽은 상태 — hidden v1
+    const fresh = await readSite(db);
+    await writeSite(db, fresh, setHidden(fresh, { hide: ['race'] }), { action: 'hide', actor: 'admin', summary: '숨김' });
+    await expect(undoChange(db, stale, add.changeId!, 'agent')).rejects.toMatchObject({ status: 409 });
+    expect(validateSite(await readSite(db))).toEqual([]);
   });
 });
 

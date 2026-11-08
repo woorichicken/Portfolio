@@ -226,9 +226,11 @@ const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
 export function affectedPaths(prev: SiteDocs, next: SiteDocs): string[] {
   const out = new Set<string>();
   const ids = (d: SiteDocs) => JSON.stringify(localePages(d, 'ko'));
+  // 앞뒤 주소의 합집합 — 항목을 지우는 쪽(추가를 되돌림)이면 next 에 없는 상세도 캐시에서 빼야 404 가 된다(수정 1회차 P2a)
+  const pages = (l: Locale) => [...new Set([...localePages(prev, l), ...localePages(next, l)])];
   if (!same(prev.roles, next.roles) || !same(prev.hidden, next.hidden)) {
     // 역할 순서·숨김은 모든 역할 화면과 상세의 「비슷한 작품」에 걸친다
-    for (const l of LOCALES) localePages(next, l).forEach((p) => out.add(p));
+    for (const l of LOCALES) pages(l).forEach((p) => out.add(p));
   }
   for (const l of LOCALES) {
     const a = prev.content[l];
@@ -236,7 +238,7 @@ export function affectedPaths(prev: SiteDocs, next: SiteDocs): string[] {
     if (same(a, b)) continue;
     const onlyDetail = detailOnlyChanges(a, b);
     if (onlyDetail) onlyDetail.forEach((id) => out.add(projectPath(l, id)));
-    else localePages(next, l).forEach((p) => out.add(p));
+    else pages(l).forEach((p) => out.add(p));
     // llms.txt 는 한국어 본문과 영어 소개 한 줄을 쓴다
     if (!onlyDetail && (l === 'ko' || l === 'en')) out.add('/llms.txt');
   }

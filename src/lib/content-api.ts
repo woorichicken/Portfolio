@@ -23,6 +23,8 @@ export function fail(status: number, code: string, message: string, extra?: Reco
 /** 핸들러를 감싸 OpError·검사 실패·모르는 오류를 같은 모양으로 바꾼다 */
 export function route(handler: (req: Request, ctx: { params: Promise<Record<string, string | string[]>> }) => Promise<Response>) {
   return async (req: Request, ctx: { params: Promise<Record<string, string | string[]>> }) => {
+    // D1 없는 정적 배포(Vercel)는 Cloudflare 컨텍스트·비밀이 없다 — 인증부터 시도하면 500 이 난다. 먼저 깔끔히 거절한다(수정 1회차 P1)
+    if (contentSource() === 'static') return fail(503, 'no_db', '이 배포는 D1 없이 저장소 파일을 읽습니다(CONTENT_SOURCE=static) — 콘텐츠 API 가 없습니다');
     try {
       return await handler(req, ctx);
     } catch (e) {
@@ -32,6 +34,21 @@ export function route(handler: (req: Request, ctx: { params: Promise<Record<stri
       return fail(500, 'internal', '서버 오류 — Worker 로그(wrangler tail)를 보세요');
     }
   };
+}
+
+/** 본문이 비어 있으면 {} — 있는데 JSON 이 아니면 400(조용히 {} 로 바꾸지 않는다 — 수정 1회차 P2d) */
+export async function readOptionalJson<T extends object>(req: Request): Promise<Partial<T>> {
+  const text = await req.text();
+  if (!text.trim()) return {};
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch {
+    throw new OpError(400, 'bad_json', '본문이 JSON 이 아닙니다 — 비우거나 { "changeId": "…" } 로 보내세요');
+  }
+  // "…" 처럼 JSON 이지만 객체가 아니면 changeId 를 못 읽어 「가장 최근」으로 새어 나간다 — 그것도 400
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new OpError(400, 'bad_json', '본문은 JSON 객체여야 합니다 — 예: { "changeId": "…" }');
+  return value as Partial<T>;
 }
 
 export async function readJson<T>(req: Request): Promise<T> {

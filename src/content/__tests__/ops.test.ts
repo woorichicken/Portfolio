@@ -78,6 +78,11 @@ describe('affectedPaths — 저장 뒤 다시 그릴 페이지', () => {
     expect(paths).toEqual(expect.arrayContaining(['/as/design', '/en/as/design', '/es/projects/kits']));
   });
 
+  it('수정 1회차 P2a — 추가를 되돌리는 방향(next 에 없는 항목)도 그 상세 주소를 무효화한다', () => {
+    const added = addItem(base, { kind: 'other', item: { ko: other('gone', '가'), en: other('gone', 'A'), es: other('gone', 'A') } });
+    expect(affectedPaths(added, base)).toEqual(expect.arrayContaining(['/projects/gone', '/en/projects/gone', '/es/projects/gone', '/sitemap.xml']));
+  });
+
   it('항목이 늘면 sitemap 도', () => {
     const next = addItem(base, { kind: 'other', item: { ko: other('n2', '가'), en: other('n2', 'A'), es: other('n2', 'A') } });
     expect(affectedPaths(base, next)).toEqual(expect.arrayContaining(['/sitemap.xml', '/projects/n2', '/es/projects/n2']));
