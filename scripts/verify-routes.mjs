@@ -44,6 +44,8 @@ if (args['cli-manager'] === '1') {
   CHECKS.push(
     { path: '/changelog', status: 301, location: '/changelog' },
     { path: '/privacy', status: 200, has: [] },
+    // 슬래시가 든 하위 경로도 308 이어야 한다(한 칸에 받으면 500 — next.config.ts 주석)
+    { path: '/api/roadmaps/x', status: 308, location: '/api/roadmaps/x' },
   );
 }
 

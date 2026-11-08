@@ -50,10 +50,12 @@ const nextConfig: NextConfig = {
         statusCode: 301 as const,
       })),
       // API 는 308: 301 이면 POST 가 GET 으로 바뀐다.
-      // 단 /api/content/* 는 이 사이트의 콘텐츠 API(D1)라 보내지 않는다 — CLI Manager 쪽 API 는 changelogs·roadmaps 뿐이다(2026-11-08 확인)
+      // 단 /api/content/* 는 이 사이트의 콘텐츠 API(D1)라 보내지 않는다 — CLI Manager 쪽 API 는 changelogs·roadmaps 뿐이다(2026-11-08 확인).
+      // 첫 구간(:first)과 나머지(:rest*)를 나눠 받는다 — 한 칸에 슬래시째 받으면 목적지를 만들 때 「[^/]+ 가 아니다」로 500 이 난다(/api/roadmaps/x 실측)
+      { source: "/api", destination: `${CLI_MANAGER_URL}/api`, statusCode: 308 as const },
       {
-        source: "/api/:path((?!content(?:/|$)).*)",
-        destination: `${CLI_MANAGER_URL}/api/:path`,
+        source: "/api/:first((?!content(?:/|$))[^/]+)/:rest*",
+        destination: `${CLI_MANAGER_URL}/api/:first/:rest*`,
         statusCode: 308 as const,
       },
     ];

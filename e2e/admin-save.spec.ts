@@ -68,6 +68,7 @@ test('어드민 저장 → 역할 화면 반영 → D1 행 · 되돌리기', asy
   await shot(page, '02-admin-changed');
   await page.getByRole('button', { name: '저장', exact: true }).click();
   await expect(page.locator('[data-admin-status="saved"]')).toContainText('저장했습니다');
+  await page.locator('.admin-diff').scrollIntoViewIfNeeded();
   await shot(page, '03-admin-saved');
 
   // 화면: 공개 역할 화면의 첫 카드가 바뀌었다
@@ -95,6 +96,8 @@ test('어드민 저장 → 역할 화면 반영 → D1 행 · 되돌리기', asy
     await page.getByRole('button', { name: '마지막 저장 되돌리기' }).click();
     await expect(page.locator('[data-admin-status="saved"]')).toContainText('되돌렸습니다');
   }
+  await page.locator('.admin-history summary').click();
+  await page.locator('.admin-diff').scrollIntoViewIfNeeded();
   await shot(page, '05-admin-undone');
   await page.goto('/as/design');
   expect((await projectOrder(page, 'row-projects')).slice(0, 2)).toEqual(startRoles.design.projects.slice(0, 2));
