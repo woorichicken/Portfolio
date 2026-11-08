@@ -106,8 +106,10 @@ export async function authorize(req: Request): Promise<Actor> {
     const valid = Number(exp) > Date.now() && sig && safeEqual(sig, await hmac(env.ADMIN_SESSION_SECRET, `admin:${exp}`));
     if (valid) {
       if (req.method !== 'GET' && req.method !== 'HEAD') {
+        // req.url 이 아니라 Host 헤더와 비교한다 — Workers(OpenNext) 안의 req.url 호스트는 브라우저가 연 주소와 다를 수 있다(2026-11-08 로컬에서 403)
         const origin = req.headers.get('origin');
-        if (!origin || new URL(origin).host !== new URL(req.url).host) throw new OpError(403, 'bad_origin', '다른 출처에서 온 쓰기 요청입니다');
+        const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host');
+        if (!origin || !host || new URL(origin).host !== host) throw new OpError(403, 'bad_origin', `다른 출처에서 온 쓰기 요청입니다(origin ${origin ?? '없음'} · host ${host ?? '없음'})`);
       }
       return 'admin';
     }

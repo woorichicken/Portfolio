@@ -124,7 +124,7 @@ export async function writeSite(
   db: D1Database,
   base: Site,
   next: SiteDocs,
-  meta: { action: Action; actor: Actor; summary: string; changeId?: string; extra?: D1PreparedStatement[] },
+  meta: { action: Action; actor: Actor; summary: string; changeId?: string; undoes?: string; extra?: D1PreparedStatement[] },
 ): Promise<WriteResult> {
   const problems = validateSite(next);
   if (problems.length) throw new ValidationError(problems);
@@ -143,10 +143,10 @@ export async function writeSite(
     statements.push(
       db
         .prepare(
-          `INSERT INTO content_history (change_id, key, version, prev_body, body, action, actor, summary, at)
-           SELECT ?1, key, ?2, body, ?3, ?4, ?5, ?6, ?7 FROM content_doc WHERE key = ?8`,
+          `INSERT INTO content_history (change_id, key, version, prev_body, body, action, actor, summary, at, undoes)
+           SELECT ?1, key, ?2, body, ?3, ?4, ?5, ?6, ?7, ?9 FROM content_doc WHERE key = ?8`,
         )
-        .bind(changeId, version + 1, after[key], meta.action, meta.actor, meta.summary, at, key),
+        .bind(changeId, version + 1, after[key], meta.action, meta.actor, meta.summary, at, key, meta.undoes ?? null),
       db.prepare('UPDATE content_doc SET body = ?1, version = ?2, updated_at = ?3, updated_by = ?4 WHERE key = ?5').bind(after[key], version + 1, at, meta.actor, key),
     );
   }
@@ -167,6 +167,7 @@ export async function writeSite(
 
 export type HistoryRow = {
   id: number;
+  undoes?: string | null;
   change_id: string;
   key: DocKey;
   version: number;
@@ -238,7 +239,27 @@ export async function undoChange(db: D1Database, base: Site, changeId: string | 
     actor,
     summary: `되돌림: ${results[0].summary}`,
     changeId: undoId,
-    extra: [db.prepare('UPDATE content_history SET undone_by = ?1 WHERE change_id = ?2').bind(undoId, target)],
+    undoes: target,
+    extra: await statusUpdates(db, target, undoId),
   });
   return { ...result, undid: target };
+}
+
+/**
+ * target 을 undoId 가 되돌렸다고 적고, 그 연쇄를 따라 「살아 있음」을 맞춘다.
+ * target 이 되돌리기였으면(= 다시 하기) 그게 되돌렸던 저장은 다시 살아 있고, 그 저장이 또 되돌리기였으면 그 대상은 다시 되돌린 상태다 …
+ * 이걸 맞춰 둬야 기본 undo(가장 최근의 살아 있는 저장)가 사람이 기대하는 것을 고른다.
+ */
+async function statusUpdates(db: D1Database, target: string, undoId: string): Promise<D1PreparedStatement[]> {
+  const out = [db.prepare('UPDATE content_history SET undone_by = ?1 WHERE change_id = ?2').bind(undoId, target)];
+  let current = target;
+  let active = true; // current 가 꺼졌으니 그 대상은 켜진다
+  for (let depth = 0; depth < 20; depth += 1) {
+    const row = await db.prepare('SELECT action, undoes FROM content_history WHERE change_id = ?1 LIMIT 1').bind(current).first<{ action: Action; undoes: string | null }>();
+    if (!row || row.action !== 'undo' || !row.undoes) break;
+    out.push(db.prepare('UPDATE content_history SET undone_by = ?1 WHERE change_id = ?2').bind(active ? null : current, row.undoes));
+    current = row.undoes;
+    active = !active;
+  }
+  return out;
 }

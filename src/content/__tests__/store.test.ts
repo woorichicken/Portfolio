@@ -79,6 +79,18 @@ describe('undoChange', () => {
     expect(await tagline()).toBe('A');
   });
 
+  it('다시 하기 뒤의 기본 undo 는 그 다시 하기를 무른다(오래된 저장으로 건너뛰지 않는다)', async () => {
+    await set('A');
+    await set('B');
+    const u1 = await undoChange(db, await readSite(db), undefined, 'agent'); // B 를 되돌림 → A
+    await undoChange(db, await readSite(db), u1.changeId!, 'agent'); // 다시 하기 → B
+    expect(await tagline()).toBe('B');
+    await undoChange(db, await readSite(db), undefined, 'agent'); // 다시 B 를 되돌림 → A
+    expect(await tagline()).toBe('A');
+    await undoChange(db, await readSite(db), undefined, 'agent'); // A 를 되돌림 → 시드
+    expect(await tagline()).toBe(STATIC_DOCS.content.ko.work.projects[0].tagline);
+  });
+
   it('그 뒤에 같은 문서가 또 바뀌었으면 막는다 — 뒤의 저장을 조용히 지우지 않는다', async () => {
     const a = await set('A');
     await set('B');

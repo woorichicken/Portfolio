@@ -1,7 +1,7 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 
-// 유닛 테스트용 D1 — node:sqlite 에 진짜 마이그레이션(migrations/0001)을 깐다. 트리거·트랜잭션이 운영 D1(SQLite)과 같게 돈다.
+// 유닛 테스트용 D1 — node:sqlite 에 진짜 마이그레이션(migrations/*.sql 순서대로)을 깐다. 트리거·트랜잭션이 운영 D1(SQLite)과 같게 돈다.
 // D1 API 중 store.ts 가 쓰는 것만(prepare · bind · all · first · run · batch).
 
 type Params = (string | number | null)[];
@@ -31,7 +31,8 @@ class Statement {
 export class FakeD1 {
   readonly sqlite = new DatabaseSync(':memory:');
   constructor() {
-    this.sqlite.exec(readFileSync(new URL('../../../migrations/0001_content.sql', import.meta.url), 'utf8'));
+    const dir = new URL('../../../migrations/', import.meta.url);
+    for (const file of readdirSync(dir).filter((f) => f.endsWith('.sql')).sort()) this.sqlite.exec(readFileSync(new URL(file, dir), 'utf8'));
   }
   prepare(sql: string) {
     return new Statement(this.sqlite, sql);

@@ -10,14 +10,22 @@ pnpm dev                    # http://localhost:3427  (3427 은 피드백 수집 
 pnpm typecheck
 pnpm build && pnpm start
 pnpm verify:feedback-gate   # 피드백 관문 허용/차단 호스트·비밀번호 해시 검사
+
+# Cloudflare Workers(OpenNext) + 본문 D1 — 2026-11-08~ (운영 전환 전 · docs/content-api.md)
+pnpm db:migrate:local && pnpm db:seed:local   # 로컬 D1 에 본문 넣기(처음 한 번)
+pnpm cf:build && pnpm cf:preview              # http://127.0.0.1:8797
+pnpm content get                              # 본문 읽기·고치기 CLI — .claude/skills/solhun-content/SKILL.md
+pnpm test                                     # 유닛(zod 검사·되돌리기)
 ```
 
 ## 구조
 
 | 경로 | 무엇 |
 |---|---|
-| `src/content/{ko,en,es}.ts` | 본문 전부. 셋은 `types.ts` 의 같은 모양이라 한 언어에서 항목을 빠뜨리면 타입체크가 잡는다 |
-| `src/content/roles.ts` | **역할 4개(+전체)와 역할마다의 순서** — 대표작(`featured`) · 큰 프로젝트 순서 · 「그 외」 순서 · 숨김(`HIDDEN`), 리브랜딩 화면의 새 문구(세 언어 한 줄씩). 어드민의 「변경안」을 여기 옮긴다 |
+| **D1 `content_doc`** | **본문의 정본(2026-11-08~)** — ko·en·es · roles · hidden 문서 5개. 고치기는 `pnpm content`(에이전트) 또는 `/admin` 「저장」. 쓸 때마다 zod 로 세 언어 모양을 검사하고 직전 값을 이력에 남긴다 — `docs/content-api.md` |
+| `src/content/{ko,en,es}.ts` | D1 의 **시드**(처음 넣은 값)이자 D1 없는 빌드(Vercel)의 본문. 여기를 고쳐도 Workers 사이트는 안 바뀐다 |
+| `src/content/schema.ts` · `ops.ts` · `store.ts` | zod 스키마(types.ts 와 같은지 컴파일 때 확인) · 본문 바꾸기(순수 함수) · D1 읽기/쓰기/되돌리기 |
+| `src/content/roles.ts` | 역할 id · 화면 글(`SCREEN`, 세 언어 한 줄씩) · 역할 순서/숨김의 **시드값**(`ROLES`·`HIDDEN`). 순서·숨김의 정본은 D1 `roles`·`hidden` |
 | `src/content/screen-data.ts` | 역할 화면의 행·비슷한 작품 계산(화면은 이 결과만 그린다) |
 | `src/content/images.ts` · `artifacts.ts` | 사진 경로·크기(`public/work/`) · 결과물 목록 |
 | `src/app/(ko)/` · `src/app/(intl)/[locale]/` | 한국어 `/` · `/en`·`/es` — 언어마다 루트 레이아웃을 따로 둬서 `<html lang>` 이 정확하다 |
@@ -25,12 +33,13 @@ pnpm verify:feedback-gate   # 피드백 관문 허용/차단 호스트·비밀�
 | `/as/<역할>` → `screen/Browse.tsx` | 역할 화면 — 대표작 빌보드 → 가로 행(그 역할의 프로젝트 · 숫자 · 만든 화면과 도구 · 그 외 · 이전) → 연표 → 연락 |
 | `/projects/<slug>` → `screen/TitlePage.tsx` | 작품 상세(큰 프로젝트 · 그 외 · 이전 공통) — 그림 → 이름·칩 → 사이트 열기/메일 · 링크 복사 → 탭(개요 · 바꾼 것 · 화면 · 비슷한 작품 · 자세히, `#tab-<id>`) |
 | `/design` | **없앴다(2026-11-03)** — 옛 주소는 `next.config.ts` 가 `/as/design#row-artifacts`(308)로 보낸다. 결과물은 역할 화면의 「만든 화면과 도구」 행과 상세 「화면」 탭에만 있다 |
-| `/admin` → `admin/Admin.tsx` | 나를 위한 화면(검색 제외). 비밀번호 = 피드백 모드. 역할별 순서·숨김을 바꿔 보고 「변경안」 코드로 내보낸다(바로 반영되지 않는다). 항목별 코멘트는 브라우저에 쌓고 배포본에서는 라쏘런에도 보낸다(`admin/send-comment.ts`) |
+| `/admin` → `admin/Admin.tsx` | 나를 위한 화면(검색 제외). 비밀번호 = 피드백 모드(서버가 확인 → 쿠키). 역할별 순서·숨김을 바꿔 **「저장」하면 바로 반영**(`PUT /api/content/layout`) · 「마지막 저장 되돌리기」. D1 없는 배포에서는 예전처럼 변경안 코드만. 항목별 코멘트는 브라우저에 쌓고 배포본에서는 라쏘런에도 보낸다(`admin/send-comment.ts`) |
 | `src/components/screen/Shell.tsx` · `RoleClient.tsx` | 공통 뼈대(머리 · 연락 띠 · 모바일 아래 탭) · 마지막 역할 기억(`localStorage` `solhun:role`) |
 | `src/app/globals.css` | **리브랜딩 디자인 시스템 전부** — 어두운 화면 하나, 채널 네 색 = 역할 네 색, 대비 비율은 주석에. 색 글자(#…)는 `:root` 토큰 블록에만 |
 | `src/components/feedback/` · `src/lib/feedback-gate.ts` | `?feedback` 관문 + feedback-kit 위젯 |
 | `next.config.ts` | `/design` → 역할 화면 308(늘 켬) · CLI Manager 옛 경로 301/프록시 — 기본 꺼짐(`CLI_MANAGER_ROUTES=1`) |
 | `docs/DEPLOY.md` | Vercel·env·도메인 이전·피드백 운영 — **배포 전에 읽을 것** |
+| `docs/content-api.md` · `wrangler.jsonc` · `open-next.config.ts` · `migrations/` | Cloudflare Workers 이전 — API 표·응답/오류 모양·「토큰 받은 뒤 할 일」 |
 | `docs/verification/` | 검증 캡처 |
 
 ## 피드백 모드는 방문자와 같은 화면이다
