@@ -1,4 +1,5 @@
 import { getContent } from '@/content';
+import type { Site } from '@/content/store';
 import { LOCALES, SITE_URL, localePath, type Locale } from '@/i18n/config';
 
 // AI 검색(GEO)이 「이 사이트가 누구의 것인지」를 문장이 아니라 구조로 읽게 한다.
@@ -11,12 +12,11 @@ const EXTRA_PROFILES = [
   'https://dev.to/solhun',
 ];
 
-// 정적 페이지는 배포 때 만들어지므로 이 값이 곧 「마지막으로 내용이 바뀐 날」이다.
-const BUILD_DATE = new Date().toISOString().slice(0, 10);
-
-export function buildPersonJsonLd(locale: Locale) {
-  const t = getContent(locale);
-  const otherNames = LOCALES.map((l) => getContent(l).hero.name).filter((name) => name !== t.hero.name);
+export function buildPersonJsonLd(site: Site, locale: Locale) {
+  const t = getContent(site, locale);
+  const otherNames = LOCALES.map((l) => getContent(site, l).hero.name).filter((name) => name !== t.hero.name);
+  // 본문이 마지막으로 바뀐 날 — 예전에는 빌드한 날이었다. D1 로 옮긴 뒤로는 문서의 updated_at 이 그 날이다
+  const modified = site.updatedAt.slice(0, 10);
   const siteLinks = [...t.hero.links, ...t.contact.links].map((link) => link.href).filter((href) => href.startsWith('https://'));
 
   // Person 을 ProfilePage 안에 넣지 않고 @graph 의 형제 노드로 둔다 — 중첩을 안 펼치는 점검기·크롤러도 Person 과 sameAs 를 바로 읽게
@@ -40,7 +40,7 @@ export function buildPersonJsonLd(locale: Locale) {
         '@type': 'ProfilePage',
         url: `${SITE_URL}${localePath(locale)}`,
         inLanguage: locale,
-        dateModified: BUILD_DATE,
+        dateModified: modified,
         mainEntity: { '@id': personId },
       },
     ],

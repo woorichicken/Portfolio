@@ -9,27 +9,34 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "verify:feedback-gate": "node --no-warnings scripts/verify-feedback-gate.mjs",
-    "cf:build": "opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion",
-    "cf:preview": "opennextjs-cloudflare preview --port 8787"
+    "cf:build": "node scripts/content-snapshot.mjs --local && opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion",
+    "cf:preview": "opennextjs-cloudflare preview --port 8787",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:seed:local": "tsx scripts/seed-content.ts",
+    "cf:types": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@solhun/feedback-kit-core": "^0.14.0",
     "@solhun/feedback-kit-web": "^0.14.0",
     "next": "15.5.26",
     "react": "19.1.2",
-    "react-dom": "19.1.2"
+    "react-dom": "19.1.2",
+    "zod": "4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@opennextjs/cloudflare": "1.18.1",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^22.20.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.26",
     "tailwindcss": "^4",
+    "tsx": "4",
     "typescript": "^5",
+    "vitest": "3",
     "wrangler": "4.158.0"
   }
 }

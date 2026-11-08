@@ -59,3 +59,11 @@ export function shot(id: ImageId, alt: string, caption?: string): Shot {
   const [width, height] = DIMENSIONS[id];
   return { src: `/work/${id}.jpg`, width, height, alt, caption };
 }
+
+/**
+ * R2 에 올린 사진(/media/…)인가. 이 사진은 next/image 최적화(/_next/image)를 건너뛴다 —
+ * OpenNext 의 이미지 처리는 상대 주소를 정적 파일(ASSETS)에서만 찾아서 /media/ 는 404 가 된다(templates/images.js).
+ */
+export function isMediaSrc(src: string): boolean {
+  return src.startsWith('/media/');
+}

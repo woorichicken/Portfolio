@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { getContent } from '@/content';
-import { PICKABLE_ROLES, ROLES, screenCopy } from '@/content/roles';
+import { PICKABLE_ROLES, screenCopy } from '@/content/roles';
+import type { SiteDocs } from '@/content/schema';
 import { LANGUAGE_NAMES, LOCALES, browsePath, localePath, type Locale } from '@/i18n/config';
 import EmailLink from '../EmailLink';
 import FeedbackGate from '../feedback/FeedbackGate';
@@ -13,8 +14,8 @@ import { PickerMemory } from './RoleClient';
 // 고르면 /as/<역할> 로 간다. 주소가 역할마다 달라서 「AX 쪽 저를 보세요」처럼 링크로 바로 보낼 수 있다.
 // 5회차 리뷰(D1): 첫 화면은 제목 · 역할 이름 · 두 단추만. 누구 사이트인지(U01)는 제목의 이름과 「정경훈 소개」 창이 맡는다.
 
-export default function RolePicker({ locale }: { locale: Locale }) {
-  const t = getContent(locale);
+export default function RolePicker({ site, locale }: { site: SiteDocs; locale: Locale }) {
+  const t = getContent(site, locale);
   const s = screenCopy(locale);
   return (
     <div className="picker">
@@ -40,7 +41,7 @@ export default function RolePicker({ locale }: { locale: Locale }) {
             <li key={role}>
               <a className="picker-tile" href={browsePath(locale, role)} data-pick-role={role}>
                 <Avatar role={role} />
-                <span className="picker-name">{ROLES[role].name[locale]}</span>
+                <span className="picker-name">{site.roles[role].name[locale]}</span>
                 <span className="picker-recent">{s.pickerRecent}</span>
               </a>
             </li>

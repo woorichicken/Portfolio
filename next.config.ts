@@ -49,10 +49,11 @@ const nextConfig: NextConfig = {
         destination: `${CLI_MANAGER_URL}${source}`,
         statusCode: 301 as const,
       })),
-      // API 는 308: 301 이면 POST 가 GET 으로 바뀐다
+      // API 는 308: 301 이면 POST 가 GET 으로 바뀐다.
+      // 단 /api/content/* 는 이 사이트의 콘텐츠 API(D1)라 보내지 않는다 — CLI Manager 쪽 API 는 changelogs·roadmaps 뿐이다(2026-11-08 확인)
       {
-        source: "/api/:path*",
-        destination: `${CLI_MANAGER_URL}/api/:path*`,
+        source: "/api/:path((?!content(?:/|$)).*)",
+        destination: `${CLI_MANAGER_URL}/api/:path`,
         statusCode: 308 as const,
       },
     ];

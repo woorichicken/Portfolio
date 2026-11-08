@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import type { ArtifactCard, TitleCard as TitleCardData } from '@/content/screen-data';
 import { projectPath, type Locale } from '@/i18n/config';
 import RowTrack from './RowTrack';
+import { isMediaSrc } from '@/content/images';
 
 // 행 하나와 그 안의 카드들. 서버에서 다 그리고, 넘기는 화살표만 클라이언트(RowTrack)다.
 
@@ -32,7 +33,7 @@ export function TitleCard({ card, locale, sizes, priority, tag }: { card: TitleC
   return (
     <a className="card" href={projectPath(locale, card.slug)}>
       <span className={`card-media${portrait ? ' is-portrait' : ''}`}>
-        <Image src={card.shot.src} alt="" width={card.shot.width} height={card.shot.height} sizes={sizes} priority={priority} />
+        <Image src={card.shot.src} unoptimized={isMediaSrc(card.shot.src)} alt="" width={card.shot.width} height={card.shot.height} sizes={sizes} priority={priority} />
         {tag && <span className="card-tag">{tag}</span>}
         <span className="card-label">
           <span className="card-kicker">{card.kicker}</span>
@@ -57,7 +58,7 @@ export function ArtifactTileCard({ item, sizes, openLabel }: { item: ArtifactCar
       aria-label={`${openLabel}: ${a.title}${item.projectName ? ` · ${item.projectName}` : ''}`}
     >
       <span className="card-media">
-        <Image src={a.shot.src} alt="" width={a.shot.width} height={a.shot.height} sizes={sizes} />
+        <Image src={a.shot.src} unoptimized={isMediaSrc(a.shot.src)} alt="" width={a.shot.width} height={a.shot.height} sizes={sizes} />
         <span className="card-label">
           {item.projectName && <span className="card-kicker">{item.projectName}</span>}
           <span className="card-name">{a.title}</span>
@@ -71,7 +72,7 @@ export function ArtifactTileCard({ item, sizes, openLabel }: { item: ArtifactCar
 export function SimilarCard({ card, locale, sizes }: { card: TitleCardData; locale: Locale; sizes: string }) {
   return (
     <a className="sim" href={projectPath(locale, card.slug)}>
-      <span className="sim-media"><Image src={card.shot.src} alt="" width={card.shot.width} height={card.shot.height} sizes={sizes} /></span>
+      <span className="sim-media"><Image src={card.shot.src} unoptimized={isMediaSrc(card.shot.src)} alt="" width={card.shot.width} height={card.shot.height} sizes={sizes} /></span>
       <span className="sim-body">
         <span className="sim-kicker">{card.kicker}</span>
         <span className="sim-name">{card.name}</span>

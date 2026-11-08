@@ -5,6 +5,7 @@ import { getContent, type WorkEntry } from '@/content';
 import type { Shot } from '@/content/images';
 import { screenCopy } from '@/content/roles';
 import { similarTitles } from '@/content/screen-data';
+import type { SiteDocs } from '@/content/schema';
 import type { Fact, Link, Project, Quote } from '@/content/types';
 import { projectPath, type Locale } from '@/i18n/config';
 import Figure from '../Figure';
@@ -14,6 +15,7 @@ import { DetailTabs, Tip, type TabPanel } from './DetailClient';
 import { IconClose, IconExternal } from './icons';
 import { BackToList } from './RoleClient';
 import Shell from './Shell';
+import { isMediaSrc } from '@/content/images';
 
 // 작품 상세(/projects/<slug>) — 큰 프로젝트와 「그 외」·「이전」을 같은 틀로 그린다.
 // 넷플릭스 상세 창(882px 시트 · 위 16:9 · 정보 2:1 칸)을 페이지로 옮겼다: 주소가 있어 링크로 보내고 검색엔진도 읽는다.
@@ -64,8 +66,8 @@ function splitWho(q: Quote) {
 // 사실 표의 첫 칸(기간)과 둘째 칸(역할)은 머리 칩으로, 「함께」는 이름 아래 한 줄로 올린다
 const CREDIT_LABELS = ['함께', 'With', 'Con', '팀', 'Team', 'Equipo'];
 
-export default function TitlePage({ locale, project, entry }: { locale: Locale; project?: Project; entry?: WorkEntry }) {
-  const t = getContent(locale);
+export default function TitlePage({ site: docs, locale, project, entry }: { site: SiteDocs; locale: Locale; project?: Project; entry?: WorkEntry }) {
+  const t = getContent(docs, locale);
   const s = screenCopy(locale);
   const m = project ? fromProject(project) : fromEntry(entry!);
   const site = m.links[0];
@@ -73,7 +75,7 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
   // 결과물로 이미 나온 사진은 「화면」 아래 갤러리에서 빼서 같은 사진이 두 번 나오지 않게 한다
   const used = new Set(artifacts.flatMap(({ artifact }) => ('shot' in artifact ? [artifact.shot.src] : [])));
   const gallery = m.gallery.filter((g) => !used.has(g.src));
-  const similar = similarTitles(locale, m.slug);
+  const similar = similarTitles(docs, locale, m.slug);
   const credits = m.facts.filter((f) => CREDIT_LABELS.includes(f.label));
   const chips = m.facts.filter((f) => !CREDIT_LABELS.includes(f.label)).slice(0, 3);
 
@@ -220,15 +222,15 @@ export default function TitlePage({ locale, project, entry }: { locale: Locale; 
 
   const portrait = m.cover.height > m.cover.width;
   return (
-    <Shell locale={locale} altPath={(l) => projectPath(l, m.slug)}>
+    <Shell site={docs} locale={locale} altPath={(l) => projectPath(l, m.slug)}>
       {/* 시트 뒤 바탕 — 대표 그림을 흐리게 깔아 「목록 위에 열린 창」처럼 보이게 한다 */}
       <div className="title-backdrop" aria-hidden="true">
-        <Image src={m.cover.src} alt="" width={m.cover.width} height={m.cover.height} sizes="10vw" />
+        <Image src={m.cover.src} unoptimized={isMediaSrc(m.cover.src)} alt="" width={m.cover.width} height={m.cover.height} sizes="10vw" />
       </div>
       <article className="title-sheet">
         <div className="title-hero">
           <a className={`title-hero-media${portrait ? ' is-portrait' : ''}`} href={m.cover.src} data-lightbox="" data-alt={m.cover.alt} data-caption={m.cover.caption ?? m.name} aria-label={`${t.a11y.openImage}: ${m.cover.alt}`}>
-            <Image src={m.cover.src} alt={m.cover.alt} width={m.cover.width} height={m.cover.height} sizes="(max-width: 1000px) 100vw, 960px" priority />
+            <Image src={m.cover.src} unoptimized={isMediaSrc(m.cover.src)} alt={m.cover.alt} width={m.cover.width} height={m.cover.height} sizes="(max-width: 1000px) 100vw, 960px" priority />
           </a>
           <BackToList locale={locale} className="round title-close" label={s.backToList}><IconClose /></BackToList>
           <div className="title-head">
