@@ -1,0 +1,43 @@
+// Cloudflare Workers 설정 — solhun.com 포트폴리오(OpenNext).
+// ⚠️ 2026-11-08 기준 원격 자원은 아직 없다(토큰 없음). 아래 database_id 는 자리표시다 —
+//    로컬(`wrangler dev`·`--local`)에서는 이 값이 로컬 SQLite 파일 이름으로만 쓰인다.
+//    「토큰 받은 뒤 할 일」은 docs/content-api.md 끝 절과 docs/DEPLOY.md 「Cloudflare 이전」에 있다.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "solhun-portfolio",
+  "main": ".open-next/worker.js",
+  "account_id": "4521ed2f6bd35977301d9344ffcbbc8e",
+  // workerd 1.20261104 이 아는 날짜 안에서 고른다
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "services": [
+    // OpenNext 캐시가 자기 자신을 부를 때 쓴다 — 이름이 Worker 이름과 같아야 한다
+    { "binding": "WORKER_SELF_REFERENCE", "service": "solhun-portfolio" }
+  ],
+  "d1_databases": [
+    // 본문(ko·en·es)·역할 순서·숨김·이력·미디어 목록. 스키마는 migrations/
+    {
+      "binding": "DB",
+      "database_name": "solhun-portfolio",
+      "database_id": "PLACEHOLDER-set-after-wrangler-d1-create",
+      "migrations_dir": "migrations"
+    },
+    // OpenNext 태그 캐시(revalidatePath·revalidateTag) — 같은 DB 를 다른 이름으로 한 번 더 묶는다
+    {
+      "binding": "NEXT_TAG_CACHE_D1",
+      "database_name": "solhun-portfolio",
+      "database_id": "PLACEHOLDER-set-after-wrangler-d1-create",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    // 다 그린 페이지 캐시(OpenNext incremental cache)
+    { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "solhun-portfolio-cache" },
+    // 어드민·API 로 올린 사진·영상 — /media/<key> 로 내보낸다
+    { "binding": "MEDIA", "bucket_name": "solhun-portfolio-media" }
+  ],
+  // next/image 최적화. 없으면 원본을 그대로 내보낸다(OpenNext images.js)
+  "images": { "binding": "IMAGES" },
+  "observability": { "enabled": true }
+}
