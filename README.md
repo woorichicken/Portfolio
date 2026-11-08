@@ -16,6 +16,7 @@ pnpm db:migrate:local && pnpm db:seed:local   # 로컬 D1 에 본문 넣기(처�
 pnpm cf:build && pnpm cf:preview              # http://127.0.0.1:8797
 pnpm content get                              # 본문 읽기·고치기 CLI — .claude/skills/solhun-content/SKILL.md
 pnpm test                                     # 유닛(zod 검사·되돌리기)
+pnpm e2e:workers                              # E2E(Workers · cf:build 뒤) · 정적은 CONTENT_SOURCE=static pnpm build && pnpm e2e:static
 ```
 
 ## 구조

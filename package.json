@@ -15,7 +15,9 @@
     "db:seed:local": "tsx scripts/seed-content.ts",
     "cf:types": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "test": "vitest run",
-    "content": "node scripts/content-cli.mjs"
+    "content": "node scripts/content-cli.mjs",
+    "e2e:workers": "scripts/with-workers.sh playwright test --workers=1",
+    "e2e:static": "scripts/with-static.sh playwright test --workers=1"
   },
   "dependencies": {
     "@solhun/feedback-kit-core": "^0.14.0",

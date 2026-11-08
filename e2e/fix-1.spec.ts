@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 
 // 수정 1회차(Codex 교차 검수 2026-11-08 17:40)의 P2 세 건 — 옛 코드에서 실패하는 것을 먼저 확인했다(REPORT.md 「수정 1회차」).
-// 로컬 Workers 에 붙는다: pnpm cf:build && scripts/with-workers.sh pnpm exec playwright test e2e/fix-1.spec.ts --workers=1
+// 로컬 Workers 에 붙는다: pnpm cf:build && pnpm e2e:workers
 
 const TOKEN = readFileSync('.dev.vars', 'utf8').match(/^CONTENT_API_TOKEN=(.+)$/m)![1].trim();
 const auth = { authorization: `Bearer ${TOKEN}` };

@@ -108,12 +108,13 @@ pnpm cf:build                                        # 스냅숏 → next build 
 pnpm cf:preview                                      # http://127.0.0.1:8797 (populateCache local + wrangler dev)
 scripts/with-workers.sh <명령>                        # 띄우고 → 명령 → 닫기(E2E·검증 스크립트용)
 pnpm test                                            # 유닛(vitest — schema · ops · store(node:sqlite 에 같은 마이그레이션))
-pnpm cf:build && scripts/with-workers.sh pnpm exec playwright test e2e/admin-save.spec.ts --workers=1
+pnpm cf:build && pnpm e2e:workers                      # E2E(Workers) — e2e/*.spec.ts 전부(정적 스펙 *.static.spec.ts 는 빠진다)
+CONTENT_SOURCE=static pnpm build && pnpm e2e:static    # E2E(정적 = 지금 Vercel) — e2e/*.static.spec.ts 만
 node scripts/verify-routes.mjs --a https://www.solhun.com --b http://127.0.0.1:8797   # 운영과 경로 대조
 ```
 
 `next dev`(`pnpm dev`)도 `initOpenNextCloudflareForDev()` 로 같은 로컬 D1 을 읽는다. Vercel 빌드(`VERCEL=1`)나 `CONTENT_SOURCE=static` 은 D1 대신 저장소 TS 파일을 읽고, `/api/content/*` 는 전부 503 `no_db` 이다 — **운영을 옮기는 동안 지금 Vercel 배포가 깨지지 않게** 둔 길이다.
-어드민도 그때는 API 를 부르지 않고 예전처럼 브라우저 해시로 열려 변경안 코드·코멘트만 쓴다. 확인: `CONTENT_SOURCE=static pnpm build && scripts/with-static.sh pnpm exec playwright test e2e/admin-static.spec.ts --workers=1`.
+어드민도 그때는 API 를 부르지 않고 예전처럼 브라우저 해시로 열려 변경안 코드·코멘트만 쓴다. 확인: `CONTENT_SOURCE=static pnpm build && pnpm e2e:static`(`e2e/admin.static.spec.ts`).
 
 ## 토큰 받은 뒤 할 일 (운영 전환 — 사람 승인 뒤, 순서대로)
 

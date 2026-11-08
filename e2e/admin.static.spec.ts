@@ -5,7 +5,7 @@ import { expect, test } from '@playwright/test';
 
 // 수정 1회차 P1 — D1 없는 정적 배포(지금 운영 Vercel)에서도 어드민이 예전처럼 돼야 한다:
 // 비밀번호(브라우저 해시) → 목록 · 순서 바꾸면 변경안 코드 · 코멘트(이 브라우저에만).
-// 정적 빌드에 붙는다: CONTENT_SOURCE=static pnpm build → next start → E2E_BASE_URL=http://127.0.0.1:3437 (scripts/with-static.sh)
+// 정적 빌드에 붙는다: CONTENT_SOURCE=static pnpm build && pnpm e2e:static (기본 Workers 실행에는 안 모인다 — playwright.config.ts)
 
 const PASSWORD = process.env.ADMIN_PASSWORD ?? readFileSync(join(homedir(), '.config/portfolio/feedback-password.txt'), 'utf8').trim();
 

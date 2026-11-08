@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # D1 없는 정적 빌드(지금 운영 Vercel 과 같은 길 — CONTENT_SOURCE=static)를 next start 로 띄우고, 명령을 돌린 뒤 정확히 닫는다.
 # 빌드는 하지 않는다 — 먼저 `CONTENT_SOURCE=static pnpm build`.
-#   STATIC_PORT=3437 scripts/with-static.sh pnpm exec playwright test e2e/admin-static.spec.ts --workers=1
+#   STATIC_PORT=3437 scripts/with-static.sh pnpm exec playwright test --workers=1   (= pnpm e2e:static)
 set -u
 PORT="${STATIC_PORT:-3437}"
 LOG="${STATIC_LOG:-/tmp/portfolio-static-$PORT.log}"
@@ -19,4 +19,4 @@ for _ in $(seq 1 60); do
   sleep 1
 done
 [ "$code" = "200" ] || { echo "60초 안에 안 떴다 — $LOG" >&2; exit 3; }
-E2E_BASE_URL="http://127.0.0.1:$PORT" "$@"
+E2E_MODE=static E2E_BASE_URL="http://127.0.0.1:$PORT" "$@"
