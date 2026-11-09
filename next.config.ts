@@ -40,10 +40,22 @@ const REMOVED_DESIGN_PAGE = [
   { source: "/:locale(en|es)/design", destination: "/:locale/as/design#row-artifacts", permanent: true },
 ];
 
+// solhun.com(apex) → www 307. Vercel 은 도메인 설정이 하던 일인데, Cloudflare Workers 로 옮기면(2026-11-09) 앱이 해야 한다.
+// 정본 주소(canonical·sitemap)는 www 가 아니라 NEXT_PUBLIC_SITE_URL 이 정한다 — 이건 사람이 친 주소를 예전과 같게 보내는 것뿐이다.
+const APEX_TO_WWW = [
+  {
+    source: "/:path*",
+    has: [{ type: "host" as const, value: "solhun.com" }],
+    destination: "https://www.solhun.com/:path*",
+    permanent: false,
+  },
+];
+
 const nextConfig: NextConfig = {
   async redirects() {
-    if (!CLI_MANAGER_ROUTES_ENABLED) return REMOVED_DESIGN_PAGE;
+    if (!CLI_MANAGER_ROUTES_ENABLED) return [...APEX_TO_WWW, ...REMOVED_DESIGN_PAGE];
     return [
+      ...APEX_TO_WWW,
       ...REMOVED_DESIGN_PAGE,
       ...MOVED_TO_CLI_MANAGER.map((source) => ({
         source,
