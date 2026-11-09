@@ -1,7 +1,5 @@
 // Cloudflare Workers 설정 — solhun.com 포트폴리오(OpenNext).
-// ⚠️ 2026-11-08 기준 원격 자원은 아직 없다(토큰 없음). 아래 database_id 는 자리표시다 —
-//    로컬(`wrangler dev`·`--local`)에서는 이 값이 로컬 SQLite 파일 이름으로만 쓰인다.
-//    「토큰 받은 뒤 할 일」은 docs/content-api.md 끝 절과 docs/DEPLOY.md 「Cloudflare 이전」에 있다.
+// 2026-11-09 운영 자원·도메인 연결 끝 — 자원 id·트리거·되돌리기는 docs/DEPLOY.md 8절.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "solhun-portfolio",
@@ -39,5 +37,12 @@
   ],
   // next/image 최적화. 없으면 원본을 그대로 내보낸다(OpenNext images.js)
   "images": { "binding": "IMAGES" },
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // 2026-11-09 Vercel → Workers 전환. 도메인은 API 로 먼저 붙였고(배치 cutover.sh), 다음 배포가 떼지 않게 여기에도 적는다.
+  // routes 를 적으면 Wrangler 가 workers.dev 를 기본으로 끄므로 명시해서 유지한다(검증·비상용 주소)
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "www.solhun.com", "custom_domain": true },
+    { "pattern": "solhun.com", "custom_domain": true }
+  ]
 }

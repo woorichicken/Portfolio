@@ -1,4 +1,6 @@
-# 배포 · CI/CD · 도메인 (2026-09-30 실측)
+# 배포 · CI/CD · 도메인
+
+> **2026-11-09 부터 운영은 Cloudflare Workers 다** — `solhun.com`·`www.solhun.com` → Worker `solhun-portfolio`, 배포 = `main` 머지(Workers Builds). 지금 상태·되돌리기는 **8절**. 1~7절은 Vercel 시절 기록(2026-09-30 실측)이고 Vercel 프로젝트는 되돌리기용으로 남겨 두었다.
 
 이 문서는 **사람이 결정할 것과 그 절차**를 담는다. 2026-09-30 에 2절 추천안(새 프로젝트)으로 배포했다 —
 도메인(`solhun.com`) 이전과 `CLI_MANAGER_ROUTES` 도 **끝났다**(2026-10-04 실측 — 아래 표 `solhun.com` 행).
@@ -208,3 +210,13 @@ node ~/Downloads/geo-tracker/audit.mjs "$P"                                     
 - **피드백 env 를 바꾸면** 빌드 변수(비밀)도 바꾼다 — `NEXT_PUBLIC_*` 는 번들에 박힌다(`wb.mjs vars`).
 - 배포 확인: `node ~/.claude/skills/cf-workers-builds/scripts/commit-status.mjs --repo woorichicken/Portfolio --sha <커밋> --excludes '<위 제외>'` → 0.
 - 2026-11-09 workers.dev 실측: verify-routes 21/21 · 원격 `pnpm content set` → 26곳 다시 그림 → `undo` · 피드백 위젯 청크 2개에 ingest 주소.
+
+### 도메인 전환 (2026-11-09 23:5x KST)
+
+| 항목 | 값 |
+|---|---|
+| 한 일 | DNS 의 Vercel CNAME 두 줄(`solhun.com`·`www.solhun.com` → `fa967484a7ac7eef.vercel-dns-017.com`, DNS only) 삭제 → Workers 커스텀 도메인 두 개 연결(API). `wrangler.jsonc` `routes` 에도 적었다 |
+| apex → www | 앱이 307(`next.config.ts` `APEX_TO_WWW`) — Vercel 때는 도메인 설정이 하던 일 |
+| 전환 뒤 실측 | 인증서 발급까지 약 80초 · `www` 200(`server: cloudflare`) · apex 307 → www · verify-routes 21/21(www ↔ workers.dev) · `climanager`·`design`·`standup` 하위 도메인 200 · 운영 `pnpm content set` → 반영 → `undo` |
+| 되돌리기 | Workers 도메인 두 개 떼기 → 위 CNAME 두 줄(DNS only) 다시 만들기. 스크립트: `~/Downloads/_batches/task-portfolio-d1-1108/rollback.sh`(토큰 `~/.config/portfolio/cf-api-token`). Vercel 프로젝트·도메인 등록은 그대로라 CNAME 만 돌리면 바로 산다 |
+| Vercel | Git 연결이 살아 있어 `main` 머지마다 Vercel 도 빌드한다(정적 모드, D1 없음 — 어드민 저장은 안 됨). 안정되면 Git 연결을 끊는다(사람 결정) |
