@@ -1,15 +1,17 @@
 import Image from 'next/image';
 import { getContent } from '@/content';
-import { ROLES, screenCopy, type RoleId } from '@/content/roles';
+import { screenCopy, type RoleId } from '@/content/roles';
+import type { SiteDocs } from '@/content/schema';
 import { roleScreen } from '@/content/screen-data';
 import { browsePath, projectPath, type Locale } from '@/i18n/config';
 import { ArtifactTileCard, Row, TitleCard } from './Cards';
 import { Avatar, IconExternal, IconInfo } from './icons';
 import { RememberRole } from './RoleClient';
 import Shell from './Shell';
+import { isMediaSrc } from '@/content/images';
 
 // 역할 화면(/as/<역할>) — 대표작 빌보드 → 가로 행들(그 역할의 프로젝트 · 결과물 · 그 외 · 이전) → 연표 → 연락.
-// 어떤 프로젝트를 몇 번째에 둘지는 content/roles.ts 가 정한다. 여기는 그 순서를 그리기만 한다.
+// 어떤 프로젝트를 몇 번째에 둘지는 D1 의 roles 문서가 정한다(어드민 「저장」 · `pnpm content role`). 여기는 그 순서를 그리기만 한다.
 
 /** 연표를 해마다 묶는다 — 「2026.07」의 앞 네 자리. 최근 해·최근 달이 위로 온다 */
 function timelineByYear(items: { date: string; text: string }[]) {
@@ -21,23 +23,23 @@ function timelineByYear(items: { date: string; text: string }[]) {
   return [...years].map(([year, list]) => ({ year, items: list }));
 }
 
-export default function Browse({ locale, role }: { locale: Locale; role: RoleId }) {
-  const t = getContent(locale);
+export default function Browse({ site: docs, locale, role }: { site: SiteDocs; locale: Locale; role: RoleId }) {
+  const t = getContent(docs, locale);
   const s = screenCopy(locale);
-  const def = ROLES[role];
-  const data = roleScreen(locale, role);
+  const def = docs.roles[role];
+  const data = roleScreen(docs, locale, role);
   const f = data.featured;
   const site = f.links?.[0];
   const arrows = { prevLabel: s.prevRow, nextLabel: s.nextRow };
 
   return (
-    <Shell locale={locale} altPath={(l) => browsePath(l, role)} role={role} tab="home">
+    <Shell site={docs} locale={locale} altPath={(l) => browsePath(l, role)} role={role} tab="home">
       <RememberRole role={role} />
 
       {/* 빌보드 — 넷플릭스 2026 홈처럼 바깥 여백 안에 들어간 둥근 카드. 큰 화면은 가로(2.18:1), 작은 화면은 세로 카드 */}
       <section className="billboard" aria-labelledby="billboard-title">
         <div className="billboard-media">
-          <Image src={f.cover.src} alt="" width={f.cover.width} height={f.cover.height} sizes="(max-width: 1000px) 100vw, 1400px" priority />
+          <Image src={f.cover.src} unoptimized={isMediaSrc(f.cover.src)} alt="" width={f.cover.width} height={f.cover.height} sizes="(max-width: 1000px) 100vw, 1400px" priority />
         </div>
         <div className="billboard-body">
           <p className="billboard-kicker"><Avatar role={role} />{t.hero.name} · {def.name[locale]} · {s.featured}</p>

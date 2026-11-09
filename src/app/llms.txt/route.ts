@@ -1,19 +1,22 @@
 import { plain } from '@/components/Rich';
-import { PROJECT_IDS, getContent, getProject, getWorkEntries } from '@/content';
+import { getContent, getProject, getWorkEntries, projectIds } from '@/content';
+import { getSite } from '@/content/store';
 import { SITE_URL, localePath, projectPath } from '@/i18n/config';
 
 // AI 가 이 사이트를 읽을 때 쓰는 안내 파일(llms.txt). sitemap 처럼 콘텐츠에서 만들어 글과 어긋나지 않게 한다.
 // 2026-10-30 Zecle SCORE 에서 「llms.txt 없음」 경고였다. 파일이 있다고 인용이 보장되지는 않는다.
+// 한 번 만들어 캐시에 두고, 본문을 저장하면 API 가 이 주소를 다시 만들게 한다(ops.ts affectedPaths).
 export const dynamic = 'force-static';
 
-export function GET() {
-  const t = getContent('ko');
-  const en = getContent('en');
+export async function GET() {
+  const site = await getSite();
+  const t = getContent(site, 'ko');
+  const en = getContent(site, 'en');
 
-  const projects = PROJECT_IDS.map((id) => getProject('ko', id))
+  const projects = projectIds(site).map((id) => getProject(site, 'ko', id))
     .filter((project) => project !== undefined)
     .map((project) => `- [${project.name}](${SITE_URL}${projectPath('ko', project.id)}): ${plain(project.tagline)}`);
-  const others = getWorkEntries('ko').map((entry) => `- [${entry.name}](${SITE_URL}${projectPath('ko', entry.slug)}): ${plain(entry.body)}`);
+  const others = getWorkEntries(site, 'ko').map((entry) => `- [${entry.name}](${SITE_URL}${projectPath('ko', entry.slug)}): ${plain(entry.body)}`);
   const links = [...t.hero.links, ...t.contact.links]
     .filter((link) => link.href.startsWith('https://'))
     .map((link) => `- [${link.label}](${link.href})`);

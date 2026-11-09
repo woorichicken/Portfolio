@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from 'next';
 import { plain } from '@/components/Rich';
 import { getContent, getProject, getWorkEntry } from '@/content';
-import { ROLES, type RoleId } from '@/content/roles';
+import type { RoleId } from '@/content/roles';
+import type { SiteDocs } from '@/content/schema';
 import { LOCALES, OG_LOCALES, SITE_URL, browsePath, localePath, projectPath, type Locale } from '@/i18n/config';
 
 // 세 언어가 서로를 hreflang 으로 가리키게 한다. 검색엔진이 언어별 페이지를 같은 문서의 번역으로 묶는 근거다.
-export function buildMetadata(locale: Locale): Metadata {
-  const t = getContent(locale);
+export function buildMetadata(docs: SiteDocs, locale: Locale): Metadata {
+  const t = getContent(docs, locale);
   const languages = Object.fromEntries(LOCALES.map((l) => [l, localePath(l)]));
   return {
     metadataBase: new URL(SITE_URL),
@@ -33,13 +34,13 @@ export function buildMetadata(locale: Locale): Metadata {
 }
 
 // 상세 페이지도 세 언어판이 서로를 가리킨다. 제목은 「프로젝트 — 이름」, 설명은 홈 카드의 한 줄 요약.
-export function buildDetailMetadata(locale: Locale, slug: string): Metadata {
-  const t = getContent(locale);
+export function buildDetailMetadata(docs: SiteDocs, locale: Locale, slug: string): Metadata {
+  const t = getContent(docs, locale);
   // 큰 프로젝트(ProjectCase)와 「그 외」·「이전」(WorkDetail)이 같은 /projects/<slug> 를 쓴다
-  const project = getProject(locale, slug);
+  const project = getProject(docs, locale, slug);
   const entry = project
     ? { name: project.name, body: project.tagline, shot: project.cover }
-    : getWorkEntry(locale, slug);
+    : getWorkEntry(docs, locale, slug);
   if (!entry) return {};
   const title = `${entry.name} — ${t.hero.name} (SOLHUN)`;
   const description = plain(entry.body);
@@ -67,10 +68,10 @@ export function buildDetailMetadata(locale: Locale, slug: string): Metadata {
 }
 
 // 역할 화면(/as/<역할>) — 제목에 역할 이름을 붙이고, 미리보기 그림은 그 역할의 대표작 표지
-export function buildBrowseMetadata(locale: Locale, role: RoleId): Metadata {
-  const t = getContent(locale);
-  const def = ROLES[role];
-  const featured = getProject(locale, def.featured);
+export function buildBrowseMetadata(docs: SiteDocs, locale: Locale, role: RoleId): Metadata {
+  const t = getContent(docs, locale);
+  const def = docs.roles[role];
+  const featured = getProject(docs, locale, def.featured);
   const title = `${def.name[locale]} — ${t.hero.name} (SOLHUN)`;
   const description = `${def.blurb[locale]}. ${t.meta.description}`;
   const languages = Object.fromEntries(LOCALES.map((l) => [l, browsePath(l, role)]));

@@ -1,4 +1,9 @@
 import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+
+// `next dev` 에서도 wrangler 의 로컬 D1·R2 바인딩을 쓸 수 있게 한다(운영 빌드에는 영향 없음).
+// Vercel(정적 · D1 없음) 빌드에서는 부르지 않는다 — 설정을 읽을 때 wrangler(miniflare)를 띄울 이유가 없다.
+if (!process.env.VERCEL) initOpenNextCloudflareForDev();
 
 // ── solhun.com 을 CLI Manager 사이트에서 넘겨받을 때 필요한 옛 경로 처리 ─────────────────
 // 정본: solhun-web-page 저장소 docs/domain-migration-climanager.md (「Portfolio 에 넣을 next.config.ts 스니펫」).
@@ -45,10 +50,13 @@ const nextConfig: NextConfig = {
         destination: `${CLI_MANAGER_URL}${source}`,
         statusCode: 301 as const,
       })),
-      // API 는 308: 301 이면 POST 가 GET 으로 바뀐다
+      // API 는 308: 301 이면 POST 가 GET 으로 바뀐다.
+      // 단 /api/content/* 는 이 사이트의 콘텐츠 API(D1)라 보내지 않는다 — CLI Manager 쪽 API 는 changelogs·roadmaps 뿐이다(2026-11-08 확인).
+      // 첫 구간(:first)과 나머지(:rest*)를 나눠 받는다 — 한 칸에 슬래시째 받으면 목적지를 만들 때 「[^/]+ 가 아니다」로 500 이 난다(/api/roadmaps/x 실측)
+      { source: "/api", destination: `${CLI_MANAGER_URL}/api`, statusCode: 308 as const },
       {
-        source: "/api/:path*",
-        destination: `${CLI_MANAGER_URL}/api/:path*`,
+        source: "/api/:first((?!content(?:/|$))[^/]+)/:rest*",
+        destination: `${CLI_MANAGER_URL}/api/:first/:rest*`,
         statusCode: 308 as const,
       },
     ];

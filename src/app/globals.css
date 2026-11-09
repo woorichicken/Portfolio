@@ -737,3 +737,14 @@ a.frame { cursor: zoom-in; }
   .admin-actions { grid-column: 1 / -1; justify-content: flex-end; }
   .admin-stats { margin-left: 0; width: 100%; }
 }
+
+/* 어드민 저장 칸 — 바꾼 것이 있으면 화면 아래에 붙어 따라온다(목록이 길어 저장 단추가 멀어지지 않게) */
+.admin-diff[data-changed] { position: sticky; bottom: 12px; box-shadow: 0 8px 32px rgb(0 0 0 / 0.45); }
+.admin-problems { margin: 0 0 12px; padding-left: 18px; font-size: 13px; color: var(--text-2); }
+.admin-problems code { font-size: 12px; color: var(--text-3); }
+.admin-history { margin-top: 14px; font-size: 14px; color: var(--text-2); }
+.admin-history summary { cursor: pointer; color: var(--text-3); }
+.admin-history ol { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.admin-history li { background: var(--surface-2); padding: 8px 10px; border-radius: 6px; }
+.admin-history li[data-undone] { opacity: 0.6; text-decoration: line-through; }
+.admin-history time { display: block; font-size: 12px; color: var(--text-4); }

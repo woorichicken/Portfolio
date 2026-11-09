@@ -26,6 +26,7 @@ export default function FeedbackGate({ copy }: { copy: Content['feedback'] }) {
 
   useEffect(() => {
     const host = isFeedbackHost(location.hostname);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 주소·저장소는 붙은 뒤에만 안다(서버 HTML 과 첫 그림을 맞추려고)
     setAllowedHost(host);
     if (!host) return;
     const already = readUnlocked();

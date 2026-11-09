@@ -186,3 +186,25 @@ node ~/Downloads/geo-tracker/audit.mjs "$P"                                     
 | 4 | 옛 계정 프로젝트 정리(삭제/Git 해제) — **Git 연동이 살아 있어 main push 마다 옛 주소에도 배포된다** | 도메인 이전 확인 뒤 |
 | 5 | 로컬 `origin` 을 `woorichicken/Portfolio` 로 바꿀지 | 바꾸는 편이 명확 |
 | 6 | solhun.com 도메인 갱신(2026-12-01 만료) | 자동 갱신 확인 |
+
+## 8. Cloudflare Workers — 2026-11-09 이전 (실측)
+
+배포 = `main` 머지 → **Workers Builds** 가 검사·빌드·배포한다. 수동 배포는 비상용(`docs/content-api.md` 「토큰 받은 뒤 할 일」 6의 명령을 로컬에서).
+
+| 항목 | 값 |
+|---|---|
+| 계정 | 개인 `4521ed2f6bd35977301d9344ffcbbc8e`(jkh040922 — solhun.com zone 과 같은 계정) |
+| Worker | `solhun-portfolio` · https://solhun-portfolio.jkh040922.workers.dev |
+| D1 | `solhun-portfolio` `e19ff0c9-85cd-4c53-aaa0-aa73b987ddb3` — 마이그레이션 0001~0003 적용 · 시드 5문서(2026-11-09) |
+| R2 | `solhun-portfolio-cache`(페이지 캐시) · `solhun-portfolio-media`(사진·영상, `/media/*`) |
+| Worker secret | `CONTENT_API_TOKEN` · `ADMIN_SESSION_SECRET` |
+| Workers Builds | 연결 `c5c479c0-f07b-41e4-bb07-c919860c15b1` · 트리거 `800a28cb-720a-4870-9f5f-47558746f186` · 브랜치 `main` · 제외 `docs/*,docs/**,README.md,CLAUDE.md,AGENTS.md` |
+| 빌드 명령 | `pnpm install --frozen-lockfile && pnpm exec tsc --noEmit && pnpm exec vitest run && CLOUDFLARE_API_TOKEN=$PORTFOLIO_CF_TOKEN node scripts/content-snapshot.mjs --remote && pnpm exec opennextjs-cloudflare build` |
+| 배포 명령 | `CLOUDFLARE_API_TOKEN=$PORTFOLIO_CF_TOKEN pnpm exec opennextjs-cloudflare deploy` |
+| 빌드 변수 키 | `NODE_VERSION` · `PNPM_VERSION` · `SKIP_DEPENDENCY_INSTALL` · `CLI_MANAGER_ROUTES` · `CLOUDFLARE_ACCOUNT_ID` · 비밀 `PORTFOLIO_CF_TOKEN` · `NEXT_PUBLIC_DP_FEEDBACK_URL` · `NEXT_PUBLIC_DP_FEEDBACK_KEY` |
+
+- **왜 `PORTFOLIO_CF_TOKEN` 을 따로 두나**: 빌드가 운영 D1 을 읽고(스냅숏), 배포가 R2 페이지 캐시를 채운다. Workers Builds 기본 빌드 토큰에 그 권한이 있는지 확인하지 않았다 — 권한을 좁힌 우리 토큰을 그 두 명령에만 준다.
+- **비밀값 위치**: 1Password lightsoft 「직원」 — 「solhun.com 포트폴리오 - Cloudflare API 토큰 (D1·R2·Workers 배포)」(토큰 id `52691633…`) · 「… 콘텐츠 API 토큰」 · 「… 어드민 세션 서명 비밀」. 로컬 사본 `~/.config/portfolio/{cf-api-token,content-api-token,admin-session-secret}`(0600).
+- **피드백 env 를 바꾸면** 빌드 변수(비밀)도 바꾼다 — `NEXT_PUBLIC_*` 는 번들에 박힌다(`wb.mjs vars`).
+- 배포 확인: `node ~/.claude/skills/cf-workers-builds/scripts/commit-status.mjs --repo woorichicken/Portfolio --sha <커밋> --excludes '<위 제외>'` → 0.
+- 2026-11-09 workers.dev 실측: verify-routes 21/21 · 원격 `pnpm content set` → 26곳 다시 그림 → `undo` · 피드백 위젯 청크 2개에 ingest 주소.

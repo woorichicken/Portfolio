@@ -23,6 +23,7 @@ export default function FeedbackWidget() {
     if (!ENDPOINT || !TOKEN) return;
     // 진단은 위젯보다 먼저 설치한다. 위젯 자신의 전송은 진단에서 뺀다.
     sharedDiagnostics.install(webDiagnosticsOptions({ excludeMatcher: (req) => req.url.startsWith(ENDPOINT) }));
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 진단 설치(바깥 시스템)가 끝난 뒤에 위젯을 그린다
     setReady(true);
     return () => sharedDiagnostics.uninstall();
   }, []);

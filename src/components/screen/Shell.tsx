@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import type { ReactNode } from 'react';
 import { getContent } from '@/content';
-import { screenCopy, type RoleId } from '@/content/roles';
+import { roleNames, screenCopy, type RoleId } from '@/content/roles';
+import type { SiteDocs } from '@/content/schema';
 import { LANGUAGE_NAMES, LOCALES, type Locale } from '@/i18n/config';
 import FeedbackGate from '../feedback/FeedbackGate';
 import Lightbox from '../Lightbox';
@@ -12,7 +13,8 @@ import { CarryHash, HeaderSolid, MenuButton, RoleChip, RoleHomeLink, type TabKey
 // 좁은 화면은 메뉴·언어를 「메뉴 ▾」 하나로 접는다(넷플릭스 웹 390px 과 같은 방식). 아래 탭 막대는 3회차에 뺐다.
 // altPath: 언어를 바꿀 때 같은 화면의 다른 언어판 주소. role: 지금 역할을 아는 화면(역할 화면)이면 넘긴다.
 
-export default function Shell({ locale, altPath, role, tab, children, contact = true }: {
+export default function Shell({ site, locale, altPath, role, tab, children, contact = true }: {
+  site: SiteDocs;
   locale: Locale;
   altPath: (l: Locale) => string;
   role?: RoleId;
@@ -21,7 +23,7 @@ export default function Shell({ locale, altPath, role, tab, children, contact = 
   /** 연락 띠를 보일지 — 어드민처럼 방문자용이 아닌 화면은 끈다 */
   contact?: boolean;
 }) {
-  const t = getContent(locale);
+  const t = getContent(site, locale);
   const s = screenCopy(locale);
   // 머리 메뉴와 좁은 화면의 「메뉴 ▾」 안이 같은 링크를 쓴다
   const navLinks = (
@@ -54,7 +56,7 @@ export default function Shell({ locale, altPath, role, tab, children, contact = 
           </MenuButton>
           <div className="sx-header-end">
             <nav aria-label={t.a11y.language} className="lang-switch">{langLinks}</nav>
-            <RoleChip locale={locale} role={role} label={s.switchRole} />
+            <RoleChip locale={locale} role={role} label={s.switchRole} names={roleNames(site.roles, locale)} />
           </div>
         </div>
       </header>

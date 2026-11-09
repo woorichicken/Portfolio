@@ -1,9 +1,12 @@
 import type { MetadataRoute } from 'next';
-import { PROJECT_IDS, WORK_SLUGS } from '@/content';
+import { projectIds, workSlugs } from '@/content';
+import { getSite } from '@/content/store';
 import { ROLE_IDS } from '@/content/roles';
 import { LOCALES, SITE_URL, browsePath, localePath, projectPath } from '@/i18n/config';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const site = await getSite();
+  const PROJECT_IDS = projectIds(site);
   const languages = Object.fromEntries(LOCALES.map((l) => [l, `${SITE_URL}${localePath(l)}`]));
   const home: MetadataRoute.Sitemap = LOCALES.map((locale) => ({
     url: `${SITE_URL}${localePath(locale)}`,
@@ -12,7 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     alternates: { languages },
   }));
   // 프로젝트 상세 — 언어판끼리 서로를 가리킨다
-  const details: MetadataRoute.Sitemap = [...PROJECT_IDS, ...WORK_SLUGS].flatMap((slug) => {
+  const details: MetadataRoute.Sitemap = [...PROJECT_IDS, ...workSlugs(site)].flatMap((slug) => {
     const alternates = { languages: Object.fromEntries(LOCALES.map((l) => [l, `${SITE_URL}${projectPath(l, slug)}`])) };
     return LOCALES.map((locale) => ({
       url: `${SITE_URL}${projectPath(locale, slug)}`,

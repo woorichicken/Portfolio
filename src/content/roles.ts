@@ -2,7 +2,8 @@ import type { Locale } from '@/i18n/config';
 
 // 리브랜딩(2026-11, 스탠드업 메모 「solhun rebranding」) — 들어오면 「어떤 역할의 저를 볼지」 고르고,
 // 그 역할에 맞는 순서로 대표작·행을 보여 준다. 어떤 프로젝트를 어느 역할에 몇 번째로 둘지는 이 파일 한 곳에서 정한다.
-// 어드민(/admin)도 이 파일을 읽는다 — 어드민에서 바꾼 순서·숨김은 「변경안」으로 내보내 이 파일에 옮긴다.
+// ⚠️ 2026-11-08 부터 ROLES·HIDDEN 은 D1 의 시드값이다 — 사이트는 D1 의 roles·hidden 문서를 읽는다. 순서·숨김은 어드민 「저장」이나
+// `pnpm content role …`·`hide …` 로 바꾼다(여기를 고쳐도 사이트는 안 바뀐다). SCREEN(화면 글)은 그대로 코드에 있다.
 
 type Localized = Record<Locale, string>;
 const t = (ko: string, en: string, es: string): Localized => ({ ko, en, es });
@@ -135,6 +136,7 @@ export function screenCopy(locale: Locale): Record<ScreenKey, string> {
   return Object.fromEntries(Object.entries(SCREEN).map(([k, v]) => [k, v[locale]])) as Record<ScreenKey, string>;
 }
 
-export function roleName(role: RoleId, locale: Locale): string {
-  return ROLES[role].name[locale];
+/** 역할 이름 — 화면에서는 D1 의 roles 문서(docs.roles)를 쓴다. 여기 ROLES 는 시드값이다 */
+export function roleNames(roles: Record<RoleId, RoleDef>, locale: Locale): Record<RoleId, string> {
+  return Object.fromEntries(ROLE_IDS.map((r) => [r, roles[r].name[locale]])) as Record<RoleId, string>;
 }

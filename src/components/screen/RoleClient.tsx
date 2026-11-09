@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
-import { ROLES, type RoleId } from '@/content/roles';
+import { isRoleId, type RoleId } from '@/content/roles';
 import { browsePath, localePath, type Locale } from '@/i18n/config';
 import { Avatar, IconCaret } from './icons';
 import { readRole, writeRole } from './role-memory';
@@ -14,6 +14,7 @@ function useStoredRole(fallback: RoleId): RoleId {
   const [role, setRole] = useState<RoleId>(fallback);
   useEffect(() => {
     const stored = readRole();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 기억한 역할은 붙은 뒤에만 읽는다(서버는 fallback 으로 그린다)
     if (stored) setRole(stored);
   }, []);
   return role;
@@ -36,7 +37,7 @@ export function PickerMemory() {
     function onClick(e: MouseEvent) {
       const tile = (e.target as Element | null)?.closest<HTMLElement>('[data-pick-role]');
       const role = tile?.dataset.pickRole;
-      if (role && role in ROLES) writeRole(role as RoleId);
+      if (role && isRoleId(role)) writeRole(role);
     }
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
@@ -121,12 +122,13 @@ export function RoleHomeLink({ locale, role: known, hash = '', className, childr
 }
 
 /** 머리 오른쪽의 역할 아이콘 — 누르면 역할 고르기로. 지금 역할을 아는 화면(역할 화면)은 role 을 넘긴다 */
-export function RoleChip({ locale, role: known, label }: { locale: Locale; role?: RoleId; label: string }) {
+/** names: 역할 이름(D1 roles 문서에서) — 클라이언트 번들에 시드값을 굳혀 두지 않으려고 서버에서 넘긴다 */
+export function RoleChip({ locale, role: known, label, names }: { locale: Locale; role?: RoleId; label: string; names: Record<RoleId, string> }) {
   const stored = useStoredRole('all');
   const role = known ?? stored;
   return (
     <a className="role-chip" href={localePath(locale)} title={label}>
-      <span className="role-chip-label">{ROLES[role].name[locale]}</span>
+      <span className="role-chip-label">{names[role]}</span>
       <Avatar role={role} />
       {/* 넷플릭스 프로필 단추처럼 그림 옆 ▾ — 「누르면 바꾼다」는 단서(사용성 점검 U14) */}
       <IconCaret />
