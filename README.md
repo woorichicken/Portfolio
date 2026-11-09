@@ -1,6 +1,6 @@
 # SOLHUN — 정경훈 포트폴리오
 
-solhun.com 에 올릴 개인 포트폴리오. Next.js 15 (App Router) · 한국어(기본) / English / Español.
+solhun.com 에 올릴 개인 포트폴리오. Next.js 16 (App Router · Turbopack) · 한국어(기본) / English / Español.
 
 ## 실행
 

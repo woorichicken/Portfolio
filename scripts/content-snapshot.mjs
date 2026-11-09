@@ -22,7 +22,7 @@ try {
     maxBuffer: 64 * 1024 * 1024,
     stdio: ['ignore', 'pipe', 'inherit'],
   });
-} catch (e) {
+} catch {
   console.error(`D1(${target}) 를 읽지 못했습니다 — ${target === '--local' ? 'pnpm db:migrate:local && pnpm db:seed:local 을 먼저' : '토큰·database_id 를 확인'}`);
   process.exit(1);
 }

@@ -90,6 +90,7 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 브라우저 저장소는 붙은 뒤에만 읽는다(서버 HTML 과 첫 그림을 맞추려고)
     setComments(load(COMMENTS_KEY, {}));
     if (staticMode) {
       // 정적 배포 — 예전처럼 이 브라우저에 남은 통과 표시로만 연다

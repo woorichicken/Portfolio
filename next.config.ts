@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 // `next dev` 에서도 wrangler 의 로컬 D1·R2 바인딩을 쓸 수 있게 한다(운영 빌드에는 영향 없음).
-initOpenNextCloudflareForDev();
+// Vercel(정적 · D1 없음) 빌드에서는 부르지 않는다 — 설정을 읽을 때 wrangler(miniflare)를 띄울 이유가 없다.
+if (!process.env.VERCEL) initOpenNextCloudflareForDev();
 
 // ── solhun.com 을 CLI Manager 사이트에서 넘겨받을 때 필요한 옛 경로 처리 ─────────────────
 // 정본: solhun-web-page 저장소 docs/domain-migration-climanager.md (「Portfolio 에 넣을 next.config.ts 스니펫」).

@@ -14,6 +14,7 @@ function useStoredRole(fallback: RoleId): RoleId {
   const [role, setRole] = useState<RoleId>(fallback);
   useEffect(() => {
     const stored = readRole();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 기억한 역할은 붙은 뒤에만 읽는다(서버는 fallback 으로 그린다)
     if (stored) setRole(stored);
   }, []);
   return role;

@@ -1,16 +1,22 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import { defineConfig, globalIgnores } from 'eslint/config';
+import nextVitals from 'eslint-config-next/core-web-vitals';
+import nextTs from 'eslint-config-next/typescript';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-];
-
-export default eslintConfig;
+// Next 16 은 `next lint` 를 없앴다 — ESLint CLI(`pnpm lint` = eslint .)로 돈다. eslint-config-next 16 이 플랫 설정을 바로 낸다(FlatCompat 불필요).
+export default defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  globalIgnores([
+    // eslint-config-next 기본값
+    '.next/**',
+    'out/**',
+    'build/**',
+    'next-env.d.ts',
+    // Cloudflare(OpenNext·wrangler) 산출물 · 생성 타입 · 테스트 결과
+    '.open-next/**',
+    '.wrangler/**',
+    'cloudflare-env.d.ts',
+    'test-results/**',
+    'playwright-report/**',
+  ]),
+]);
