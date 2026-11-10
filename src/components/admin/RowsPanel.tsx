@@ -41,8 +41,10 @@ export default function RowsPanel({ which, items, onSaved, active = true, onDirt
   const dirtyRef = useRef(false);
 
   /** 본문(openSource | videos) — 저장 뒤·취소·깨끗한 채로 탭에 돌아올 때만. 역할 토글 뒤에는 부르지 않는다(쓰던 행이 지워진다 — 수정 1회차 P2) */
-  const loadBody = useCallback(async () => {
+  // onlyIfClean: 탭에 돌아올 때의 새로 읽기 — 응답을 기다리는 사이 글을 고쳤으면 그 응답은 버린다(덮으면 새 편집이 사라진다 · Codex 재검수 P2)
+  const loadBody = useCallback(async ({ onlyIfClean = false }: { onlyIfClean?: boolean } = {}) => {
     const r = await readPath(which);
+    if (onlyIfClean && dirtyRef.current) return;
     if (!r.ok) return setStatus({ kind: 'error', text: r.error.message });
     // 칸이 아직 없는 문서(새 칸 전의 운영 D1)는 빈 목록으로 시작한다
     const next = Object.fromEntries(LOCALES.map((l) => [l, (r.data.values[l] ?? { items: [] }) as Record<string, unknown>])) as Draft;
@@ -70,7 +72,7 @@ export default function RowsPanel({ which, items, onSaved, active = true, onDirt
   useEffect(() => {
     if (active && !wasActive.current) {
       loadRoles();
-      if (!dirtyRef.current) loadBody();
+      if (!dirtyRef.current) loadBody({ onlyIfClean: true });
     }
     wasActive.current = active;
   }, [active, loadBody, loadRoles]);

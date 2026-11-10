@@ -418,3 +418,26 @@ test('수정1-④ 탭을 붙여 둔 채 다른 칸이 저장돼도 내 저장은
   for (const s of [/openSource\.items\[0\]\.body \(en\)/, /고침 openSource — items \(en\)/, /tagline \(en\)/]) await undoFromHistory(page, s);
   expect(d1Doc<Content>('content:en').body).toEqual(start.en);
 });
+
+test('수정2 탭에 돌아올 때 다시 읽는 동안 고친 글은 늦게 온 응답에 덮이지 않는다', async ({ page }) => {
+  test.skip(!(start.ko.openSource?.items.length), '저장소가 있어야 한다');
+  await login(page);
+  await page.getByRole('tab', { name: '오픈소스' }).click();
+  const panel = page.locator('[data-rows-panel="openSource"]');
+  const nameKo = panel.locator('.admin-rows > li').first().locator('input[data-field$=".name"][data-locale="ko"]');
+  await expect(nameKo).toHaveValue(/.+/);
+  await page.getByRole('tab', { name: '최근 저장' }).click();
+  // 깨끗한 채로 돌아오면 본문을 다시 읽는다 — 그 응답을 붙잡아 두고 그 사이에 고친다
+  let release!: () => void;
+  const held = new Promise<void>((r) => { release = r; });
+  let caught = 0;
+  await page.route('**/api/content/doc/*?path=openSource', async (route) => { caught += 1; await held; await route.continue(); });
+  await page.getByRole('tab', { name: '오픈소스' }).click();
+  await expect.poll(() => caught).toBeGreaterThan(0);
+  await nameKo.fill('읽는 사이 고친 이름');
+  release();
+  await page.waitForTimeout(800);
+  await expect(nameKo).toHaveValue('읽는 사이 고친 이름');
+  await page.unroute('**/api/content/doc/*?path=openSource');
+  await panel.getByRole('button', { name: '바꾼 것 취소' }).click();
+});
