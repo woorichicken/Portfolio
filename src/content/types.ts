@@ -40,7 +40,7 @@ export type Project = {
   lesson?: { title: string; body: string };
   gallery?: Shot[];
   links?: Link[];
-  /** 코드 저장소 주소(GitHub 등) — 있으면 빌보드·상세 머리에 「코드 보기」 단추. 세 언어가 같아야 한다 */
+  /** 코드 저장소 주소(GitHub 등) — 있으면 빌보드·상세 머리에 「GitHub 보러가기」 단추. 세 언어가 같아야 한다 */
   repo?: string;
 };
 

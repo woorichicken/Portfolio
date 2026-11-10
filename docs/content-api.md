@@ -34,10 +34,10 @@ curl(Bearer) ───┘    (Worker)          └─ 바뀐 페이지만 무효
 |---|---|---|---|
 | `openSource.items[]` | `content:*` | `{ id, name, body, repo, homepage? }` — `repo`·`homepage` 는 https · 세 언어 같은 값 | 역할 화면 「오픈소스」 행(글 카드 · 「코드 보기」 · 「사이트」) |
 | `videos.items[]` | `content:*` | `{ id, title, body, src, poster, width, height, project? }` — `src` 는 `/media/….mp4·webm`(R2 만) · `poster` 사진 · `project` 는 있는 항목 id | 역할 화면 「만든 영상」 행(`<video controls preload="none" playsinline poster>` — 자동재생 없음) |
-| `repo` | `work.projects[]` · `others.items[]` | https 주소 · 세 언어 같은 값 | 빌보드(대표작일 때)·상세 머리에 「코드 보기」 |
+| `repo` | `work.projects[]` · `others.items[]` | https 주소 · 세 언어 같은 값 | 빌보드(대표작일 때)·상세 머리에 「GitHub 보러가기」 |
 | `openSource` · `videos` | `roles.<역할>` | boolean(없으면 꺼짐) | 그 역할 화면에 행을 보일지 — 2026-11-10 시드: 오픈소스 maker·all · 영상 design·all |
 
-- 행 제목·단추 글(「오픈소스」·「만든 영상」·「코드 보기」·「사이트」·「프로젝트 보기」)은 본문이 아니라 화면 글 `SCREEN`(src/content/roles.ts)이다.
+- 행 제목·단추 글(「오픈소스」·「만든 영상」·「GitHub 보러가기」·「사이트」·「프로젝트 보기」)은 본문이 아니라 화면 글 `SCREEN`(src/content/roles.ts)이다.
 - 미디어 키는 `<image|video>/<이름>-<SHA-256 앞 10자>.<확장자>` — 같은 파일은 어디서 몇 번 올려도 같은 주소라 시드(`src/content/*.ts`)에 운영과 같은 `src` 를 적어 둘 수 있다.
 
 ### 왜 이렇게 했나
