@@ -14,7 +14,7 @@ test('/as/maker 오픈소스 행 — 저장소 5개, 카드에서 GitHub 저장�
   await expect(cards).toHaveCount(5);
   const expected = ['CLI_manager', 'artifact-dock', 'nightgate', 'framenote', 'climanager-session'];
   for (const [i, repo] of expected.entries()) {
-    const code = cards.nth(i).getByRole('link', { name: /^코드 보기/ });
+    const code = cards.nth(i).getByRole('link', { name: /^GitHub 보러가기/ });
     await expect(code).toHaveAttribute('href', `https://github.com/woorichicken/${repo}`);
     await expect(code).toHaveAttribute('target', '_blank');
   }
@@ -30,15 +30,15 @@ test('코드 보기 — /projects/cli-manager 머리와 /as/maker 빌보드', as
   await page.goto('/projects/cli-manager');
   const head = page.locator('.title-actions');
   await expect(head.getByRole('link', { name: /^사이트 열기/ })).toBeVisible();
-  await expect(head.getByRole('link', { name: /^코드 보기/ })).toHaveAttribute('href', CLI_REPO);
+  await expect(head.getByRole('link', { name: /^GitHub 보러가기/ })).toHaveAttribute('href', CLI_REPO);
   await page.goto('/as/maker');
-  await expect(page.locator('.billboard-actions').getByRole('link', { name: /^코드 보기/ })).toHaveAttribute('href', CLI_REPO);
+  await expect(page.locator('.billboard-actions').getByRole('link', { name: /^GitHub 보러가기/ })).toHaveAttribute('href', CLI_REPO);
   // repo 가 없는 항목에는 없다
   await page.goto('/projects/kits');
-  await expect(page.getByRole('link', { name: /^코드 보기/ })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /^GitHub 보러가기/ })).toHaveCount(0);
   // 영어 문구
   await page.goto('/en/projects/cli-manager');
-  await expect(page.locator('.title-actions').getByRole('link', { name: /^View code/ })).toHaveAttribute('href', CLI_REPO);
+  await expect(page.locator('.title-actions').getByRole('link', { name: /^View on GitHub/ })).toHaveAttribute('href', CLI_REPO);
 });
 
 test('/as/design 만든 영상 행 — 자동재생 없이 포스터, 영상은 Range 206 으로 받는다', async ({ page, request }) => {

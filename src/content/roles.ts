@@ -118,7 +118,7 @@ export const SCREEN = {
   artifactsRow: t('만든 화면과 도구', 'Screens and tools I made', 'Pantallas y herramientas que hice'),
   openSourceRow: t('오픈소스', 'Open source', 'Código abierto'),
   videosRow: t('만든 영상', 'Videos I made', 'Videos que hice'),
-  viewCode: t('코드 보기', 'View code', 'Ver código'),
+  viewCode: t('GitHub 보러가기', 'View on GitHub', 'Ver en GitHub'),
   visitSite: t('사이트', 'Website', 'Sitio web'),
   aboutProject: t('프로젝트 보기', 'See the project', 'Ver el proyecto'),
   prevRow: t('이전 항목', 'Previous items', 'Anteriores'),

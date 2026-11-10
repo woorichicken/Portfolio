@@ -57,7 +57,7 @@ scripts/with-workers.sh pnpm -s content get     # 또는: 띄우고 → 명령 �
 | 오픈소스·영상 행 켜고 끄기(역할마다) | `pnpm content role maker --open-source on\|off` · `pnpm content role design --videos on\|off` · 지금 값 `get --doc roles --path maker.openSource` |
 | 영상 제목·설명 고치기 | `pnpm content set 'videos.items[fair-update].title' "…" --locale ko` |
 | 영상 추가 | 5.1절 |
-| 「코드 보기」 단추(빌보드·상세 머리) | `pnpm content set kits.repo --ko <URL> --en <URL> --es <URL>` (세 언어 같은 주소) · 빼기 `set kits.repo --unset` |
+| 「GitHub 보러가기」 단추(빌보드·상세 머리) | `pnpm content set kits.repo --ko <URL> --en <URL> --es <URL>` (세 언어 같은 주소) · 빼기 `set kits.repo --unset` |
 | 운영에 하기 | 같은 명령 끝에 `--target prod` (0절 상태 확인) |
 | 결과를 기계로 읽기 | 아무 명령에 `--json` |
 
