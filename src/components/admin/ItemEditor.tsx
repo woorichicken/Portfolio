@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LOCALES, projectPath } from '@/i18n/config';
 import { IconClose } from '../screen/icons';
-import { api, type Versions, type WriteResult } from './admin-api';
+import { api, savePath, type Versions } from './admin-api';
 import { changedFields, problemsUnder, sameL3, type FieldProblems } from './editor-model';
 import { SPEC_BY_KIND } from './editor-spec';
-import { FieldList, type Draft } from './Fields';
+import { FieldList, type Draft, type DraftUpdate } from './Fields';
 
 // 항목 편집 패널 — 어드민 목록에서 항목을 누르면 열린다. 그 항목의 칸을 세 언어 나란히 고치고 「저장」.
 // 저장은 항목을 통째로 PATCH /api/content/field 에 보낸다 — { path: work.projects[kits], values: { ko, en, es }, expect: 문서 버전 }.
@@ -17,7 +17,7 @@ const LIST_PATH: Record<ItemKind, string> = { project: 'work.projects', other: '
 const KIND_LABEL: Record<ItemKind, string> = { project: '큰 프로젝트', other: '그 외', early: '이전' };
 
 type ItemResponse = { item: Draft; versions: Versions; kind: ItemKind };
-type Status = { kind: 'idle' | 'loading' | 'busy' | 'saved' | 'error'; text?: string; result?: WriteResult };
+type Status = { kind: 'idle' | 'loading' | 'busy' | 'saved' | 'error'; text?: string; result?: { changeId: string | null }; conflict?: boolean };
 
 /** 저장 뒤 확인할 곳 — 세 언어 상세 */
 export function SiteLinks({ paths, label = '사이트에서 보기' }: { paths: string[]; label?: string }) {
@@ -32,7 +32,7 @@ export function SiteLinks({ paths, label = '사이트에서 보기' }: { paths: 
   );
 }
 
-export default function ItemEditor({ id, name, kind, onClose, onSaved }: { id: string; name: string; kind: ItemKind; onClose: () => void; onSaved: () => void }) {
+export default function ItemEditor({ id, name, kind, onClose, onSaved, onDirty }: { id: string; name: string; kind: ItemKind; onClose: () => void; onSaved: () => void; onDirty?: (dirty: boolean) => void }) {
   const [original, setOriginal] = useState<Draft | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [versions, setVersions] = useState<Versions>({});
@@ -57,6 +57,12 @@ export default function ItemEditor({ id, name, kind, onClose, onSaved }: { id: s
   }, [load]);
 
   const dirty = Boolean(original && draft && !sameL3(original, draft));
+  // 어드민이 「저장 안 한 것」을 알아야 떠나기(beforeunload) 전에 묻는다. 닫히면 깨끗한 것으로
+  useEffect(() => {
+    onDirty?.(dirty);
+  }, [dirty, onDirty]);
+  useEffect(() => () => onDirty?.(false), [onDirty]);
+  const update: DraftUpdate = (f) => setDraft((p) => (p ? f(p) : p));
 
   const requestClose = useCallback(() => {
     if (dirty && !confirmClose) return setConfirmClose(true);
@@ -72,14 +78,14 @@ export default function ItemEditor({ id, name, kind, onClose, onSaved }: { id: s
   }, [requestClose]);
 
   async function save() {
-    if (!draft) return;
+    if (!draft || !original) return;
     setStatus({ kind: 'busy', text: '저장하는 중…' });
     setProblems({ byField: {}, all: [] });
-    const expect = Object.fromEntries(LOCALES.map((l) => [`content:${l}`, versions[`content:${l}`]]));
-    const r = await api<WriteResult>('/api/content/field', { method: 'PATCH', body: JSON.stringify({ path: `${LIST_PATH[kind]}[${id}]`, values: draft, expect }) });
+    // 409 면 그 항목이 서버에서 그대로일 때만 새 버전으로 한 번 더(다른 칸·다른 탭의 저장 때문) — admin-api savePath
+    const r = await savePath(`${LIST_PATH[kind]}[${id}]`, draft, versions, original);
     if (!r.ok) {
       if (r.error.problems?.length) setProblems(problemsUnder(r.error.problems, LIST_PATH[kind], { itemList: true }));
-      return setStatus({ kind: 'error', text: r.status === 422 ? `저장하지 않았습니다 — 고칠 칸 ${r.error.problems?.length ?? 0}곳(빨간 줄)` : r.error.message });
+      return setStatus({ kind: 'error', conflict: r.status === 409, text: r.status === 422 ? `저장하지 않았습니다 — 고칠 칸 ${r.error.problems?.length ?? 0}곳(빨간 줄)` : r.error.message });
     }
     await load();
     setConfirmClose(false);
@@ -110,7 +116,7 @@ export default function ItemEditor({ id, name, kind, onClose, onSaved }: { id: s
               <ul className="admin-problems">{problems.all.slice(0, 10).map((p, i) => <li key={i}><code>{p.path}</code> {p.message}</li>)}</ul>
             </div>
           )}
-          {draft ? <FieldList specs={spec} base={[]} ctx={{ draft, set: setDraft, problems: problems.byField, disabled: status.kind === 'busy' }} /> : <p className="admin-hint">{status.text}</p>}
+          {draft ? <FieldList specs={spec} base={[]} ctx={{ draft, set: update, problems: problems.byField, disabled: status.kind === 'busy' }} /> : <p className="admin-hint">{status.text}</p>}
         </div>
 
         <footer className="admin-sheet-foot">
@@ -121,7 +127,14 @@ export default function ItemEditor({ id, name, kind, onClose, onSaved }: { id: s
           {confirmClose && <p className="admin-warn">저장하지 않은 것이 있습니다 — 한 번 더 누르면 버리고 닫습니다.</p>}
           <div className="billboard-actions">
             <button type="button" className="btn btn-primary" disabled={!dirty || status.kind === 'busy'} onClick={save}>저장</button>
-            <button type="button" className="btn btn-ghost" disabled={!dirty || status.kind === 'busy'} onClick={() => { setDraft(original); setProblems({ byField: {}, all: [] }); setConfirmClose(false); }}>바꾼 것 취소</button>
+            <button type="button" className="btn btn-ghost" disabled={!dirty || status.kind === 'busy'} onClick={() => {
+              // 보통은 처음 읽은 값으로 바로 되돌린다. 409(같은 칸을 누가 바꿈) 뒤에만 서버의 새 값을 읽는다 — 늘 다시 읽으면 늦게 끝난 읽기가 곧바로 친 글을 덮는다
+              if (status.conflict) load();
+              else setDraft(original);
+              setProblems({ byField: {}, all: [] });
+              setConfirmClose(false);
+              setStatus({ kind: 'idle' });
+            }}>바꾼 것 취소</button>
             <button type="button" className="btn btn-ghost" onClick={requestClose}>{confirmClose ? '버리고 닫기' : '닫기'}</button>
           </div>
         </footer>

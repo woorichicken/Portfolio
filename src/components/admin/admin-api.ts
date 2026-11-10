@@ -1,3 +1,5 @@
+import { LOCALES, type Locale } from '@/i18n/config';
+
 // 어드민 화면이 콘텐츠 API(/api/content/*)를 부르는 곳 — Admin(배치) · ItemEditor(항목) · ListPanels(오픈소스·영상) · AddProject 가 같이 쓴다.
 // 같은 출처라 로그인 쿠키(solhun_admin)가 따라가고, 서버는 쓰기 요청의 Origin 을 확인한다(docs/content-api.md 「인증」).
 
@@ -52,4 +54,48 @@ export function videoSize(file: File): Promise<{ width: number; height: number }
 /** 파일 이름 → 미디어 이름(키 앞부분) 제안 — 서버가 다시 다듬는다(safeMediaName) */
 export function mediaNameOf(file: File): string {
   return file.name.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'upload';
+}
+
+// ── 경로 하나 읽고 쓰기 — 편집 패널·오픈소스/영상 탭이 같이 쓴다(수정 1회차) ─────────────────────
+// 탭을 옮겨도 쓰던 것을 지키려고 패널을 계속 붙여 두면, 다른 탭이 같은 문서(content:ko …)의 **다른 칸**을 저장해 버전이 올라간다.
+// 그대로면 이 패널의 저장이 409 가 된다. 그래서 409 가 나면 그 경로의 서버 값을 다시 읽어 — 처음 읽은 값과 같으면(이 칸은 아무도 안 바꿨다)
+// 새 버전으로 한 번 더 보내고, 다르면(누가 같은 칸을 바꿨다) 409 그대로 돌려준다. 남의 저장을 덮지 않는 규칙은 그대로다.
+
+
+export type PathSnapshot = { values: Record<Locale, unknown>; versions: Versions };
+
+/** 세 언어 문서에서 경로 하나 — 칸이 아직 없으면(404) 그 언어 값은 undefined */
+export async function readPath(path: string): Promise<ApiResult<PathSnapshot>> {
+  const docs = await Promise.all(LOCALES.map((l) => api<{ value: unknown; version: number }>(`/api/content/doc/${l}?path=${encodeURIComponent(path)}`)));
+  const values = {} as Record<Locale, unknown>;
+  const versions: Versions = {};
+  for (const [i, l] of LOCALES.entries()) {
+    const d = docs[i];
+    if (d.ok) {
+      values[l] = d.data.value;
+      versions[`content:${l}`] = d.data.version;
+    } else if (d.status === 404 && d.error.code === 'not_found') {
+      values[l] = undefined;
+      const doc = await api<{ version: number }>(`/api/content/doc/${l}?path=meta`);
+      if (!doc.ok) return doc;
+      versions[`content:${l}`] = doc.data.version;
+    } else return d;
+  }
+  return { ok: true, data: { values, versions } };
+}
+
+const sameJson = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+
+/** 경로 하나를 세 언어로 저장(PATCH /field + expect). 409 면 위 규칙대로 한 번만 다시 */
+export async function savePath(path: string, values: Record<Locale, unknown>, versions: Versions, base: Record<Locale, unknown>): Promise<ApiResult<WriteResult>> {
+  const send = (v: Versions) =>
+    api<WriteResult>('/api/content/field', { method: 'PATCH', body: JSON.stringify({ path, values, expect: Object.fromEntries(LOCALES.map((l) => [`content:${l}`, v[`content:${l}`]])) }) });
+  const first = await send(versions);
+  if (first.ok || first.status !== 409) return first;
+  const now = await readPath(path);
+  if (!now.ok) return first;
+  if (!LOCALES.every((l) => sameJson(now.data.values[l], base[l]))) {
+    return { ok: false, status: 409, error: { code: 'conflict', message: '그 사이 다른 곳(에이전트·다른 창)이 같은 칸을 바꿨습니다 — 덮어쓰지 않았습니다. 「바꾼 것 취소」로 새 값을 읽은 뒤 다시 고치세요' } };
+  }
+  return send(now.data.versions);
 }

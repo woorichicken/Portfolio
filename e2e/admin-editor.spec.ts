@@ -309,3 +309,112 @@ test('프로젝트 추가(그 외) — 잘못된 slug · 있는 slug 409 · 추�
   await undoFromHistory(page, new RegExp(`추가 other ${slug}`));
   expect((await page.request.get(`/projects/${slug}`)).status()).toBe(404);
 });
+
+// ── 수정 1회차(Codex 리뷰 P2) — 저장 안 한 편집이 조용히 사라지는 길 셋 ─────────────────────────
+
+test('수정1-① 업로드 중에 고친 글이 업로드가 끝난 뒤에도 남는다', async ({ page }) => {
+  const sheet = await openEditor(page, 'kits');
+  // 업로드 응답을 붙잡아 두고 그 사이에 이름을 고친다(실제 요청은 그대로 서버로 간다)
+  let release!: () => void;
+  const gate = new Promise<void>((r) => (release = r));
+  await page.route('**/api/content/media', async (route) => {
+    await gate;
+    await route.continue();
+  });
+  await sheet.locator('div[data-field="cover"] input[type="file"]').first().setInputFiles(join(FIX, 'e2e-cover.jpg'));
+  await expect(sheet.getByRole('button', { name: '올리는 중…' })).toBeVisible();
+  const nameKo = sheet.locator('input[data-field="name"][data-locale="ko"]');
+  await nameKo.fill('업로드 중에 고친 이름');
+  release();
+  await expect(sheet.locator('[data-shot-src="cover"]')).toHaveText(/^\/media\/image\/e2e-cover-/);
+  await expect(nameKo).toHaveValue('업로드 중에 고친 이름');
+  await expect(page.locator('[data-editor-status]')).toContainText('name (ko)');
+  await expect(page.locator('[data-editor-status]')).toContainText('cover (ko·en·es)');
+  await page.unroute('**/api/content/media');
+  // 저장하지 않는다 — 취소하고 닫는다
+  await sheet.getByRole('button', { name: '바꾼 것 취소' }).click();
+  await sheet.locator('.admin-sheet-foot').getByRole('button', { name: '닫기', exact: true }).click();
+});
+
+test('수정1-② 역할을 켜고 꺼도 저장 안 한 행 편집은 그대로', async ({ page }) => {
+  const role = Object.entries(start.roles).find(([, r]) => r.openSource)?.[0];
+  test.skip(!role || !(start.ko.openSource?.items.length), '오픈소스 행이 켜진 역할·저장소가 있어야 한다');
+  await login(page);
+  await page.getByRole('tab', { name: '오픈소스' }).click();
+  const panel = page.locator('[data-rows-panel="openSource"]');
+  const nameKo = panel.locator('.admin-rows > li').first().locator('input[data-field$=".name"][data-locale="ko"]');
+  await nameKo.fill('저장 안 한 이름');
+  await panel.getByRole('button', { name: '+ 저장소 추가' }).click();
+  const rows = await panel.locator('.admin-rows > li').count();
+  // 켜진 역할을 껐다가 다시 켠다 → roles 문서는 처음과 같은 값, 그 사이 본문 편집은 그대로
+  const toggle = panel.locator(`input[data-role-toggle="${role}"]`);
+  await toggle.uncheck();
+  await expect(page.locator('[data-rows-status="saved"]')).toContainText('껐습니다');
+  await expect(nameKo).toHaveValue('저장 안 한 이름');
+  await expect(panel.locator('.admin-rows > li')).toHaveCount(rows);
+  await toggle.check();
+  await expect(page.locator('[data-rows-status="saved"]')).toContainText('켰습니다');
+  await expect(nameKo).toHaveValue('저장 안 한 이름');
+  await expect(panel.locator('.admin-rows > li')).toHaveCount(rows);
+  expect(d1Doc<Roles>('roles').body[role!].openSource).toBe(true);
+  // 본문은 저장하지 않았다
+  expect(d1Doc<Content>('content:ko').body.openSource).toEqual(start.ko.openSource);
+  await panel.getByRole('button', { name: '바꾼 것 취소' }).click();
+});
+
+test('수정1-③ 탭을 옮겨도 쓰던 것이 남고, 저장 안 한 채 떠나려 하면 브라우저가 묻는다', async ({ page }) => {
+  await login(page);
+  await page.getByRole('tab', { name: '프로젝트 추가' }).click();
+  const add = page.locator('[data-add-panel]');
+  await add.getByLabel('slug(주소)').fill('keep-me');
+  await add.locator('input[data-field="name"][data-locale="ko"]').fill('쓰던 이름');
+  await page.getByRole('tab', { name: '오픈소스' }).click();
+  const oss = page.locator('[data-rows-panel="openSource"]');
+  await oss.getByRole('button', { name: '+ 저장소 추가' }).click();
+  const ossRows = await oss.locator('.admin-rows > li').count();
+  await page.getByRole('tab', { name: '최근 저장' }).click();
+  await page.getByRole('tab', { name: '항목·배치' }).click();
+  await page.getByRole('tab', { name: '프로젝트 추가' }).click();
+  await expect(add.getByLabel('slug(주소)')).toHaveValue('keep-me');
+  await expect(add.locator('input[data-field="name"][data-locale="ko"]')).toHaveValue('쓰던 이름');
+  await page.getByRole('tab', { name: '오픈소스' }).click();
+  await expect(oss.locator('.admin-rows > li')).toHaveCount(ossRows);
+  // 떠나기 — beforeunload 가 걸려 있다(사람이 「머무르기」를 누른 것처럼 dismiss)
+  const dialog = page.waitForEvent('dialog');
+  await page.close({ runBeforeUnload: true });
+  const d = await dialog;
+  expect(d.type()).toBe('beforeunload');
+  await d.dismiss();
+  expect(page.isClosed()).toBe(false);
+});
+
+test('수정1-④ 탭을 붙여 둔 채 다른 칸이 저장돼도 내 저장은 통과 · 같은 칸이 바뀌었으면 덮어쓰지 않는다', async ({ page }) => {
+  test.skip(!(start.ko.openSource?.items.length), '오픈소스 저장소가 있어야 한다');
+  const auth = { authorization: `Bearer ${TOKEN}` };
+  await login(page);
+  await page.getByRole('tab', { name: '오픈소스' }).click();
+  const panel = page.locator('[data-rows-panel="openSource"]');
+  const bodyEn = panel.locator('.admin-rows > li').first().locator('textarea[data-field$=".body"][data-locale="en"]');
+  await bodyEn.fill('E2E body kept');
+  // 그 사이 에이전트가 같은 문서(content:en)의 **다른 칸**을 저장 → 문서 버전이 오른다
+  const other = await page.request.patch('/api/content/field', { headers: auth, data: { path: 'work.projects[kits].tagline', locale: 'en', value: `other field ${Date.now()}` } });
+  expect(other.status()).toBe(200);
+  await panel.getByRole('button', { name: '오픈소스 저장' }).click();
+  await expect(panel.locator('[data-rows-status="saved"]')).toContainText('저장했습니다');
+  expect(d1Doc<Content & { openSource: { items: { body: string }[] } }>('content:en').body.openSource.items[0].body).toBe('E2E body kept');
+
+  // 이번엔 에이전트가 **같은 칸**(openSource)을 바꾼다 → 내 저장은 409, 에이전트 값이 그대로 남는다
+  await bodyEn.fill('E2E body second');
+  const same = await page.request.patch('/api/content/field', { headers: auth, data: { path: 'openSource.items[0].body', locale: 'en', value: 'agent body' } });
+  expect(same.status()).toBe(200);
+  await panel.getByRole('button', { name: '오픈소스 저장' }).click();
+  await expect(panel.locator('[data-rows-status="error"]')).toContainText('같은 칸을 바꿨습니다');
+  expect(d1Doc<Content & { openSource: { items: { body: string }[] } }>('content:en').body.openSource.items[0].body).toBe('agent body');
+  // 취소 → 서버의 새 값(에이전트 값)을 읽는다
+  await panel.getByRole('button', { name: '바꾼 것 취소' }).click();
+  await expect(bodyEn).toHaveValue('agent body');
+
+  // 정리 — 세 저장을 뒤에서부터 되돌린다
+  for (const s of [/openSource\.items\[0\]\.body \(en\)/, /고침 openSource — items \(en\)/, /tagline \(en\)/]) await undoFromHistory(page, s);
+  expect(d1Doc<Content>('content:en').body).toEqual(start.en);
+});

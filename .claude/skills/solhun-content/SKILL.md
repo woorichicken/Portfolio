@@ -99,7 +99,7 @@ scripts/with-workers.sh pnpm -s content get     # 또는: 띄우고 → 명령 �
 
 ```bash
 pnpm content add-project --template other > new.json      # 「그 외」 틀(큰 프로젝트는 --template project)
-# new.json 을 고친다: slug(주소 · 소문자-하이픈) 세 언어 같게, 이름·한 줄·상세 문단, roles(넣을 역할과 위치)
+# new.json 을 고친다: slug(주소 · 영문 소문자로 시작 · 소문자-숫자-하이픈 — 숫자로 시작하면 422) 세 언어 같게, 이름·한 줄·상세 문단, roles(넣을 역할과 위치)
 pnpm content media ./cover.jpg --name my-new-work          # 표지 사진이 새것이면 먼저 올리고 나온 shot 을 세 언어 shot 에 (alt 만 언어마다)
 pnpm content add-project new.json                          # 검사 → 저장 → /projects/<slug> 와 그 역할 화면이 바로 생긴다
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8797/projects/my-new-work   # 200 확인

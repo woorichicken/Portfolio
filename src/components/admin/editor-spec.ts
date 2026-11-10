@@ -83,7 +83,7 @@ export const EARLY_SPEC: Spec[] = [
 ];
 
 export const OSS_ITEM_SPEC: Spec[] = [
-  { t: 'text', key: 'id', label: 'id', same: true, hint: '소문자·숫자·하이픈' },
+  { t: 'text', key: 'id', label: 'id', same: true, hint: '영문 소문자로 시작 · 소문자·숫자·하이픈' },
   { t: 'text', key: 'name', label: '이름' },
   { t: 'text', key: 'body', label: '설명', long: true },
   { t: 'text', key: 'repo', label: '저장소 주소', same: true, hint: 'https://github.com/…' },
@@ -91,7 +91,7 @@ export const OSS_ITEM_SPEC: Spec[] = [
 ];
 
 export const VIDEO_ITEM_SPEC: Spec[] = [
-  { t: 'text', key: 'id', label: 'id', same: true, hint: '소문자·숫자·하이픈' },
+  { t: 'text', key: 'id', label: 'id', same: true, hint: '영문 소문자로 시작 · 소문자·숫자·하이픈' },
   { t: 'text', key: 'title', label: '제목' },
   { t: 'text', key: 'body', label: '설명', long: true },
 ];

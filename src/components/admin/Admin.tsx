@@ -78,6 +78,15 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
   const [openComment, setOpenComment] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [tab, setTab] = useState<Tab>('layout');
+  /** 한 번이라도 연 탭 — 처음 열 때 붙이고, 그 뒤로는 숨기기만 한다(떼면 쓰던 것이 사라진다 — 수정 1회차 P2) */
+  const [opened, setOpened] = useState<Set<Tab>>(() => new Set<Tab>(['layout']));
+  /** 저장 안 한 것이 있는 곳 — 탭 점 표시와 떠나기 전 묻기(beforeunload)에 쓴다 */
+  const [dirtyParts, setDirtyParts] = useState<Record<string, boolean>>({});
+  const markDirty = useCallback((part: string, dirty: boolean) => setDirtyParts((p) => (Boolean(p[part]) === dirty ? p : { ...p, [part]: dirty })), []);
+  const dirtyOss = useCallback((d: boolean) => markDirty('openSource', d), [markDirty]);
+  const dirtyVideos = useCallback((d: boolean) => markDirty('videos', d), [markDirty]);
+  const dirtyAdd = useCallback((d: boolean) => markDirty('add', d), [markDirty]);
+  const dirtyEditor = useCallback((d: boolean) => markDirty('editor', d), [markDirty]);
   const [editing, setEditing] = useState<AdminItem | null>(null);
   const router = useRouter();
 
@@ -133,6 +142,17 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
   useEffect(() => {
     layoutDirty.current = changed;
   }, [changed]);
+  const anyDirty = changed || Object.values(dirtyParts).some(Boolean);
+  // 저장 안 한 것이 있으면 새로고침·닫기·주소 이동 전에 브라우저가 묻는다(화면 안 확인창은 편집 패널 닫기에만 — 브라우저 confirm() 은 쓰지 않는다)
+  useEffect(() => {
+    if (!anyDirty || readOnly) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [anyDirty, readOnly]);
 
   if (unlocked === null) return null;
   if (!unlocked) return <AdminGate readOnly={readOnly} staticMode={staticMode} onUnlock={() => { setUnlocked(true); if (!staticMode) refresh(); }} />;
@@ -282,20 +302,36 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
       {!readOnly && (
         <div className="seg admin-tabs" role="tablist" aria-label="관리">
           {TABS.map((t) => (
-            <button key={t.id} type="button" role="tab" id={`tab-${t.id}`} aria-selected={tab === t.id} aria-controls={`panel-${t.id}`} onClick={() => setTab(t.id)}>{t.label}</button>
+            <button
+              key={t.id}
+              type="button"
+              role="tab"
+              id={`tab-${t.id}`}
+              aria-selected={tab === t.id}
+              aria-controls={`panel-${t.id}`}
+              data-dirty={(t.id === 'layout' ? changed : dirtyParts[t.id]) ? '' : undefined}
+              title={(t.id === 'layout' ? changed : dirtyParts[t.id]) ? '저장 안 한 것이 있습니다' : undefined}
+              onClick={() => {
+                setTab(t.id);
+                setOpened((o) => (o.has(t.id) ? o : new Set(o).add(t.id)));
+              }}
+            >
+              {t.label}
+            </button>
           ))}
         </div>
       )}
-      {tab !== 'layout' && !readOnly && (
-        <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
-          {tab === 'openSource' && <RowsPanel which="openSource" items={items} onSaved={afterWrite} />}
-          {tab === 'videos' && <RowsPanel which="videos" items={items} onSaved={afterWrite} />}
-          {tab === 'add' && <AddProject roleNames={Object.fromEntries(Object.entries(draft.roles).map(([id, r]) => [id, r.name]))} onSaved={afterWrite} />}
-          {tab === 'history' && <HistoryPanel onChanged={afterWrite} />}
-        </div>
+      {!readOnly && (
+        <>
+          {/* 탭 패널은 한 번 열면 계속 붙여 두고 hidden 으로만 숨긴다 — 탭을 옮겨도 쓰던 것이 남는다 */}
+          {opened.has('openSource') && <div role="tabpanel" id="panel-openSource" aria-labelledby="tab-openSource" hidden={tab !== 'openSource'}><RowsPanel which="openSource" items={items} onSaved={afterWrite} active={tab === 'openSource'} onDirty={dirtyOss} /></div>}
+          {opened.has('videos') && <div role="tabpanel" id="panel-videos" aria-labelledby="tab-videos" hidden={tab !== 'videos'}><RowsPanel which="videos" items={items} onSaved={afterWrite} active={tab === 'videos'} onDirty={dirtyVideos} /></div>}
+          {opened.has('add') && <div role="tabpanel" id="panel-add" aria-labelledby="tab-add" hidden={tab !== 'add'}><AddProject roleNames={Object.fromEntries(Object.entries(draft.roles).map(([id, r]) => [id, r.name]))} onSaved={afterWrite} onDirty={dirtyAdd} /></div>}
+          {/* 최근 저장은 쓰는 것이 없어 열 때마다 새로 읽는다 */}
+          {tab === 'history' && <div role="tabpanel" id="panel-history" aria-labelledby="tab-history"><HistoryPanel onChanged={afterWrite} /></div>}
+        </>
       )}
-      {(tab === 'layout' || readOnly) && (
-      <div role={readOnly ? undefined : 'tabpanel'} id="panel-layout" aria-labelledby={readOnly ? undefined : 'tab-layout'}>
+      <div role={readOnly ? undefined : 'tabpanel'} id="panel-layout" aria-labelledby={readOnly ? undefined : 'tab-layout'} hidden={!readOnly && tab !== 'layout'}>
       <div className="admin-bar">
         <div className="seg" role="group" aria-label="보기">
           <button type="button" aria-pressed={view === ALL_VIEW} onClick={() => setView(ALL_VIEW)}>전체 항목</button>
@@ -355,9 +391,8 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
         )}
       </section>
       </div>
-      )}
       {editing && !readOnly && (
-        <ItemEditor key={editing.slug} id={editing.slug} name={editing.name} kind={editing.kind} onClose={() => setEditing(null)} onSaved={afterWrite} />
+        <ItemEditor key={editing.slug} id={editing.slug} name={editing.name} kind={editing.kind} onClose={() => setEditing(null)} onSaved={afterWrite} onDirty={dirtyEditor} />
       )}
     </div>
   );

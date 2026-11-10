@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LOCALES, browsePath, projectPath } from '@/i18n/config';
 import { api, type WriteResult } from './admin-api';
-import { problemsUnder, setAll, type FieldProblems } from './editor-model';
+import { SLUG_MESSAGE } from '@/content/slug';
+import { SLUG_PATTERN, problemsUnder, setAll, type FieldProblems } from './editor-model';
 import { OTHER_SPEC, blankOther } from './editor-spec';
 import { FieldList, Problems, type Draft } from './Fields';
 import { SiteLinks } from './ItemEditor';
@@ -11,20 +12,24 @@ import { SiteLinks } from './ItemEditor';
 // 「그 외」 프로젝트 추가 — `pnpm content add-project`(POST /api/content/projects)와 같은 API·같은 검사.
 // slug(주소)는 세 언어 같은 값 · 이름·기간·한 줄·사진·상세 문단은 언어마다. 넣을 역할을 고르면 그 역할 「그 외」 줄 맨 뒤에 들어간다.
 
-const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 type Status = { kind: 'idle' | 'busy' | 'saved' | 'error'; text?: string; links?: string[] };
 
 function blankDraft(slug: string): Draft {
   return Object.fromEntries(LOCALES.map((l) => [l, blankOther(slug)])) as unknown as Draft;
 }
 
-export default function AddProject({ roleNames, onSaved }: { roleNames: Record<string, string>; onSaved: () => void }) {
+export default function AddProject({ roleNames, onSaved, onDirty }: { roleNames: Record<string, string>; onSaved: () => void; onDirty?: (dirty: boolean) => void }) {
   const [slug, setSlug] = useState('');
   const [draft, setDraft] = useState<Draft>(() => blankDraft(''));
   const [roles, setRoles] = useState<string[]>([]);
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [problems, setProblems] = useState<FieldProblems>({ byField: {}, all: [] });
-  const slugProblem = slug && !SLUG_RE.test(slug) ? 'slug 는 소문자·숫자·하이픈만 씁니다(예: my-new-work)' : '';
+  // 쓰던 것이 있으면 어드민에 알린다 — 떠나기 전에 브라우저가 묻는다(수정 1회차)
+  const dirty = Boolean(slug) || roles.length > 0 || JSON.stringify(draft) !== JSON.stringify(blankDraft(''));
+  useEffect(() => {
+    onDirty?.(dirty);
+  }, [dirty, onDirty]);
+  const slugProblem = slug && !SLUG_PATTERN.test(slug) ? SLUG_MESSAGE : '';
 
   async function submit() {
     if (!slug || slugProblem) return setStatus({ kind: 'error', text: slugProblem || 'slug(주소)를 먼저 정하세요' });
@@ -49,7 +54,7 @@ export default function AddProject({ roleNames, onSaved }: { roleNames: Record<s
       <p className="admin-hint">저장하면 상세 페이지(/projects/&lt;slug&gt;)와 고른 역할 화면에 바로 생깁니다. 지우는 단추는 없습니다 — 숨기거나 「최근 저장」에서 되돌립니다.</p>
 
       <div className="admin-field" data-field="slug">
-        <span className="admin-field-label">slug(주소)<small>세 언어 같음 · 소문자·숫자·하이픈</small></span>
+        <span className="admin-field-label">slug(주소)<small>세 언어 같음 · 영문 소문자로 시작 · 소문자·숫자·하이픈</small></span>
         <input
           className="admin-input"
           value={slug}

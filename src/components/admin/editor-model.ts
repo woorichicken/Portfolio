@@ -1,4 +1,8 @@
+import { SLUG_RE } from '@/content/slug';
 import { LOCALES, type Locale } from '@/i18n/config';
+
+/** slug·id 규칙 — 서버 검사와 같은 정규식(src/content/slug.ts) */
+export const SLUG_PATTERN = SLUG_RE;
 
 // 어드민 편집기의 순수 함수 — 화면(React)을 모른다. 유닛 테스트가 직접 부른다(src/components/admin/__tests__).
 //

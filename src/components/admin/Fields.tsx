@@ -13,7 +13,9 @@ import type { Spec } from './editor-spec';
 // 서버 검사(422)의 문제는 problems[칸 열쇠] 로 받아 그 칸 바로 아래에 붙인다(열쇠 = editor-model 의 keyOf).
 
 export type Draft = L3<Record<string, unknown>>;
-type Ctx = { draft: Draft; set: (next: Draft) => void; problems: FieldProblems['byField']; disabled?: boolean };
+/** set 은 늘 「지금 draft → 다음 draft」 함수로 받는다 — 업로드처럼 늦게 끝나는 콜백이 그 사이 고친 칸을 덮지 않게(수정 1회차 P2) */
+export type DraftUpdate = (update: (prev: Draft) => Draft) => void;
+type Ctx = { draft: Draft; set: DraftUpdate; problems: FieldProblems['byField']; disabled?: boolean };
 
 const LOCALE_TAG: Record<Locale, string> = { ko: 'KO', en: 'EN', es: 'ES' };
 
@@ -47,7 +49,7 @@ function Field({ spec, path, ctx }: { spec: Spec; path: Path; ctx: Ctx }) {
       return (
         <div className="admin-field" data-field={key}>
           <span className="admin-field-label">{spec.label}</span>
-          <input className="admin-input admin-input-short" type="number" min={1} value={String(getIn(ctx.draft.ko, path) ?? '')} disabled={ctx.disabled} aria-label={spec.label} onChange={(e) => ctx.set(setAll(ctx.draft, path, Number(e.target.value) || 0))} />
+          <input className="admin-input admin-input-short" type="number" min={1} value={String(getIn(ctx.draft.ko, path) ?? '')} disabled={ctx.disabled} aria-label={spec.label} onChange={(e) => { const n = Number(e.target.value) || 0; ctx.set((d) => setAll(d, path, n)); }} />
           <Problems list={ctx.problems[key]} />
         </div>
       );
@@ -78,7 +80,7 @@ function TextField({ spec, path, ctx }: { spec: Extract<Spec, { t: 'text' }>; pa
             aria-label={spec.label}
             data-field={key}
             spellCheck={false}
-            onChange={(e) => ctx.set(spec.optional ? setAllOptional(ctx.draft, path, e.target.value) : setAll(ctx.draft, path, e.target.value))}
+            onChange={(e) => { const v = e.target.value; ctx.set((d) => (spec.optional ? setAllOptional(d, path, v) : setAll(d, path, v))); }}
           />
         )}
         {spec.hint && <span className="admin-hint">{spec.hint}</span>}
@@ -101,7 +103,7 @@ function TextField({ spec, path, ctx }: { spec: Extract<Spec, { t: 'text' }>; pa
               data-field={key}
               data-locale={l}
               rows={spec.long ? 3 : undefined}
-              onChange={(e) => ctx.set(spec.optional ? setOptionalText(ctx.draft, l, path, e.target.value) : setOne(ctx.draft, l, path, e.target.value))}
+              onChange={(e) => { const v = e.target.value; ctx.set((d) => (spec.optional ? setOptionalText(d, l, path, v) : setOne(d, l, path, v))); }}
             />
           </label>
         ))}
@@ -170,10 +172,12 @@ function ShotField({ label, path, ctx, onRemove }: { label: string; path: Path; 
               accept="image/jpeg,image/png,image/webp,image/gif"
               disabled={ctx.disabled}
               onUploaded={(u) => {
-                // 파일·크기는 세 언어 같이, alt 는 언어마다 그대로 둔다
-                let next = setAll(ctx.draft, [...path, 'src'], u.src);
-                if (u.width && u.height) next = setAll(setAll(next, [...path, 'width'], u.width), [...path, 'height'], u.height);
-                ctx.set(next);
+                // 파일·크기는 세 언어 같이, alt 는 언어마다 그대로 둔다.
+                // 업로드는 몇 초 걸린다 — 그 사이 고친 글을 덮지 않게 「지금」 draft 에 사진 칸만 넣는다(수정 1회차 P2)
+                ctx.set((d) => {
+                  const next = setAll(d, [...path, 'src'], u.src);
+                  return u.width && u.height ? setAll(setAll(next, [...path, 'width'], u.width), [...path, 'height'], u.height) : next;
+                });
               }}
             />
             {onRemove && <button type="button" className="btn btn-ghost btn-sm" disabled={ctx.disabled} onClick={onRemove}>빼기</button>}
@@ -194,7 +198,7 @@ function GroupField({ spec, path, ctx }: { spec: Extract<Spec, { t: 'group' }>; 
     return (
       <div className="admin-field admin-group" data-field={key}>
         <span className="admin-field-label">{spec.label}</span>
-        <button type="button" className="btn btn-ghost btn-sm" disabled={ctx.disabled || !spec.blank} onClick={() => spec.blank && ctx.set(toggleGroup(ctx.draft, path, spec.blank))}>+ {spec.label} 넣기</button>
+        <button type="button" className="btn btn-ghost btn-sm" disabled={ctx.disabled || !spec.blank} onClick={() => { const make = spec.blank; if (make) ctx.set((d) => toggleGroup(d, path, make)); }}>+ {spec.label} 넣기</button>
         <Problems list={ctx.problems[key]} />
       </div>
     );
@@ -203,7 +207,7 @@ function GroupField({ spec, path, ctx }: { spec: Extract<Spec, { t: 'group' }>; 
     <fieldset className="admin-group" data-field={key}>
       <legend className="admin-field-label">
         {spec.label}
-        {spec.optional && <button type="button" className="admin-link-btn" disabled={ctx.disabled} onClick={() => ctx.set(toggleGroup(ctx.draft, path, null))}>빼기</button>}
+        {spec.optional && <button type="button" className="admin-link-btn" disabled={ctx.disabled} onClick={() => ctx.set((d) => toggleGroup(d, path, null))}>빼기</button>}
       </legend>
       <FieldList specs={spec.fields} base={path} ctx={ctx} />
       <Problems list={ctx.problems[key]} />
@@ -219,9 +223,9 @@ function ListField({ spec, path, ctx }: { spec: Extract<Spec, { t: 'list' }>; pa
     <div className="admin-row-head">
       <span>{rowLabel} {i + 1}</span>
       <span className="admin-row-actions">
-        <button type="button" className="icon-btn" aria-label={`${rowLabel} ${i + 1} 위로`} disabled={ctx.disabled || i === 0} onClick={() => ctx.set(listMove(ctx.draft, path, i, -1))}><IconUp /></button>
-        <button type="button" className="icon-btn" aria-label={`${rowLabel} ${i + 1} 아래로`} disabled={ctx.disabled || i === list.length - 1} onClick={() => ctx.set(listMove(ctx.draft, path, i, 1))}><IconDown /></button>
-        {spec.item !== 'shot' && <button type="button" className="btn btn-ghost btn-sm" disabled={ctx.disabled} onClick={() => ctx.set(listRemove(ctx.draft, path, i, spec.optional))}>빼기</button>}
+        <button type="button" className="icon-btn" aria-label={`${rowLabel} ${i + 1} 위로`} disabled={ctx.disabled || i === 0} onClick={() => ctx.set((d) => listMove(d, path, i, -1))}><IconUp /></button>
+        <button type="button" className="icon-btn" aria-label={`${rowLabel} ${i + 1} 아래로`} disabled={ctx.disabled || i === list.length - 1} onClick={() => ctx.set((d) => listMove(d, path, i, 1))}><IconDown /></button>
+        {spec.item !== 'shot' && <button type="button" className="btn btn-ghost btn-sm" disabled={ctx.disabled} onClick={() => ctx.set((d) => listRemove(d, path, i, spec.optional))}>빼기</button>}
       </span>
     </div>
   );
@@ -235,7 +239,7 @@ function ListField({ spec, path, ctx }: { spec: Extract<Spec, { t: 'list' }>; pa
           {spec.item === 'text' ? (
             <TextField spec={{ t: 'text', key: String(i), label: `${rowLabel} ${i + 1}`, long: spec.long, hint: undefined }} path={[...path, i]} ctx={ctx} />
           ) : spec.item === 'shot' ? (
-            <ShotField label={`${rowLabel} ${i + 1}`} path={[...path, i]} ctx={ctx} onRemove={() => ctx.set(listRemove(ctx.draft, path, i, spec.optional))} />
+            <ShotField label={`${rowLabel} ${i + 1}`} path={[...path, i]} ctx={ctx} onRemove={() => ctx.set((d) => listRemove(d, path, i, spec.optional))} />
           ) : (
             <FieldList specs={spec.item} base={[...path, i]} ctx={ctx} />
           )}
@@ -246,10 +250,10 @@ function ListField({ spec, path, ctx }: { spec: Extract<Spec, { t: 'list' }>; pa
           label={`+ ${rowLabel} 올려서 넣기`}
           accept="image/jpeg,image/png,image/webp,image/gif"
           disabled={ctx.disabled}
-          onUploaded={(u) => ctx.set(listAdd(ctx.draft, path, () => ({ src: u.src, width: u.width ?? 0, height: u.height ?? 0, alt: '' })))}
+          onUploaded={(u) => ctx.set((d) => listAdd(d, path, () => ({ src: u.src, width: u.width ?? 0, height: u.height ?? 0, alt: '' })))}
         />
       ) : (
-        <button type="button" className="btn btn-ghost btn-sm" disabled={ctx.disabled || !spec.blank} onClick={() => spec.blank && ctx.set(listAdd(ctx.draft, path, spec.blank))}>+ {rowLabel} 추가</button>
+        <button type="button" className="btn btn-ghost btn-sm" disabled={ctx.disabled || !spec.blank} onClick={() => { const make = spec.blank; if (make) ctx.set((d) => listAdd(d, path, make)); }}>+ {rowLabel} 추가</button>
       )}
     </fieldset>
   );
