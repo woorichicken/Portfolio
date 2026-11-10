@@ -62,7 +62,7 @@ curl(Bearer) ───┘    (Worker)          └─ 바뀐 페이지만 무효
 | GitHub 보러가기 | 편집 패널 「GitHub 보러가기(repo)」 칸(세 언어 같은 주소 · 비우면 빠짐) | 위와 같음 |
 | 오픈소스 행 · 만든 영상 행 | 「오픈소스」·「만든 영상」 탭 — 줄 추가·고치기·빼기·순서 → 「… 저장」. 영상은 「영상 올리기」(mp4·webm · 가로·세로는 브라우저가 읽음) + 「포스터 올리기」 | `PATCH /field { path: openSource \| videos, values }` |
 | 그 행을 역할마다 켜고 끄기 | 같은 탭 맨 위 「보일 역할」 체크 — **누르면 바로 저장** | `PATCH /roles/<역할> { openSource \| videos, expect }` |
-| 「그 외」 프로젝트 추가 | 「프로젝트 추가」 탭 — slug · 넣을 역할 · 칸 → 「추가」 | `POST /projects { kind: other, item, roles }` (add-project 와 같은 검사 · 같은 slug 면 409) |
+| 「그 외」 프로젝트 추가 | 「프로젝트 추가」 탭 — slug · 넣을 역할 · 칸 · **사진 올리기(필수 — 안 올리면 「추가」가 막힌다)** → 「추가」 | `POST /projects { kind: other, item, roles }` (add-project 와 같은 검사 · 같은 slug 면 409) |
 | 최근 저장 · 저장마다 되돌리기 | 「최근 저장」 탭 — 사람(어드민)·에이전트·시드 구분, 바뀐 칸 한 줄. 줄마다 「되돌리기」, 되돌리기 줄은 「다시 하기」 | `GET /history?limit=30` · `POST /undo { changeId }` |
 
 - **세 언어 모양**: 줄 추가·빼기·순서와 선택 묶음(지표·배운 점) 켜고 끄기는 화면이 세 언어에 같이 한다. 글자만 언어마다. 배지·캡션 같은 선택 글자 칸은 비우면 그 언어에서 칸이 지워져, 한 언어만 채우면 422 — **문제는 그 칸 바로 아래**에 언어와 함께 뜬다(`problems` 경로를 칸에 맞춘다: `src/components/admin/editor-model.ts` `problemsUnder`).

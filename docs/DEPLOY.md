@@ -1,6 +1,6 @@
 # 배포 · CI/CD · 도메인
 
-> **2026-11-09 부터 운영은 Cloudflare Workers 다** — `solhun.com`·`www.solhun.com` → Worker `solhun-portfolio`, 배포 = `main` 머지(Workers Builds). 지금 상태·되돌리기는 **8절**. 1~7절은 Vercel 시절 기록(2026-09-30 실측)이고 Vercel 프로젝트는 되돌리기용으로 남겨 두었다.
+> **2026-11-09 부터 운영은 Cloudflare Workers 다** — `solhun.com`·`www.solhun.com` → Worker `solhun-portfolio`, 배포 = `main` 머지(Workers Builds). 지금 상태·되돌리기는 **8절**. 1~7절은 Vercel 시절 기록(2026-09-30 실측)이다. **Vercel 프로젝트 `solhun-portfolio` 는 2026-11-10 삭제했다**(사람 결정) — 도메인 등록(`solhun.com`, 등록처 Vercel · 자동 갱신 켜짐 · 만료 2026-12-01 · $12.03)은 프로젝트와 별개라 그대로 남는다.
 
 이 문서는 **사람이 결정할 것과 그 절차**를 담는다. 2026-09-30 에 2절 추천안(새 프로젝트)으로 배포했다 —
 도메인(`solhun.com`) 이전과 `CLI_MANAGER_ROUTES` 도 **끝났다**(2026-10-04 실측 — 아래 표 `solhun.com` 행).
@@ -218,6 +218,22 @@ node ~/Downloads/geo-tracker/audit.mjs "$P"                                     
 | 한 일 | DNS 의 Vercel CNAME 두 줄(`solhun.com`·`www.solhun.com` → `fa967484a7ac7eef.vercel-dns-017.com`, DNS only) 삭제 → Workers 커스텀 도메인 두 개 연결(API). `wrangler.jsonc` `routes` 에도 적었다 |
 | apex → www | 앱이 307(`next.config.ts` `APEX_TO_WWW`) — Vercel 때는 도메인 설정이 하던 일 |
 | 전환 뒤 실측 | 인증서 발급까지 약 80초 · `www` 200(`server: cloudflare`) · apex 307 → www · verify-routes 21/21(www ↔ workers.dev) · `climanager`·`design`·`standup` 하위 도메인 200 · 운영 `pnpm content set` → 반영 → `undo` |
-| 되돌리기 | Workers 도메인 두 개 떼기 → 위 CNAME 두 줄(DNS only) 다시 만들기. 스크립트: `~/Downloads/_batches/task-portfolio-d1-1108/rollback.sh`(토큰 `~/.config/portfolio/cf-api-token`). Vercel 프로젝트·도메인 등록은 그대로라 CNAME 만 돌리면 바로 산다 |
-| Vercel | **Git 연결 끊음(2026-11-10, 팀장)** — `main` 머지가 더는 Vercel 을 빌드하지 않는다. 프로젝트·도메인 등록과 **마지막 Vercel 배포**는 남겨 두었다 |
-| 되돌리기의 뜻(11-10~) | `rollback.sh` 는 **DNS 만** Vercel 로 되돌린다 — 그러면 마지막 Vercel 배포(정적 모드 · D1 없음 · 11-09 이전 본문)가 응답한다. 그 뒤 D1 에 저장한 것(「혼자」 문구 · 역할 A안 · 오픈소스·영상 행 등)과 새 코드는 거기 없고, 어드민 저장·콘텐츠 API 도 없다(503 `no_db`). Vercel 을 최신으로 올리려면 Git 을 다시 잇거나 `vercel deploy --prod` 를 손으로 해야 한다 |
+| 되돌리기 | ~~Vercel 로 DNS 되돌리기(`rollback.sh`)~~ — **2026-11-10 Vercel 프로젝트를 지워 더는 쓸 수 없다.** 이제 되돌리기는 Workers 안에서 한다: 코드는 대시보드 Deployments 의 이전 버전으로 롤백(또는 `wrangler rollback`), 본문은 `pnpm content undo`·어드민 「최근 저장」, D1 통째로는 Time Travel |
+| Vercel | Git 연결 끊음(2026-11-10) → **같은 날 프로젝트 삭제**(사람: 「vercel 은 바로 삭제하면 될거 같고」). 환경변수 3개(`CLI_MANAGER_ROUTES`·`NEXT_PUBLIC_DP_FEEDBACK_URL`·`…_KEY`)는 Workers Builds 빌드 변수에 이미 있다 |
+
+## 9. 요금 — 과다 청구가 날 수 있나 · 브레이크 (2026-11-10 실측)
+
+계정 `4521ed2f…` 는 **Workers Paid($5/월) + R2 Paid** 다(이 사이트만이 아니라 content-ops·standup·pc-sites 등과 같이 쓴다). 유료 플랜이라 **포함량을 넘으면 그만큼 청구되고, 자동으로 멈추는 상한은 없다**(공식 요금 문서에 지출 상한 없음).
+
+| 항목 | 포함량(월) | 넘으면 | 11-01~11-10 계정 전체 실측 |
+|---|---|---|---|
+| Workers 요청 | 1천만 | $0.30 / 100만 | 약 28만(이 사이트 3,553) |
+| Workers CPU | 3천만 ms | $0.02 / 100만 ms | 약 85만 ms(이 사이트 128,813 ms · 요청당 평균 약 36ms) |
+| D1 읽기 · 쓰기 | 250억 · 5천만 행 | $0.001 · $1.00 / 100만 행 | 이 사이트 9,389 · 1,922 |
+| R2 저장 | 10GB | $0.015 / GB | 약 16.6GB(대부분 `solhun-downloads` 12.2GB · `content-ops-media-dev` 4.3GB) — 이 사이트 약 0.1GB |
+| R2 Class A · B | 100만 · 1천만 | $4.50 · $0.36 / 100만 | 이 사이트 GetObject 1,584 · PutObject 845 |
+| R2 내보내기(egress) | 무료 | — | — |
+
+- **브레이크**: ① 예산 알림 — 이번 달 사용료가 **$10** 이 되면 메일(자동 생성, 켜짐). ② 제품별 사용량 알림(`billing_usage_alert`) — 없음, 만들 수 있음. ③ Worker 요청당 CPU 상한(`wrangler.jsonc` `limits.cpu_ms` · 대시보드 Settings > CPU Limits) — 지금 기본값. 셋 다 **알리거나 한 요청을 끊을 뿐 청구를 멈추지는 않는다.**
+- 측정: 대시보드 GraphQL(`workersInvocationsAdaptive`·`r2OperationsAdaptiveGroups`·`r2StorageAdaptiveGroups`·`d1AnalyticsAdaptiveGroups`) — 배포 토큰에는 결제·분석 권한이 없어 로그인된 대시보드 탭(Aside)에서 읽었다.
+

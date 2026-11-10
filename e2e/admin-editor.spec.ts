@@ -284,6 +284,11 @@ test('프로젝트 추가(그 외) — 잘못된 slug · 있는 slug 409 · 추�
     await panel.locator(`textarea[data-field="detail.paragraphs[0]"][data-locale="${l}"]`).fill(`${v} 상세 문단`);
   }
   await panel.locator('input[data-add-role="design"]').check();
+  // 사진 필수 — 자리표시 사진 그대로면 서버에 보내지 않는다(2026-11-10 사람 결정)
+  await panel.getByRole('button', { name: '추가', exact: true }).click();
+  await expect(page.locator('[data-add-status="error"]')).toContainText('사진을 먼저 올리세요');
+  await panel.locator('div[data-field="shot"] input[type="file"]').first().setInputFiles(join(FIX, 'e2e-cover.jpg'));
+  await expect(panel.locator('div[data-field="shot"] img').first()).toHaveAttribute('src', /\/media\//);
   await panel.getByRole('button', { name: '추가', exact: true }).click();
   await expect(page.locator('[data-add-status="error"]')).toContainText('이미 있습니다');
 
