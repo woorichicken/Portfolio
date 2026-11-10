@@ -14,6 +14,12 @@ import { SiteLinks } from './ItemEditor';
 
 type Status = { kind: 'idle' | 'busy' | 'saved' | 'error'; text?: string; links?: string[] };
 
+/** 빈 틀의 자리표시 사진에서 바뀌었나 — 세 언어 같은 src 라 ko 만 본다 */
+function hasOwnPhoto(draft: Draft): boolean {
+  const src = (draft.ko as { shot?: { src?: string } }).shot?.src;
+  return Boolean(src) && src !== blankOther('').shot.src;
+}
+
 function blankDraft(slug: string): Draft {
   return Object.fromEntries(LOCALES.map((l) => [l, blankOther(slug)])) as unknown as Draft;
 }
@@ -33,6 +39,8 @@ export default function AddProject({ roleNames, onSaved, onDirty }: { roleNames:
 
   async function submit() {
     if (!slug || slugProblem) return setStatus({ kind: 'error', text: slugProblem || 'slug(주소)를 먼저 정하세요' });
+    // 사진은 필수 — 안 올리면 빈 틀의 자리표시 사진(디자인 아틀라스)이 그대로 공개된다(2026-11-10 사람 결정)
+    if (!hasOwnPhoto(draft)) return setStatus({ kind: 'error', text: '사진을 먼저 올리세요 — 안 올리면 다른 작품 사진이 그대로 나갑니다' });
     setStatus({ kind: 'busy', text: '추가하는 중…' });
     setProblems({ byField: {}, all: [] });
     const r = await api<WriteResult>('/api/content/projects', { method: 'POST', body: JSON.stringify({ kind: 'other', item: draft, roles: roles.map((role) => ({ role })) }) });
@@ -51,7 +59,7 @@ export default function AddProject({ roleNames, onSaved, onDirty }: { roleNames:
   return (
     <section className="admin-panel" aria-labelledby="add-title" data-add-panel="">
       <h2 id="add-title" className="admin-panel-title">「그 외」 프로젝트 추가</h2>
-      <p className="admin-hint">저장하면 상세 페이지(/projects/&lt;slug&gt;)와 고른 역할 화면에 바로 생깁니다. 지우는 단추는 없습니다 — 숨기거나 「최근 저장」에서 되돌립니다.</p>
+      <p className="admin-hint">저장하면 상세 페이지(/projects/&lt;slug&gt;)와 고른 역할 화면에 바로 생깁니다. 사진은 꼭 올립니다. 지우는 단추는 없습니다 — 숨기거나 「최근 저장」에서 되돌립니다.</p>
 
       <div className="admin-field" data-field="slug">
         <span className="admin-field-label">slug(주소)<small>세 언어 같음 · 영문 소문자로 시작 · 소문자·숫자·하이픈</small></span>
