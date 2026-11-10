@@ -3,8 +3,8 @@
 어드민 「저장」과 에이전트(`pnpm content`)가 같은 API 를 부른다. 에이전트용 절차는 `.claude/skills/solhun-content/SKILL.md` 가 정본이고,
 이 문서는 **API 의 모양과 데이터 구조, 운영으로 옮길 때 할 일**을 적는다.
 
-> ⚠️ 2026-11-08 현재 운영(www.solhun.com)은 아직 Vercel 정적 빌드다 — `/api/content` 가 없다. 아래는 로컬 Workers(`wrangler dev`)에서 실측한 것이다.
-> 운영 전환은 맨 아래 「토큰 받은 뒤 할 일」.
+> 2026-11-09 부터 운영(www.solhun.com)이 Cloudflare Workers 다 — `pnpm content … --target prod` 가 운영 API 에 쓴다(docs/DEPLOY.md 8절).
+> 맨 아래 「토큰 받은 뒤 할 일」은 그 전환 때의 순서 기록이다.
 
 ## 한눈에
 
@@ -24,6 +24,21 @@ curl(Bearer) ───┘    (Worker)          └─ 바뀐 페이지만 무효
 | 스키마 | `migrations/0001_content.sql` · `0002_history_undoes.sql` · `0003_version_check.sql`(검사에 쓴 안 바뀐 문서의 버전 가드) |
 | 시드 | `pnpm db:seed:local` — 저장소의 `src/content/*.ts` 를 넣는다(멱등, 이미 있는 문서는 안 덮음) · `--force` 는 다른 것만 덮고 이력을 남김 |
 | 빌드 | `pnpm cf:build` = D1 스냅숏(`scripts/content-snapshot.mjs`) → `next build` 가 그 스냅숏으로 미리 그림 → OpenNext 번들 |
+| 운영 문서로 로컬 맞추기 | `for d in ko en es roles hidden; do pnpm -s content get --doc $d --target prod > <폴더>/$d.json; done` → `pnpm db:seed:local --force --from <폴더>` (읽기만 운영, 쓰기는 로컬) |
+
+### 선택 칸 — 오픈소스 · 만든 영상 · 코드 보기 (2026-11-10)
+
+새 칸은 **모두 선택**이라 없는 문서(그 전의 운영 D1)도 그대로 통과하고, 없으면 그 행·단추가 안 나온다. 칸 이름은 `src/content/types.ts` 가 정본.
+
+| 칸 | 문서 | 모양 | 화면 |
+|---|---|---|---|
+| `openSource.items[]` | `content:*` | `{ id, name, body, repo, homepage? }` — `repo`·`homepage` 는 https · 세 언어 같은 값 | 역할 화면 「오픈소스」 행(글 카드 · 「코드 보기」 · 「사이트」) |
+| `videos.items[]` | `content:*` | `{ id, title, body, src, poster, width, height, project? }` — `src` 는 `/media/….mp4·webm`(R2 만) · `poster` 사진 · `project` 는 있는 항목 id | 역할 화면 「만든 영상」 행(`<video controls preload="none" playsinline poster>` — 자동재생 없음) |
+| `repo` | `work.projects[]` · `others.items[]` | https 주소 · 세 언어 같은 값 | 빌보드(대표작일 때)·상세 머리에 「코드 보기」 |
+| `openSource` · `videos` | `roles.<역할>` | boolean(없으면 꺼짐) | 그 역할 화면에 행을 보일지 — 2026-11-10 시드: 오픈소스 maker·all · 영상 design·all |
+
+- 행 제목·단추 글(「오픈소스」·「만든 영상」·「코드 보기」·「사이트」·「프로젝트 보기」)은 본문이 아니라 화면 글 `SCREEN`(src/content/roles.ts)이다.
+- 미디어 키는 `<image|video>/<이름>-<SHA-256 앞 10자>.<확장자>` — 같은 파일은 어디서 몇 번 올려도 같은 주소라 시드(`src/content/*.ts`)에 운영과 같은 `src` 를 적어 둘 수 있다.
 
 ### 왜 이렇게 했나
 
@@ -58,12 +73,12 @@ curl(Bearer) ───┘    (Worker)          └─ 바뀐 페이지만 무효
 | `GET /api/content/item/<id>` | – | 항목 하나를 세 언어로(`item.ko` …) + 경로 + 배치 |
 | `PATCH /api/content/field` | `{ path, locale, value }` · `{ path, values: {ko,en,es} }` · `{ path, unset: true, locales? }` (+`expect`) | 칸 고치기 |
 | `POST /api/content/projects` | `{ kind: project\|other\|early, item: {ko,en,es}, at?, roles?: [{role, at?}] }` | 프로젝트 추가 |
-| `PATCH /api/content/roles/<role>` | `{ place: {id, at?} }` · `{ remove }` · `{ featured }` · `{ projects }` · `{ others }` · `{ early }` · `{ name\|blurb\|rowTitle: {ko,en,es} }` (+`expect`) | 역할 배치 |
+| `PATCH /api/content/roles/<role>` | `{ place: {id, at?} }` · `{ remove }` · `{ featured }` · `{ projects }` · `{ others }` · `{ early }` · `{ openSource }` · `{ videos }` · `{ name\|blurb\|rowTitle: {ko,en,es} }` (+`expect`) | 역할 배치 · 행 켜고 끄기 |
 | `PUT /api/content/layout` | `{ roles: { <role>: {featured, projects, others} }, hidden, expect? }` | 어드민 「저장」(한 change) |
 | `PATCH /api/content/hidden` | `{ hide?: [id], show?: [id] }` | 숨김 |
 | `GET /api/content/history?limit=20` | – | 최근 change(`changeId` · action · actor · summary · at · keys · undoneBy) |
 | `POST /api/content/undo` | `{ changeId? }` 또는 빈 본문 | 되돌리기(없으면 가장 최근의 살아 있는 저장). 되돌리기의 changeId 를 주면 다시 하기. 본문이 깨진 JSON·객체가 아니면 400(가장 최근으로 새지 않는다) |
-| `POST /api/content/media` | multipart `file`, `name?` | R2 에 올림 → `{ key, src, contentType, size, shot }` (201) |
+| `POST /api/content/media` | multipart `file`, `name?` | R2 에 올림 → `{ key, src, contentType, size, shot }` (201). 키 = `<image\|video>/<이름>-<내용 지문 10자>.<확장자>` — 같은 파일은 같은 키(다시 올리면 덮고 목록엔 한 줄) |
 | `GET /api/content/media` | – | 올린 것 목록 |
 | `GET /media/<key>` | `Range: bytes=…` 가능 | 공개 내보내기(200 · 206 — 끝이 크기를 넘으면 파일 끝까지로 줄여 헤더도 그 값 · 시작이 끝을 넘으면 416) |
 

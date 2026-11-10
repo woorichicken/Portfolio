@@ -38,7 +38,8 @@ describe('validateSite — 세 언어 모양 검사', () => {
   it('역할이 없는 id 를 가리키면 막는다', () => {
     const d = copy();
     d.roles.design.projects.push('no-such-project');
-    expect(validateSite(d)).toContainEqual({ path: 'roles.design.projects[7]', message: '"no-such-project" 는 큰 프로젝트 id 가 아닙니다' });
+    const at = d.roles.design.projects.length - 1;
+    expect(validateSite(d)).toContainEqual({ path: `roles.design.projects[${at}]`, message: '"no-such-project" 는 큰 프로젝트 id 가 아닙니다' });
   });
 
   it('숨김이 없는 id 를 가리키면 막는다', () => {

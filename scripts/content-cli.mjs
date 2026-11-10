@@ -8,6 +8,8 @@
 //   pnpm content set kits.tagline --ko "…" --en "…" --es "…"
 //   pnpm content add-project new.json                  (pnpm content add-project --template other > new.json)
 //   pnpm content role design --place fair --at 0       (--remove · --featured · --order a,b,c · --others-order …)
+//   pnpm content role maker --open-source on           「오픈소스」·「만든 영상」 행 켜고 끄기(--videos on|off)
+//   pnpm content set openSource --as-json --ko '{"items":[…]}' --en '…' --es '…'   (videos · kits.repo 도 같은 식)
 //   pnpm content hide motion-meme                      (--show 로 다시 보이기)
 //   pnpm content undo [changeId] · history
 //   pnpm content media ./shot.jpg [--name kits-board] · media --list
@@ -44,7 +46,7 @@ const [command, ...rest] = positional;
 
 function usage(message) {
   if (message) console.error(`✗ ${message}\n`);
-  console.error(readFileSync(new URL(import.meta.url), 'utf8').split('\n').slice(1, 17).map((l) => l.replace(/^\/\/ ?/, '')).join('\n'));
+  console.error(readFileSync(new URL(import.meta.url), 'utf8').split('\n').slice(1, 19).map((l) => l.replace(/^\/\/ ?/, '')).join('\n'));
   process.exit(2);
 }
 
@@ -101,7 +103,7 @@ function reportWrite(r) {
 /** `kits.tagline` 처럼 항목 id 로 시작하면 API 경로(work.projects[kits].tagline)로 바꾼다. 이미 전체 경로면 그대로 */
 async function resolvePath(path) {
   const [head, ...tail] = path.split('.');
-  if (/[[\]]/.test(head) || ['meta', 'a11y', 'nav', 'hero', 'stats', 'work', 'others', 'early', 'timeline', 'awards', 'contact', 'detail', 'footer', 'feedback'].includes(head)) return path;
+  if (/[[\]]/.test(head) || ['meta', 'a11y', 'nav', 'hero', 'stats', 'work', 'others', 'early', 'openSource', 'videos', 'timeline', 'awards', 'contact', 'detail', 'footer', 'feedback'].includes(head)) return path;
   const { items } = await call('GET', '/api/content');
   const item = items.find((i) => i.id === head);
   if (!item) {
@@ -189,13 +191,19 @@ const commands = {
 
   async role() {
     const [role] = rest;
-    if (!role) usage('role <design|product|ax|maker|all> --place <id> [--at N] | --remove <id> | --featured <id> | --order a,b,c | --others-order a,b');
+    if (!role) usage('role <design|product|ax|maker|all> --place <id> [--at N] | --remove <id> | --featured <id> | --order a,b,c | --others-order a,b | --open-source on|off | --videos on|off');
     const body = {};
     if (flags.place) body.place = { id: flags.place, ...(flags.at !== undefined ? { at: Number(flags.at) } : {}) };
     if (flags.remove) body.remove = flags.remove;
     if (flags.featured) body.featured = flags.featured;
     if (flags.order) body.projects = String(flags.order).split(',');
     if (flags['others-order']) body.others = String(flags['others-order']).split(',');
+    // 행 켜고 끄기 — roles 문서의 openSource · videos(없으면 꺼진 것)
+    for (const [flag, key] of [['open-source', 'openSource'], ['videos', 'videos']]) {
+      if (flags[flag] === undefined) continue;
+      if (!['on', 'off'].includes(flags[flag])) usage(`--${flag} 는 on 또는 off 입니다`);
+      body[key] = flags[flag] === 'on';
+    }
     if (!Object.keys(body).length) {
       const r = await call('GET', '/api/content');
       return print(r.roles[role] ?? `모르는 역할: ${role}`);

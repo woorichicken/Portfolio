@@ -219,4 +219,5 @@ node ~/Downloads/geo-tracker/audit.mjs "$P"                                     
 | apex → www | 앱이 307(`next.config.ts` `APEX_TO_WWW`) — Vercel 때는 도메인 설정이 하던 일 |
 | 전환 뒤 실측 | 인증서 발급까지 약 80초 · `www` 200(`server: cloudflare`) · apex 307 → www · verify-routes 21/21(www ↔ workers.dev) · `climanager`·`design`·`standup` 하위 도메인 200 · 운영 `pnpm content set` → 반영 → `undo` |
 | 되돌리기 | Workers 도메인 두 개 떼기 → 위 CNAME 두 줄(DNS only) 다시 만들기. 스크립트: `~/Downloads/_batches/task-portfolio-d1-1108/rollback.sh`(토큰 `~/.config/portfolio/cf-api-token`). Vercel 프로젝트·도메인 등록은 그대로라 CNAME 만 돌리면 바로 산다 |
-| Vercel | Git 연결이 살아 있어 `main` 머지마다 Vercel 도 빌드한다(정적 모드, D1 없음 — 어드민 저장은 안 됨). 안정되면 Git 연결을 끊는다(사람 결정) |
+| Vercel | **Git 연결 끊음(2026-11-10, 팀장)** — `main` 머지가 더는 Vercel 을 빌드하지 않는다. 프로젝트·도메인 등록과 **마지막 Vercel 배포**는 남겨 두었다 |
+| 되돌리기의 뜻(11-10~) | `rollback.sh` 는 **DNS 만** Vercel 로 되돌린다 — 그러면 마지막 Vercel 배포(정적 모드 · D1 없음 · 11-09 이전 본문)가 응답한다. 그 뒤 D1 에 저장한 것(「혼자」 문구 · 역할 A안 · 오픈소스·영상 행 등)과 새 코드는 거기 없고, 어드민 저장·콘텐츠 API 도 없다(503 `no_db`). Vercel 을 최신으로 올리려면 Git 을 다시 잇거나 `vercel deploy --prod` 를 손으로 해야 한다 |

@@ -138,7 +138,7 @@ const es: Content = {
           { value: '5', label: 'conjuntos de pantallas por rol · dirección, ejecutivos, asesores, casos, empleados' },
         ],
         lesson: {
-          title: 'Trabajando solo, hay que forzar la mirada del usuario',
+          title: 'Quien construye tiene que forzar la mirada del usuario',
           body: 'Escribir la guía de uso destapó huecos en las pantallas, y hacer el vídeo me obligó a **resumir en una frase a quién le ahorra trabajo este producto** y cómo.',
         },
         gallery: [
@@ -198,6 +198,7 @@ const es: Content = {
           { label: 'GitHub', href: 'https://github.com/woorichicken/CLI_manager' },
           { label: 'Product Hunt', href: 'https://www.producthunt.com/products/cli-manager' },
         ],
+        repo: 'https://github.com/woorichicken/CLI_manager',
       },
       {
         id: 'automation',
@@ -214,7 +215,7 @@ const es: Content = {
         ],
         cover: shot('sym_flow', 'Vista de flujo en la plataforma interna de docs y QA'),
         parts: [
-          { title: 'Symphony', body: 'Diseñé y construí yo solo un daemon que toma un issue, desarrolla a partir de la documentación y avisa a una persona por Slack si se atasca.' },
+          { title: 'Symphony', body: 'Diseñé y construí un daemon que toma un issue, desarrolla a partir de la documentación y avisa a una persona por Slack si se atasca, y lo extendí en la empresa junto al CEO y los desarrolladores del equipo.' },
           { title: 'Lassorun · widget de feedback', body: 'Construí Lassorun, que une documentación, casos de prueba y reportes en un solo flujo, y el widget para dejar feedback directamente sobre la pantalla.' },
           { title: 'Difusión interna', body: 'Organicé la demo interna de 2026.07 y convertí en sesión fija el intercambio de trucos de Claude Code.' },
         ],
@@ -572,6 +573,25 @@ const es: Content = {
         shot('early_kmong-fair-devhoon-profile', 'Perfil de vendedor en Kmong', 'Perfil en Kmong «DEV HOON, equipo universitario» · reseñas de 5,0'),
       ],
     },
+  },
+  // 오픈소스 · 만든 영상 — 2026-11-10 제보(336f0c01 · 2b371c78). 어느 역할에 보일지는 roles.ts 의 openSource · videos
+  // 영상·포스터는 R2(/media/…) — 주소의 끝 10자는 파일 내용의 지문이라 로컬·운영이 같다(api/content/media)
+  openSource: {
+    items: [
+      { id: 'cli-manager', name: 'CLI Manager', body: 'App de Mac que agrupa sesiones de IA y terminales por proyecto en una sola pantalla', repo: 'https://github.com/woorichicken/CLI_manager', homepage: 'https://climanager.solhun.com' },
+      { id: 'artifact-dock', name: 'Artifact Dock', body: 'Extensión de Chrome y CLI que abre informes HTML de agentes en una pestaña de fondo, una por documento, en un panel lateral', repo: 'https://github.com/woorichicken/artifact-dock', homepage: 'https://artifact-dock.solhun.com' },
+      { id: 'nightgate', name: 'Nightgate', body: 'Deja solo las preguntas de los agentes nocturnos que de verdad me toca decidir, filtradas por un modelo local', repo: 'https://github.com/woorichicken/nightgate', homepage: 'https://nightgate.solhun.com' },
+      { id: 'framenote', name: 'Framenote', body: 'Deja notas fotograma a fotograma en un video renderizado y un agente de código las recibe al instante', repo: 'https://github.com/woorichicken/framenote', homepage: 'https://framenote.solhun.com' },
+      { id: 'climanager-session', name: 'climanager-session', body: 'Skill de agente que abre sesiones de terminal visibles en CLI Manager y dirige agentes de código dentro', repo: 'https://github.com/woorichicken/climanager-session' },
+    ],
+  },
+  videos: {
+    items: [
+      { id: 'climanager-demo', title: 'Conoce CLI Manager', body: '33 segundos sobre cómo agrupar terminales y sesiones de IA por carpeta.', src: '/media/video/climanager-demo-3193c41932.mp4', poster: '/media/image/climanager-demo-poster-71790c6e30.jpg', width: 1920, height: 1080, project: 'cli-manager' },
+      { id: 'fair-update', title: 'Actualización de FAIR', body: 'Video de producto que resume la actualización en unos dos minutos: inspecciones, asistencia, nóminas y declaraciones.', src: '/media/video/fair-update-478a236917.mp4', poster: '/media/image/fair-update-poster-2cff77b809.jpg', width: 1920, height: 1080, project: 'fair' },
+      { id: 'artifact-dock-promo', title: 'Conoce Artifact Dock', body: 'Las explicaciones de los agentes se abren en una pestaña al lado y las anteriores quedan en una barra lateral.', src: '/media/video/artifact-dock-promo-2afd6de51f.mp4', poster: '/media/image/artifact-dock-poster-c71167bdfa.jpg', width: 1920, height: 1080 },
+      { id: 'climanager-orchestrator', title: 'Dirigir sesiones de IA', body: 'Una sesión de Claude abre otra por repositorio, reparte el trabajo y reúne los resultados en una tabla.', src: '/media/video/climanager-orchestrator-506f3e6ecd.mp4', poster: '/media/image/climanager-orchestrator-poster-0feaec530c.jpg', width: 1280, height: 720, project: 'cli-manager' },
+    ],
   },
   timeline: {
     title: 'Trayectoria',

@@ -12,7 +12,7 @@ import Figure from '../Figure';
 import Rich from '../Rich';
 import { ArtifactTileCard, SimilarCard } from './Cards';
 import { DetailTabs, Tip, type TabPanel } from './DetailClient';
-import { IconClose, IconExternal } from './icons';
+import { IconClose, IconCode, IconExternal } from './icons';
 import { BackToList } from './RoleClient';
 import Shell from './Shell';
 import { isMediaSrc } from '@/content/images';
@@ -39,13 +39,14 @@ type Model = {
   paragraphs: string[];
   gallery: Shot[];
   isProject: boolean;
+  repo?: string;
 };
 
 function fromProject(p: Project): Model {
   return {
     slug: p.id, name: p.name, kicker: p.context, cover: p.cover, tagline: p.tagline, summary: p.summary, facts: p.facts,
     links: p.links ?? [], parts: p.parts ?? [], improvements: p.improvements, quotes: p.quotes ?? [], lesson: p.lesson,
-    paragraphs: [], gallery: p.gallery ?? [], isProject: true,
+    paragraphs: [], gallery: p.gallery ?? [], isProject: true, repo: p.repo,
   };
 }
 
@@ -53,7 +54,7 @@ function fromEntry(e: WorkEntry): Model {
   return {
     slug: e.slug, name: e.name, kicker: e.meta, cover: e.shot, summary: e.body, facts: e.detail.facts,
     links: e.detail.links ?? [], parts: [], improvements: undefined, quotes: [], lesson: undefined,
-    paragraphs: e.detail.paragraphs, gallery: [], isProject: false,
+    paragraphs: e.detail.paragraphs, gallery: [], isProject: false, repo: e.repo,
   };
 }
 
@@ -236,9 +237,11 @@ export default function TitlePage({ site: docs, locale, project, entry }: { site
           <div className="title-head">
             <p className="title-kicker">{m.kicker}</p>
             <h1 className="title-name">{m.name}</h1>
-            {site && (
+            {(site || m.repo) && (
               <div className="title-actions">
-                <a className="btn btn-primary btn-lg" href={site.href} target="_blank" rel="noreferrer"><IconExternal />{s.openSite}<span className="visually-hidden"> {s.newTab}</span></a>
+                {site && <a className="btn btn-primary btn-lg" href={site.href} target="_blank" rel="noreferrer"><IconExternal />{s.openSite}<span className="visually-hidden"> {s.newTab}</span></a>}
+                {/* 코드 보기 — 본문 repo 칸이 있을 때만(2026-11-10 제보 3cea15e9 · 핀 .project-head) */}
+                {m.repo && <a className={`btn ${site ? 'btn-ghost' : 'btn-primary'} btn-lg`} href={m.repo} target="_blank" rel="noreferrer"><IconCode />{s.viewCode}<span className="visually-hidden"> {s.newTab}</span></a>}
               </div>
             )}
           </div>

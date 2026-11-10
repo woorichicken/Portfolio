@@ -139,7 +139,7 @@ const ko: Content = {
           { value: '5', label: '역할별로 나눈 화면 · 대표·임원·자문·사건 담당·직원' },
         ],
         lesson: {
-          title: '혼자 맡을수록 사용자 관점을 일부러',
+          title: '만드는 쪽일수록 사용자 관점을 일부러',
           body: '사용 가이드를 쓰며 화면의 빈틈을 찾았고 소개 영상을 만들며 **이 제품이 누구의 어떤 업무를 줄이는지 한 문장으로** 정리했습니다.',
         },
         gallery: [
@@ -199,6 +199,7 @@ const ko: Content = {
           { label: 'GitHub', href: 'https://github.com/woorichicken/CLI_manager' },
           { label: 'Product Hunt', href: 'https://www.producthunt.com/products/cli-manager' },
         ],
+        repo: 'https://github.com/woorichicken/CLI_manager',
       },
       {
         id: 'automation',
@@ -215,7 +216,7 @@ const ko: Content = {
         ],
         cover: shot('sym_flow', '사내 문서·QA 플랫폼의 흐름 화면'),
         parts: [
-          { title: 'Symphony', body: '이슈를 받아 문서를 근거로 개발하고, 막히면 슬랙으로 사람을 부르는 데몬을 설계해 혼자 만들었습니다.' },
+          { title: 'Symphony', body: '이슈를 받아 문서를 근거로 개발하고, 막히면 슬랙으로 사람을 부르는 데몬을 설계·개발했고, 대표·사내 개발자와 함께 사내에 펼쳤습니다.' },
           { title: '라쏘런 · 피드백 위젯', body: '문서·테스트케이스·제보를 한 흐름으로 묶는 라쏘런과, 화면 위에서 바로 남기는 피드백 위젯을 만들었습니다.' },
           { title: '사내 전파', body: '2026.07 사내 데모를 열었고, Claude Code 사용법 공유를 정기 모임으로 만들었습니다.' },
         ],
@@ -573,6 +574,25 @@ const ko: Content = {
         shot('early_kmong-fair-devhoon-profile', '크몽 셀러 프로필', '크몽 셀러 "대학생 개발팀, DEV 훈" · 리뷰 5.0'),
       ],
     },
+  },
+  // 오픈소스 · 만든 영상 — 2026-11-10 제보(336f0c01 · 2b371c78). 어느 역할에 보일지는 roles.ts 의 openSource · videos
+  // 영상·포스터는 R2(/media/…) — 주소의 끝 10자는 파일 내용의 지문이라 로컬·운영이 같다(api/content/media)
+  openSource: {
+    items: [
+      { id: 'cli-manager', name: 'CLI Manager', body: 'AI 코딩 세션과 터미널을 작업 폴더별로 묶어 한 화면에서 보는 맥 앱', repo: 'https://github.com/woorichicken/CLI_manager', homepage: 'https://climanager.solhun.com' },
+      { id: 'artifact-dock', name: 'Artifact Dock', body: '에이전트가 만든 HTML 보고서를 뒤쪽 탭에 문서당 하나로 열고 옆 패널에 모아 두는 크롬 확장 + CLI', repo: 'https://github.com/woorichicken/artifact-dock', homepage: 'https://artifact-dock.solhun.com' },
+      { id: 'nightgate', name: 'Nightgate', body: '밤새 도는 코딩 에이전트의 질문 중 제가 정할 것만 남기는 도구 — 판단은 로컬 모델이 합니다', repo: 'https://github.com/woorichicken/nightgate', homepage: 'https://nightgate.solhun.com' },
+      { id: 'framenote', name: 'Framenote', body: '렌더된 영상에 프레임 단위로 메모를 남기면 코딩 에이전트가 그 메모를 바로 받습니다', repo: 'https://github.com/woorichicken/framenote', homepage: 'https://framenote.solhun.com' },
+      { id: 'climanager-session', name: 'climanager-session', body: 'CLI Manager 안에 보이는 터미널 세션을 열고 그 안에서 코딩 에이전트를 돌리는 에이전트 스킬', repo: 'https://github.com/woorichicken/climanager-session' },
+    ],
+  },
+  videos: {
+    items: [
+      { id: 'climanager-demo', title: 'CLI Manager 소개', body: '작업 폴더마다 터미널과 AI 세션을 묶어 두는 모습을 33초에 담았습니다.', src: '/media/video/climanager-demo-3193c41932.mp4', poster: '/media/image/climanager-demo-poster-71790c6e30.jpg', width: 1920, height: 1080, project: 'cli-manager' },
+      { id: 'fair-update', title: 'FAIR 업데이트 소개', body: '현장점검 앱부터 근태·급여·신고까지, 이번 업데이트를 2분 남짓에 담은 제품 소개 영상입니다.', src: '/media/video/fair-update-478a236917.mp4', poster: '/media/image/fair-update-poster-2cff77b809.jpg', width: 1920, height: 1080, project: 'fair' },
+      { id: 'artifact-dock-promo', title: 'Artifact Dock 소개', body: '에이전트가 만든 설명서를 옆 탭에 띄우고, 지난 것까지 사이드바 하나에 모읍니다.', src: '/media/video/artifact-dock-promo-2afd6de51f.mp4', poster: '/media/image/artifact-dock-poster-c71167bdfa.jpg', width: 1920, height: 1080 },
+      { id: 'climanager-orchestrator', title: 'AI 세션 지휘하기', body: 'Claude 세션 하나가 저장소마다 세션을 열어 일을 나누고, 결과를 표 하나로 모읍니다.', src: '/media/video/climanager-orchestrator-506f3e6ecd.mp4', poster: '/media/image/climanager-orchestrator-poster-0feaec530c.jpg', width: 1280, height: 720, project: 'cli-manager' },
+    ],
   },
   timeline: {
     title: '연표',

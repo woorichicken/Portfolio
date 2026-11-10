@@ -25,6 +25,9 @@ const MetricSchema = z.strictObject({ value: text, label: text });
 const QuoteSchema = z.strictObject({ text, who: text });
 const LinkSchema = z.strictObject({ label: text, href: z.string().regex(/^(https?:\/\/|mailto:|\/)/, '링크는 https://, mailto: 또는 / 로 시작합니다') });
 
+/** 바깥 주소(저장소 · 제품 사이트) — https 만 */
+const HttpsUrlSchema = z.string().regex(/^https:\/\/[^\s]+$/, '주소는 https:// 로 시작합니다');
+
 const ImprovementSchema = z.strictObject({
   title: text,
   before: text,
@@ -53,9 +56,24 @@ export const ProjectSchema = z.strictObject({
   lesson: z.strictObject({ title: text, body: text }).optional(),
   gallery: z.array(ShotSchema).optional(),
   links: z.array(LinkSchema).optional(),
+  repo: HttpsUrlSchema.optional(),
 });
 
-export const OtherWorkSchema = z.strictObject({ slug: SlugSchema, name: text, period: text, body: text, shot: ShotSchema, detail: DetailSchema });
+export const OtherWorkSchema = z.strictObject({ slug: SlugSchema, name: text, period: text, body: text, shot: ShotSchema, detail: DetailSchema, repo: HttpsUrlSchema.optional() });
+
+export const OpenSourceRepoSchema = z.strictObject({ id: SlugSchema, name: text, body: text, repo: HttpsUrlSchema, homepage: HttpsUrlSchema.optional() });
+
+export const VideoSchema = z.strictObject({
+  id: SlugSchema,
+  title: text,
+  body: text,
+  // 영상은 R2 에만 둔다 — 저장소(public/)에 넣으면 배포 묶음이 커진다
+  src: z.string().regex(/^\/media\/[^\s]+\.(mp4|webm)$/, '영상 경로는 /media/….mp4 또는 .webm 입니다(pnpm content media 로 올린 주소)'),
+  poster: z.string().regex(/^\/(work|media)\/[^\s]+\.(jpg|jpeg|png|webp)$/, '포스터는 /work/… 또는 /media/… 사진입니다'),
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+  project: SlugSchema.optional(),
+});
 
 export const EarlyWorkSchema = z.strictObject({
   slug: SlugSchema,
@@ -101,6 +119,8 @@ export const ContentSchema = z.strictObject({
       shots: z.array(ShotSchema),
     }),
   }),
+  openSource: z.strictObject({ items: z.array(OpenSourceRepoSchema) }).optional(),
+  videos: z.strictObject({ items: z.array(VideoSchema) }).optional(),
   timeline: z.strictObject({ title: text, items: z.array(z.strictObject({ date: text, text })) }),
   awards: z.strictObject({ title: text, items: z.array(z.strictObject({ date: text, title: text, org: text, body: text })) }),
   contact: z.strictObject({ title: text, body: text, email: z.string().email(), links: z.array(LinkSchema), closing: text }),
@@ -120,6 +140,8 @@ export const RoleDefSchema = z.strictObject({
   others: z.array(SlugSchema),
   early: z.boolean(),
   standaloneArtifacts: z.boolean(),
+  openSource: z.boolean().optional(),
+  videos: z.boolean().optional(),
 });
 
 export const RolesSchema = z.strictObject(Object.fromEntries(ROLE_IDS.map((r) => [r, RoleDefSchema])) as Record<RoleId, typeof RoleDefSchema>);
@@ -153,8 +175,8 @@ export function shapeProblems(content: Record<Locale, Content>): Problem[] {
   return problems;
 }
 
-/** 언어마다 같아야 하는 글자 칸 — 주소·사진 파일 */
-const SAME_ACROSS_LOCALES = new Set(['id', 'slug', 'src', 'width', 'height']);
+/** 언어마다 같아야 하는 글자 칸 — 주소·사진·영상 파일·저장소 */
+const SAME_ACROSS_LOCALES = new Set(['id', 'slug', 'src', 'width', 'height', 'repo', 'homepage', 'poster', 'project']);
 
 function compareShape(a: unknown, b: unknown, path: string, la: Locale, lb: Locale, out: Problem[]) {
   const where = path || '(전체)';
@@ -211,6 +233,15 @@ export function referenceProblems(docs: SiteDocs): Problem[] {
       if (dup.length) problems.push({ path: `roles.${role}.${list}`, message: `같은 항목이 두 번 있습니다: ${dup.join(', ')}` });
     }
   }
+  // 오픈소스·영상 — 목록 안에서 id 가 하나씩, 영상의 project 는 있는 항목을 가리킨다
+  for (const [list, items] of [['openSource', ko.openSource?.items ?? []], ['videos', ko.videos?.items ?? []]] as const) {
+    const ids = items.map((x) => x.id);
+    const dup = ids.filter((id, i) => ids.indexOf(id) !== i);
+    if (dup.length) problems.push({ path: `content.${list}.items`, message: `id 가 두 번 나옵니다: ${dup.join(', ')}` });
+  }
+  (ko.videos?.items ?? []).forEach((v) => {
+    if (v.project && !all.includes(v.project)) problems.push({ path: `content.videos.items[${v.id}].project`, message: `"${v.project}" 는 없는 항목입니다 — 큰 프로젝트 id 나 그 외 slug` });
+  });
   docs.hidden.forEach((id, i) => {
     if (!all.includes(id)) problems.push({ path: `hidden[${i}]`, message: `"${id}" 는 없는 항목입니다` });
   });

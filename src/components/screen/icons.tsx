@@ -99,6 +99,10 @@ export function IconComment() {
 export function IconCaret() {
   return <svg className="caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4z" fill="currentColor" /></svg>;
 }
+/** 코드 — 꺾쇠 둘과 빗금. GitHub 로고를 옮기지 않고 기본 도형으로 그렸다 */
+export function IconCode() {
+  return <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke}><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4.5l-3 15" /></svg>;
+}
 export function IconClose() {
   return <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke}><path d="M6 6l12 12M18 6L6 18" /></svg>;
 }

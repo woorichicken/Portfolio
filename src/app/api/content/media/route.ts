@@ -42,10 +42,16 @@ export const POST = route(async (req) => {
   const size = file.type.startsWith('image/') ? imageSize(bytes) : null;
   if (file.type.startsWith('image/') && !size) throw new OpError(422, 'invalid', '사진 크기를 읽지 못했습니다 — 파일이 깨졌거나 형식이 확장자와 다릅니다');
   const now = new Date();
-  const key = `${now.toISOString().slice(0, 7)}/${name}-${crypto.randomUUID().slice(0, 6)}.${type.ext}`;
+  // 키에 내용의 지문(SHA-256 앞 10자)을 붙인다 — 같은 파일은 어디(로컬·운영)에 몇 번 올려도 같은 주소가 된다.
+  // 그래서 시드(src/content/*.ts)에 운영과 같은 src 를 적어 둘 수 있고, 내용이 바뀌면 주소도 바뀌어 immutable 캐시가 낡지 않는다.
+  // (2026-11-10 전까지는 `YYYY-MM/<이름>-<무작위 6자>` 였다 — 그때 올린 주소는 그대로 산다)
+  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes));
+  const hash = [...digest.slice(0, 5)].map((b) => b.toString(16).padStart(2, '0')).join('');
+  const key = `${file.type.split('/')[0]}/${name}-${hash}.${type.ext}`;
   await (await media()).put(key, bytes, { httpMetadata: { contentType: file.type, cacheControl: 'public, max-age=31536000, immutable' } });
   await db
-    .prepare('INSERT INTO media (key, content_type, size, width, height, uploaded_at, uploaded_by) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)')
+    // 같은 파일을 다시 올리면 같은 키 — 목록에는 마지막으로 올린 때만 남긴다
+    .prepare('INSERT OR REPLACE INTO media (key, content_type, size, width, height, uploaded_at, uploaded_by) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)')
     .bind(key, file.type, file.size, size?.width ?? null, size?.height ?? null, now.toISOString(), actor)
     .run();
   const src = `/media/${key}`;
