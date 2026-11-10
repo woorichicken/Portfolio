@@ -160,14 +160,14 @@ function checkExpect(base: Site, expect: Expect | undefined) {
  */
 export async function write(
   req: Request,
-  meta: { action: Action; summary: string | ((docs: SiteDocs) => string); expect?: Expect },
+  meta: { action: Action; summary: string | ((docs: SiteDocs, base: SiteDocs) => string); expect?: Expect },
   op: (docs: SiteDocs) => SiteDocs,
 ): Promise<Response> {
   const actor = await authorize(req);
   const { db, base } = await openStore();
   checkExpect(base, meta.expect);
   const next = op(base);
-  const summary = typeof meta.summary === 'function' ? meta.summary(next) : meta.summary;
+  const summary = typeof meta.summary === 'function' ? meta.summary(next, base) : meta.summary;
   const result = await writeSite(db, base, next, { action: meta.action, actor, summary });
   const revalidated = result.changeId ? revalidate(affectedPaths(base, next)) : [];
   return ok({ ...result, actor, summary, revalidated });

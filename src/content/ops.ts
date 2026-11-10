@@ -104,6 +104,37 @@ export function editField(docs: SiteDocs, edit: FieldEdit): SiteDocs {
   return next;
 }
 
+/**
+ * 이력 한 줄 — 칸 하나면 그 경로, 객체·목록을 통째로 넣었으면(어드민 「항목 저장」) 그 안에서 바뀐 칸 이름과 언어까지 적는다.
+ * 예: `고침 work.projects[kits] — tagline·summary (ko·en)`. 바뀐 것이 없으면 경로만.
+ */
+export function describeEdit(prev: SiteDocs, next: SiteDocs, edit: FieldEdit): string {
+  const verb = 'unset' in edit ? '지움' : '고침';
+  if ('unset' in edit) return `${verb} ${edit.path} (${(edit.locales ?? LOCALES).join('·')})`;
+  const read = (docs: SiteDocs, l: Locale) => {
+    try {
+      return getAt(docs.content[l], edit.path);
+    } catch {
+      return undefined;
+    }
+  };
+  const keys = new Set<string>();
+  const locales: Locale[] = [];
+  for (const l of LOCALES) {
+    const a = read(prev, l);
+    const b = read(next, l);
+    if (same(a, b)) continue;
+    locales.push(l);
+    const objA = a && typeof a === 'object' && !Array.isArray(a) ? (a as Record<string, unknown>) : null;
+    const objB = b && typeof b === 'object' && !Array.isArray(b) ? (b as Record<string, unknown>) : null;
+    if (objA && objB) for (const k of new Set([...Object.keys(objA), ...Object.keys(objB)])) if (!same(objA[k], objB[k])) keys.add(k);
+    if (!objA && objB) keys.add('(새로)');
+  }
+  const where = locales.length ? locales.join('·') : 'locale' in edit ? edit.locale : Object.keys(edit.values).join('·');
+  const what = keys.size ? ` — ${[...keys].slice(0, 6).join('·')}${keys.size > 6 ? ` 외 ${keys.size - 6}` : ''}` : '';
+  return `${verb} ${edit.path}${what} (${where})`;
+}
+
 export type ItemKind = 'project' | 'other' | 'early';
 type ItemOf<K extends ItemKind> = K extends 'project' ? Project : K extends 'other' ? OtherWork : EarlyWork;
 

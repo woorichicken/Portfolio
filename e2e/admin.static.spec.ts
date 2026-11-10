@@ -20,6 +20,10 @@ test('정적 배포 어드민 — 로그인 · 변경안 · 코멘트', async ({
   await page.getByRole('button', { name: '열기' }).click();
   await expect(page.getByRole('heading', { name: '어드민', level: 1 })).toBeVisible();
   await expect(page.locator('#diff-title')).toContainText('변경안');
+  // 2026-11-10 편집 기능(탭 · 항목 편집 · 오픈소스/영상 · 추가 · 최근 저장)은 저장할 곳이 없는 정적 모드에서 숨긴다
+  await expect(page.getByRole('tablist', { name: '관리' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /편집$/ })).toHaveCount(0);
+  await expect(page.locator('.admin-item-name')).toHaveCount(0);
 
   await page.getByRole('group', { name: '보기' }).getByRole('button', { name: '디자인 엔지니어' }).click();
   await page.locator('li[data-admin-item="ncdigitec"]').getByRole('button', { name: /위로$/ }).click();
