@@ -1,10 +1,17 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isMediaSrc } from '@/content/images';
+import { browsePath } from '@/i18n/config';
 import { FEEDBACK_PASSWORD_HASH, UNLOCK_STORAGE_KEY, isCorrectPassword } from '@/lib/feedback-gate';
-import { IconComment, IconDown, IconEye, IconUp } from '../screen/icons';
+import { IconComment, IconDown, IconEdit, IconEye, IconUp } from '../screen/icons';
+import AddProject from './AddProject';
+import { api, type ApiError, type Versions } from './admin-api';
+import HistoryPanel, { type ChangeRow } from './HistoryPanel';
+import ItemEditor, { SiteLinks } from './ItemEditor';
+import RowsPanel from './RowsPanel';
 import { canSendToLasso, sendComment, type SendResult } from './send-comment';
 
 // 어드민(/admin) — 나를 위한 화면. 무엇이 어느 역할에 몇 번째로 보이는지 한눈에 보고, 순서·숨김을 바꿔 「저장」하면 바로 사이트에 반영된다.
@@ -15,20 +22,29 @@ import { canSendToLasso, sendComment, type SendResult } from './send-comment';
 // D1 이 없는 배포(Vercel · CONTENT_SOURCE=static)에서는 저장할 수 없어서, 예전처럼 변경안 코드만 보여 주고 로그인도 예전 그대로
 // 브라우저 해시 비교다(API 를 부르지 않는다 — Vercel 에는 Cloudflare 컨텍스트가 없어 API 가 실패한다. 수정 1회차 P1).
 // 코멘트는 이 브라우저에 쌓고, 수집 주소가 있는 배포본에서는 라쏘런에도 보낸다(바뀐 것 없음).
+//
+// 2026-11-10 「실제로 관리하는 화면」 — 배치 탭 위에 탭 넷을 더했다(모두 같은 콘텐츠 API, 새 API 없음):
+//   항목 편집 패널(ItemEditor — 목록에서 항목을 누르면) · 오픈소스 · 만든 영상(RowsPanel) · 프로젝트 추가(AddProject) · 최근 저장(HistoryPanel — 저장마다 되돌리기).
+// 정적 모드(readOnly)에서는 편집 기능을 숨긴다 — 저장할 곳이 없다.
 
 export type AdminItem = { slug: string; name: string; kicker: string; cover: string; kind: 'project' | 'other' | 'early' };
 type RoleConfig = { name: string; featured: string; projects: string[]; others: string[] };
 type Layout = { roles: Record<string, RoleConfig>; hidden: string[] };
-type Versions = Record<string, number>;
 type Comment = { text: string; at: string; sent: SendResult };
-type ChangeRow = { changeId: string; action: string; actor: string; summary: string; at: string; undoneBy: string | null };
-type ApiError = { code: string; message: string; problems?: { path: string; message: string }[] };
+type Tab = 'layout' | 'openSource' | 'videos' | 'add' | 'history';
 type Status = { kind: 'idle' | 'busy' | 'saved' | 'error'; text?: string; problems?: ApiError['problems'] };
 
 const COMMENTS_KEY = 'solhun:admin-comments';
 const ALL_VIEW = '*';
 
 const KIND_LABEL: Record<AdminItem['kind'], string> = { project: '큰 프로젝트', other: '그 외', early: '이전' };
+const TABS: { id: Tab; label: string }[] = [
+  { id: 'layout', label: '항목·배치' },
+  { id: 'openSource', label: '오픈소스' },
+  { id: 'videos', label: '만든 영상' },
+  { id: 'add', label: '프로젝트 추가' },
+  { id: 'history', label: '최근 저장' },
+];
 const SENT_LABEL: Record<SendResult, string> = { sent: '라쏘런에 보냄', queued: '라쏘런 대기 중', disabled: '이 브라우저에만', failed: '보내기 실패 — 이 브라우저에만' };
 const ACTOR_LABEL: Record<string, string> = { admin: '어드민', agent: '에이전트', seed: '시드' };
 
@@ -42,18 +58,6 @@ function load<T>(key: string, fallback: T): T {
 }
 function save(key: string, value: unknown) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
-}
-
-/** 콘텐츠 API 부르기 — 같은 출처라 쿠키가 따라간다. 응답은 늘 { ok, … } 또는 { ok:false, error } */
-async function api<T>(path: string, init?: RequestInit): Promise<{ ok: true; data: T } | { ok: false; status: number; error: ApiError }> {
-  try {
-    const res = await fetch(path, { ...init, headers: { 'content-type': 'application/json', ...init?.headers }, credentials: 'same-origin' });
-    const body = (await res.json().catch(() => null)) as { ok?: boolean; error?: ApiError } | null;
-    if (res.ok && body?.ok) return { ok: true, data: body as T };
-    return { ok: false, status: res.status, error: body?.error ?? { code: 'network', message: `응답을 읽지 못했습니다(${res.status})` } };
-  } catch {
-    return { ok: false, status: 0, error: { code: 'network', message: '서버에 닿지 못했습니다' } };
-  }
 }
 
 type Summary = { versions: Versions; roles: Record<string, RoleConfig>; hidden: string[] };
@@ -73,6 +77,18 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
   const [view, setView] = useState<string>(ALL_VIEW);
   const [openComment, setOpenComment] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [tab, setTab] = useState<Tab>('layout');
+  /** 한 번이라도 연 탭 — 처음 열 때 붙이고, 그 뒤로는 숨기기만 한다(떼면 쓰던 것이 사라진다 — 수정 1회차 P2) */
+  const [opened, setOpened] = useState<Set<Tab>>(() => new Set<Tab>(['layout']));
+  /** 저장 안 한 것이 있는 곳 — 탭 점 표시와 떠나기 전 묻기(beforeunload)에 쓴다 */
+  const [dirtyParts, setDirtyParts] = useState<Record<string, boolean>>({});
+  const markDirty = useCallback((part: string, dirty: boolean) => setDirtyParts((p) => (Boolean(p[part]) === dirty ? p : { ...p, [part]: dirty })), []);
+  const dirtyOss = useCallback((d: boolean) => markDirty('openSource', d), [markDirty]);
+  const dirtyVideos = useCallback((d: boolean) => markDirty('videos', d), [markDirty]);
+  const dirtyAdd = useCallback((d: boolean) => markDirty('add', d), [markDirty]);
+  const dirtyEditor = useCallback((d: boolean) => markDirty('editor', d), [markDirty]);
+  const [editing, setEditing] = useState<AdminItem | null>(null);
+  const router = useRouter();
 
   /** 서버의 지금 배치·버전·최근 저장을 불러와 화면을 그것으로 맞춘다(바꾸던 것은 버린다) */
   const refresh = useCallback(async () => {
@@ -88,6 +104,17 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
     setVersions(summary.data.versions);
     if (history.ok) setChanges(history.data.changes);
   }, []);
+
+  /** 다른 탭(항목·행·추가·되돌리기)에서 저장한 뒤 — 이력·버전을 새로 읽고, 서버가 다시 그린 /admin 의 목록(이름·사진·새 항목)을 받는다.
+   *  배치를 고치던 중이면 그 변경은 지우지 않는다(이력만 새로) — 그 상태로 「저장」하면 버전이 달라 409 로 알려 준다 */
+  const layoutDirty = useRef(false);
+  const afterWrite = useCallback(async () => {
+    if (layoutDirty.current) {
+      const history = await api<{ changes: ChangeRow[] }>('/api/content/history?limit=6');
+      if (history.ok) setChanges(history.data.changes);
+    } else await refresh();
+    router.refresh();
+  }, [refresh, router]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 브라우저 저장소는 붙은 뒤에만 읽는다(서버 HTML 과 첫 그림을 맞추려고)
@@ -112,6 +139,20 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
   const byId = useMemo(() => Object.fromEntries(items.map((i) => [i.slug, i])), [items]);
   const roleIds = Object.keys(draft.roles).filter((r) => r !== 'all');
   const changed = JSON.stringify(draft) !== JSON.stringify(source);
+  useEffect(() => {
+    layoutDirty.current = changed;
+  }, [changed]);
+  const anyDirty = changed || Object.values(dirtyParts).some(Boolean);
+  // 저장 안 한 것이 있으면 새로고침·닫기·주소 이동 전에 브라우저가 묻는다(화면 안 확인창은 편집 패널 닫기에만 — 브라우저 confirm() 은 쓰지 않는다)
+  useEffect(() => {
+    if (!anyDirty || readOnly) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [anyDirty, readOnly]);
 
   if (unlocked === null) return null;
   if (!unlocked) return <AdminGate readOnly={readOnly} staticMode={staticMode} onUnlock={() => { setUnlocked(true); if (!staticMode) refresh(); }} />;
@@ -211,7 +252,11 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
       <li key={item.slug} className="admin-item" data-hidden={isHidden || (roleView && !inRole) ? '' : undefined} data-admin-item={item.slug}>
         <div className="admin-thumb"><Image src={item.cover} unoptimized={isMediaSrc(item.cover)} alt="" width={192} height={120} sizes="96px" /></div>
         <div>
-          <h3>{roleView && inRole ? `${index + 1}. ` : ''}{item.name}{roleView?.featured === item.slug ? ' · 대표작' : ''}</h3>
+          <h3>
+            {roleView && inRole ? `${index + 1}. ` : ''}
+            {readOnly ? item.name : <button type="button" className="admin-item-name" onClick={() => setEditing(item)}>{item.name}</button>}
+            {roleView?.featured === item.slug ? ' · 대표작' : ''}
+          </h3>
           <p>{KIND_LABEL[item.kind]} · {item.kicker}{isHidden ? ' · 숨김' : ''}</p>
           <div className="admin-roles">
             {roleIds.map((r) => {
@@ -232,6 +277,9 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
           ) : (
             <button type="button" className="icon-btn" aria-pressed={!isHidden} aria-label={`${item.name} ${isHidden ? '보이기' : '숨기기'}`} onClick={() => toggleHidden(item.slug)}><IconEye off={isHidden} /></button>
           )}
+          {!readOnly && (
+            <button type="button" className="icon-btn" aria-label={`${item.name} 편집`} onClick={() => setEditing(item)}><IconEdit /></button>
+          )}
           <button type="button" className="icon-btn" aria-expanded={openComment === item.slug} aria-label={`${item.name} 코멘트 ${itemComments.length}개`} onClick={() => setOpenComment(openComment === item.slug ? null : item.slug)}>
             <IconComment />
           </button>
@@ -248,9 +296,42 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
         역할마다 무엇을 몇 번째에 보여 줄지 고르고, 항목마다 메모를 남깁니다.
         {readOnly
           ? ' 이 배포에는 저장소(D1)가 없어 저장할 수 없습니다 — 아래 변경안 코드를 저장소에 옮겨야 반영됩니다.'
-          : ' 「저장」을 누르면 바로 방문자 화면에 반영되고, 잘못 저장했으면 「마지막 저장 되돌리기」로 돌아갑니다.'}
+          : ' 항목 이름(또는 연필)을 누르면 문구·사진을 세 언어로 고칩니다. 「저장」하면 바로 방문자 화면에 반영되고, 잘못 저장했으면 「최근 저장」에서 그 저장을 되돌립니다.'}
         {canSendToLasso ? ' 코멘트는 라쏘런에도 보냅니다.' : ' 이 빌드에는 라쏘런 수집 주소가 없어 코멘트는 이 브라우저에만 남습니다.'}
       </p>
+      {!readOnly && (
+        <div className="seg admin-tabs" role="tablist" aria-label="관리">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              role="tab"
+              id={`tab-${t.id}`}
+              aria-selected={tab === t.id}
+              aria-controls={`panel-${t.id}`}
+              data-dirty={(t.id === 'layout' ? changed : dirtyParts[t.id]) ? '' : undefined}
+              title={(t.id === 'layout' ? changed : dirtyParts[t.id]) ? '저장 안 한 것이 있습니다' : undefined}
+              onClick={() => {
+                setTab(t.id);
+                setOpened((o) => (o.has(t.id) ? o : new Set(o).add(t.id)));
+              }}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      )}
+      {!readOnly && (
+        <>
+          {/* 탭 패널은 한 번 열면 계속 붙여 두고 hidden 으로만 숨긴다 — 탭을 옮겨도 쓰던 것이 남는다 */}
+          {opened.has('openSource') && <div role="tabpanel" id="panel-openSource" aria-labelledby="tab-openSource" hidden={tab !== 'openSource'}><RowsPanel which="openSource" items={items} onSaved={afterWrite} active={tab === 'openSource'} onDirty={dirtyOss} /></div>}
+          {opened.has('videos') && <div role="tabpanel" id="panel-videos" aria-labelledby="tab-videos" hidden={tab !== 'videos'}><RowsPanel which="videos" items={items} onSaved={afterWrite} active={tab === 'videos'} onDirty={dirtyVideos} /></div>}
+          {opened.has('add') && <div role="tabpanel" id="panel-add" aria-labelledby="tab-add" hidden={tab !== 'add'}><AddProject roleNames={Object.fromEntries(Object.entries(draft.roles).map(([id, r]) => [id, r.name]))} onSaved={afterWrite} onDirty={dirtyAdd} /></div>}
+          {/* 최근 저장은 쓰는 것이 없어 열 때마다 새로 읽는다 */}
+          {tab === 'history' && <div role="tabpanel" id="panel-history" aria-labelledby="tab-history"><HistoryPanel onChanged={afterWrite} /></div>}
+        </>
+      )}
+      <div role={readOnly ? undefined : 'tabpanel'} id="panel-layout" aria-labelledby={readOnly ? undefined : 'tab-layout'} hidden={!readOnly && tab !== 'layout'}>
       <div className="admin-bar">
         <div className="seg" role="group" aria-label="보기">
           <button type="button" aria-pressed={view === ALL_VIEW} onClick={() => setView(ALL_VIEW)}>전체 항목</button>
@@ -262,7 +343,7 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
       <ol className="admin-list">{shown.map((item, i) => row(item, i, true))}</ol>
       {roleView && notInRole.length > 0 && (
         <>
-          <h2 className="panel-h" style={{ marginTop: 28 }}>이 역할에 없는 항목</h2>
+          <h2 className="panel-h admin-subhead">이 역할에 없는 항목</h2>
           <ul className="admin-list">{notInRole.map((item, i) => row(item, i, false))}</ul>
         </>
       )}
@@ -283,6 +364,7 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
             <p role="status" aria-live="polite" data-admin-status={status.kind}>
               {status.text ?? (changed ? '아직 저장하지 않았습니다.' : '바꾼 것이 없습니다.')}
             </p>
+            {status.kind === 'saved' && <SiteLinks paths={roleView ? [browsePath('ko', view)] : ['/']} label="반영 확인:" />}
             {status.problems && status.problems.length > 0 && (
               <ul className="admin-problems">{status.problems.slice(0, 8).map((p, i) => <li key={i}><code>{p.path}</code> {p.message}</li>)}</ul>
             )}
@@ -294,7 +376,7 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
             </div>
             {changes.length > 0 && (
               <details className="admin-history">
-                <summary>최근 저장 {changes.length}건</summary>
+                <summary>최근 저장 {changes.length}건 — 저장마다 되돌리기는 「최근 저장」 탭</summary>
                 <ol>
                   {changes.map((c) => (
                     <li key={c.changeId} data-undone={c.undoneBy ? '' : undefined}>
@@ -308,6 +390,10 @@ export default function Admin({ items, roles, hidden, staticMode = false }: { it
           </>
         )}
       </section>
+      </div>
+      {editing && !readOnly && (
+        <ItemEditor key={editing.slug} id={editing.slug} name={editing.name} kind={editing.kind} onClose={() => setEditing(null)} onSaved={afterWrite} onDirty={dirtyEditor} />
+      )}
     </div>
   );
 }

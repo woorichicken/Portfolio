@@ -106,3 +106,7 @@ export function IconCode() {
 export function IconClose() {
   return <svg viewBox="0 0 24 24" aria-hidden="true" {...stroke}><path d="M6 6l12 12M18 6L6 18" /></svg>;
 }
+/** 연필 — 어드민 「편집」 */
+export function IconEdit() {
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4.5L15.5 5a2.1 2.1 0 0 1 3 3L8 18.5z" /><path d="M13.5 7l3 3" /></svg>;
+}

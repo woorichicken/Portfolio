@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { LOCALES, type Locale } from '@/i18n/config';
 import type { Shot } from './images';
 import { ROLE_IDS, type RoleDef, type RoleId } from './roles';
+import { SLUG_MESSAGE, SLUG_RE } from './slug';
 import type { Content } from './types';
 
 // types.ts 의 모양을 그대로 옮긴 zod 스키마. D1 에 쓰기 전에 매번 이걸로 검사한다.
@@ -39,7 +40,7 @@ const ImprovementSchema = z.strictObject({
 const DetailSchema = z.strictObject({ facts: z.array(FactSchema), paragraphs: z.array(text), links: z.array(LinkSchema).optional() });
 
 /** 주소에 들어가는 이름 — 소문자·숫자·하이픈 */
-export const SlugSchema = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'id 는 소문자·숫자·하이픈만 씁니다(예: my-project)');
+export const SlugSchema = z.string().regex(SLUG_RE, SLUG_MESSAGE);
 
 export const ProjectSchema = z.strictObject({
   id: SlugSchema,

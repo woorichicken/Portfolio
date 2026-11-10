@@ -1,4 +1,4 @@
-import { editField, type FieldEdit } from '@/content/ops';
+import { describeEdit, editField, type FieldEdit } from '@/content/ops';
 import { readJson, route, write, type Expect } from '@/lib/content-api';
 
 // PATCH /api/content/field — 본문 칸 하나 바꾸기
@@ -9,6 +9,6 @@ export const dynamic = 'force-dynamic';
 
 export const PATCH = route(async (req) => {
   const body = await readJson<FieldEdit & { expect?: Expect }>(req);
-  const where = 'locale' in body ? body.locale : 'values' in body ? Object.keys(body.values).join('·') : '세 언어';
-  return write(req, { action: 'set', summary: `${'unset' in body ? '지움' : '고침'} ${body.path} (${where})`, expect: body.expect }, (docs) => editField(docs, body));
+  // 이력 한 줄 — 객체를 통째로 넣으면(어드민 항목 저장) 그 안에서 바뀐 칸 이름과 언어까지(describeEdit)
+  return write(req, { action: 'set', summary: (next, base) => describeEdit(base, next, body), expect: body.expect }, (docs) => editField(docs, body));
 });

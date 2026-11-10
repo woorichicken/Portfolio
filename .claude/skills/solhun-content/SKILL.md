@@ -63,6 +63,22 @@ scripts/with-workers.sh pnpm -s content get     # 또는: 띄우고 → 명령 �
 
 종류 — 큰 프로젝트(`project`, id: kits · fair · cli-manager · automation · purple · porterx · ncdigitec), 「그 외」(`other`, design-atlas 등), 「이전」(`early`, debatetimer 등). 역할: `design` · `product` · `ax` · `maker` · `all`.
 
+## 1.1 어드민에서 하는 법 — 사람이 직접 고칠 때
+
+사람이 「어드민에서 하고 싶다」고 하면 명령 대신 이걸 안내한다. 같은 API 라 **어드민 저장도 `pnpm content history` 에 `admin` 으로 남고, `undo <changeId>` 로 되돌릴 수 있다**(반대로 에이전트 저장도 어드민 「최근 저장」 탭에 「에이전트」로 보인다).
+
+| 하려는 일 | 어드민(`/admin`, 피드백 모드와 같은 비밀번호) |
+|---|---|
+| 문구(세 언어) · 사진 · alt · GitHub 보러가기 | 목록에서 **항목 이름(또는 연필)** → 편집 패널에서 ko·en·es 나란히 고치고 「저장」. 사진은 칸의 「… 바꾸기」로 파일을 올린다 |
+| 오픈소스 · 만든 영상 행 | 「오픈소스」·「만든 영상」 탭 — 줄 추가·빼기·순서 → 「… 저장」 · 「보일 역할」 체크는 누르면 바로 저장 |
+| 「그 외」 프로젝트 추가 | 「프로젝트 추가」 탭 — slug · 넣을 역할 · 칸 → 「추가」(add-project 와 같은 검사) |
+| 되돌리기 | 「최근 저장」 탭 — 저장마다 「되돌리기」 · 되돌리기 줄은 「다시 하기」 |
+| 배치 · 숨김 · 코멘트 | 「항목·배치」 탭(예전 그대로) |
+
+- 422(세 언어 모양 · https 아님 등)는 그 칸 바로 아래에 언어와 함께 뜬다. 409 는 그 사이 다른 저장이 있었다는 뜻 — 패널을 닫고 다시 연다.
+- 어드민에 아직 없는 것(큰 프로젝트 추가 · 「이전」 추가 · 역할 이름·소개 글 · 대표작(빌보드) 바꾸기 · 프로젝트 밖 문구 hero·contact 등)은 1절 명령으로 한다.
+- 화면 설명과 API 대응표: `docs/content-api.md` 「어드민에서 하는 법」.
+
 ## 2. 경로 쓰는 법
 
 - `<id>.<칸>` 으로 시작하면 CLI 가 API 경로로 바꾼다: `kits.tagline` → `work.projects[kits].tagline`, `design-atlas.body` → `others.items[design-atlas].body`.
@@ -83,7 +99,7 @@ scripts/with-workers.sh pnpm -s content get     # 또는: 띄우고 → 명령 �
 
 ```bash
 pnpm content add-project --template other > new.json      # 「그 외」 틀(큰 프로젝트는 --template project)
-# new.json 을 고친다: slug(주소 · 소문자-하이픈) 세 언어 같게, 이름·한 줄·상세 문단, roles(넣을 역할과 위치)
+# new.json 을 고친다: slug(주소 · 영문 소문자로 시작 · 소문자-숫자-하이픈 — 숫자로 시작하면 422) 세 언어 같게, 이름·한 줄·상세 문단, roles(넣을 역할과 위치)
 pnpm content media ./cover.jpg --name my-new-work          # 표지 사진이 새것이면 먼저 올리고 나온 shot 을 세 언어 shot 에 (alt 만 언어마다)
 pnpm content add-project new.json                          # 검사 → 저장 → /projects/<slug> 와 그 역할 화면이 바로 생긴다
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8797/projects/my-new-work   # 200 확인
