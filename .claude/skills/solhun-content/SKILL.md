@@ -1,6 +1,6 @@
 ---
 name: solhun-content
-description: solhun.com 포트폴리오(이 저장소)의 본문을 콘텐츠 API 로 읽고 고친다 — 문구 수정(세 언어) · 프로젝트 추가 · 역할 화면 배치·대표작 · 숨김 · 사진/영상 올리기 · 되돌리기. 저장하면 바로 사이트에 반영된다(D1 + Cloudflare Workers). 사용자가 "포트폴리오 문구 고쳐줘", "solhun.com 에 프로젝트 추가", "이 프로젝트 맨 앞으로", "대표작 바꿔줘", "이거 숨겨줘", "사진 바꿔줘", "방금 거 되돌려", "영어판 문구도", "content API" 라고 하면 — 저장소 코드를 몰라도 — 이 스킬 하나만 읽고 `pnpm content` 로 한다. 본문 파일(src/content/*.ts)을 직접 고치지 않는다.
+description: solhun.com 포트폴리오(이 저장소)의 본문을 콘텐츠 API 로 읽고 고친다 — 문구 수정(세 언어) · 프로젝트 추가 · 역할 화면 배치·대표작 · 숨김 · 오픈소스 행 · 만든 영상 행 · 「코드 보기」(repo) · 사진/영상 올리기 · 되돌리기. 저장하면 바로 사이트에 반영된다(D1 + Cloudflare Workers). 사용자가 "포트폴리오 문구 고쳐줘", "solhun.com 에 프로젝트 추가", "이 프로젝트 맨 앞으로", "대표작 바꿔줘", "이거 숨겨줘", "사진 바꿔줘", "방금 거 되돌려", "영어판 문구도", "오픈소스 저장소 추가", "영상 올려줘", "코드 보기 링크", "content API" 라고 하면 — 저장소 코드를 몰라도 — 이 스킬 하나만 읽고 `pnpm content` 로 한다. 본문 파일(src/content/*.ts)을 직접 고치지 않는다.
 ---
 
 # solhun-content — 포트폴리오 본문 고치기
@@ -11,10 +11,10 @@ description: solhun.com 포트폴리오(이 저장소)의 본문을 콘텐츠 AP
 
 ## 0. 시작 전 — 어디에 쓰나
 
-| 대상 | 주소 | 토큰 | 상태(2026-11-08) |
+| 대상 | 주소 | 토큰 | 상태(2026-11-10) |
 |---|---|---|---|
 | 로컬(기본) | `http://127.0.0.1:8797` | `.dev.vars` 의 `CONTENT_API_TOKEN`(자동으로 읽는다) | 쓸 수 있다 |
-| 운영 | `--target prod` = `https://www.solhun.com` | `CONTENT_API_TOKEN` 환경변수 또는 `~/.config/portfolio/content-api-token`(0600) | **아직 없다** — Cloudflare 토큰을 받고 도메인을 옮긴 뒤부터(docs/content-api.md 「토큰 받은 뒤 할 일」). 그 전에는 운영이 Vercel 정적 빌드라 `/api/content` 가 없다 |
+| 운영 | `--target prod` = `https://www.solhun.com` | `CONTENT_API_TOKEN` 환경변수 또는 `~/.config/portfolio/content-api-token`(0600) | **쓸 수 있다** — 2026-11-09 Cloudflare Workers 로 옮겼다(docs/DEPLOY.md 8절). 운영에 쓰면 바로 사이트에 보인다 — 사람이 시킨 것만 쓰고, 쓴 뒤 출력의 `undo` 명령을 보고에 남긴다 |
 
 로컬 서버 띄우기(처음 한 번은 D1 을 만든다):
 
@@ -51,6 +51,13 @@ scripts/with-workers.sh pnpm -s content get     # 또는: 띄우고 → 명령 �
 | 최근 저장 보기 | `pnpm content history --limit 10` |
 | 마지막 저장 되돌리기 | `pnpm content undo` (부를 때마다 한 칸씩 뒤로) |
 | 특정 저장 되돌리기 · 되돌린 걸 다시 하기 | `pnpm content undo <changeId>` (되돌리기의 changeId 를 주면 다시 하기) |
+| 오픈소스 행 — 저장소 하나 글 고치기 | `pnpm content set 'openSource.items[nightgate].body' "…" --locale ko` |
+| 오픈소스 행 — 저장소 추가(세 언어 같이 · 번호 = 지금 개수) | `pnpm content set 'openSource.items[5]' --as-json --ko '{"id":"…","name":"…","body":"…","repo":"https://github.com/…","homepage":"https://…"}' --en '…' --es '…'` (homepage 는 빼도 된다) |
+| 오픈소스 행 — 저장소 빼기 | `pnpm content set 'openSource.items[<id>]' --unset` |
+| 오픈소스·영상 행 켜고 끄기(역할마다) | `pnpm content role maker --open-source on\|off` · `pnpm content role design --videos on\|off` · 지금 값 `get --doc roles --path maker.openSource` |
+| 영상 제목·설명 고치기 | `pnpm content set 'videos.items[fair-update].title' "…" --locale ko` |
+| 영상 추가 | 5.1절 |
+| 「코드 보기」 단추(빌보드·상세 머리) | `pnpm content set kits.repo --ko <URL> --en <URL> --es <URL>` (세 언어 같은 주소) · 빼기 `set kits.repo --unset` |
 | 운영에 하기 | 같은 명령 끝에 `--target prod` (0절 상태 확인) |
 | 결과를 기계로 읽기 | 아무 명령에 `--json` |
 
@@ -60,7 +67,8 @@ scripts/with-workers.sh pnpm -s content get     # 또는: 띄우고 → 명령 �
 
 - `<id>.<칸>` 으로 시작하면 CLI 가 API 경로로 바꾼다: `kits.tagline` → `work.projects[kits].tagline`, `design-atlas.body` → `others.items[design-atlas].body`.
 - 목록은 `[번호]`(0부터) 또는 `[id]`: `kits.improvements[0].title`, `kits.gallery[2].alt`.
-- 프로젝트 밖은 맨 위 칸 이름으로: `meta.description` · `hero.lead` · `contact.body` · `timeline.items[3].text` · `awards.items[0].title`.
+- 프로젝트 밖은 맨 위 칸 이름으로: `meta.description` · `hero.lead` · `contact.body` · `timeline.items[3].text` · `awards.items[0].title` · `openSource.items[nightgate].body` · `videos.items[fair-update].title`.
+- 대괄호가 든 경로는 따옴표로 감싼다(zsh 가 `[…]` 를 파일 이름 패턴으로 읽는다).
 - 칸 이름은 `src/content/types.ts` 가 정본이다. 모르는 칸 이름은 422 로 막힌다(오타가 조용히 무시되지 않는다).
 
 ## 3. 세 언어 규칙 — 왜 422 가 나나
@@ -69,7 +77,7 @@ scripts/with-workers.sh pnpm -s content get     # 또는: 띄우고 → 명령 �
 
 - 글자 고치기는 한 언어씩 해도 된다.
 - **없던 칸을 넣거나 지우기, 목록 길이 바꾸기(갤러리 한 장 추가 등), 프로젝트 추가**는 세 언어를 한 번에 해야 통과한다 → `--ko --en --es` 또는 `add-project` 파일에 세 언어.
-- 사진 파일(`src`·`width`·`height`)과 `id`·`slug` 는 세 언어가 같아야 한다(`alt` 는 언어마다).
+- 사진 파일(`src`·`width`·`height`)과 `id`·`slug`, 그리고 `repo`·`homepage`·영상 `poster`·`project` 는 세 언어가 같아야 한다(`alt`·`body`·`title` 은 언어마다).
 
 ## 4. 프로젝트 추가 — 순서
 
@@ -88,14 +96,32 @@ curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8797/projects/my-new-w
 - 올리기: `pnpm content media <파일> [--name 이름]` — jpg·png·webp·gif(10MB) · mp4·webm(90MB). R2 에 올라가 `/media/<키>` 로 나간다(영상은 Range 로 넘겨 보기 됨).
 - 응답의 `shot`(src·width·height)을 칸에 넣는다. 예 — 퍼플 표지 바꾸기:
   ```bash
-  S=/media/2026-11/kits-round-5e6af0.jpg   # media 가 찍어 준 src
+  S=/media/image/kits-round-1a2b3c4d5e   # media 가 찍어 준 src(아래 예시는 자리표시 — 꼭 찍힌 값을 쓴다)
   pnpm content set purple.cover --as-json \
     --ko "{\"src\":\"$S\",\"width\":1400,\"height\":900,\"alt\":\"퍼플 표지\"}" \
     --en "{\"src\":\"$S\",\"width\":1400,\"height\":900,\"alt\":\"Purple cover\"}" \
     --es "{\"src\":\"$S\",\"width\":1400,\"height\":900,\"alt\":\"Portada de Purple\"}"
   ```
+- 주소는 `/media/<image|video>/<이름>-<내용 지문 10자>.<확장자>` — **같은 파일은 로컬·운영 어디에 몇 번 올려도 같은 주소**다(2026-11-10~. 그 전에 올린 `/media/2026-11/…` 주소도 그대로 산다).
 - 올리기만으로는 본문이 안 바뀐다(되돌리기 대상도 아니다). 칸에 넣는 순간부터 이력에 남는다.
 - `/media/` 사진은 next/image 최적화를 건너뛴다(원본 그대로) — 크기를 1400px 안팎으로 줄여서 올린다.
+
+### 5.1 영상 행에 영상 하나 더하기
+
+역할 화면 「만든 영상」 행(design · all 에서 켜 있다). 자동재생하지 않고, 누르기 전에는 포스터만 받는다.
+
+```bash
+ffmpeg -v error -ss 12 -i clip.mp4 -frames:v 1 -q:v 3 clip-poster.jpg   # 포스터 — 첫 장면 말고 영상을 대표하는 장면(초를 골라서)
+ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 clip.mp4   # 1920,1080
+pnpm content media clip.mp4 --name my-clip            # → /media/video/my-clip-….mp4 (90MB 까지)
+pnpm content media clip-poster.jpg --name my-clip-poster
+pnpm content get --doc ko --path videos.items        # 지금 개수 = 새 번호
+pnpm content set 'videos.items[4]' --as-json \
+  --ko '{"id":"my-clip","title":"…","body":"…","src":"/media/video/…","poster":"/media/image/…","width":1920,"height":1080,"project":"cli-manager"}' \
+  --en '{…같은 id·src·poster·width·height·project, 글만 영어…}' --es '{…}'
+```
+
+`project` 는 선택 — 있는 항목 id 면 카드 아래 「프로젝트 보기 · 이름」 링크가 붙는다. 순서를 바꾸려면 `set videos --as-json` 으로 목록을 통째로 넣는다.
 
 ## 6. 반영 확인
 
@@ -125,3 +151,7 @@ curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8797/projects/my-new-w
 - 같은 날 2회차: `get --doc ko --path contact.body`, `role --remove motion-meme`(화면에서 빠짐 0회) → undo, `role ax --order`(같은 순서 = 「바뀐 것 없음」) · `--others-order` → undo,
   `set … --unset`, `undo --json`, 다시 하기(`undo <되돌리기 id>`) 뒤 기본 `undo` 두 번이 한 칸씩 뒤로 감(이 회차에서 고친 버그 — 전에는 오래된 저장으로 건너뛰어 409), `pnpm cf:preview` 4초 기동.
   기록: 배치 폴더 `~/Downloads/_batches/task-portfolio-d1-1108/review/Portfolio/REPORT.md`.
+- 2026-11-10 로컬 Workers 에서 1절 표의 새 줄을 차례로 돌렸다 — `get --doc ko --path 'openSource.items[nightgate]'` · `get --doc roles --path maker.openSource`(true),
+  `set 'openSource.items[nightgate].body' --locale ko` → 화면 1회 → `undo`, `set 'openSource.items[5]'` 세 언어 → 화면에 저장소 링크 → `--unset` → 0회, 같은 추가를 ko 만 → 422(목록 길이),
+  `set 'videos.items[fair-update].title' --locale ko` → 화면 1회 → `undo`, `set kits.repo` 세 언어 → 상세에 링크 → `--unset`, `role maker --open-source off`(행 0회)/`on` · `role design --videos off`/`on` · `--videos maybe` → 사용법 오류.
+  5.1 의 `ffprobe` · `get --doc ko --path videos.items`(4개) · `set 'videos.items[4]'` 세 언어 → 화면 영상 5개 → `--unset` → 4개. `media`(영상·포스터)·`set videos`·`role` 순서는 배치 폴더 `fb/apply-prod.sh` 로 운영 모양 로컬 D1 에 돌려 통과(결과 = 시드와 같음). 기록 `fb/doc-commands.log` · `fb/REPORT.md`.

@@ -40,6 +40,8 @@ export type Project = {
   lesson?: { title: string; body: string };
   gallery?: Shot[];
   links?: Link[];
+  /** 코드 저장소 주소(GitHub 등) — 있으면 빌보드·상세 머리에 「코드 보기」 단추. 세 언어가 같아야 한다 */
+  repo?: string;
 };
 
 export type OtherWork = {
@@ -50,6 +52,8 @@ export type OtherWork = {
   body: string;
   shot: Shot;
   detail: Detail;
+  /** 코드 저장소 주소 — 있으면 상세 머리에 「코드 보기」 */
+  repo?: string;
 };
 
 export type EarlyWork = {
@@ -61,6 +65,33 @@ export type EarlyWork = {
   metrics?: Metric[];
   note?: string;
   detail: Detail;
+};
+
+/** 공개한 저장소 하나 — 역할 화면의 「오픈소스」 행. 카드에서 저장소로 나간다 */
+export type OpenSourceRepo = {
+  id: string;
+  name: string;
+  /** 카드 아래 한 줄 — 저장소 설명을 그 언어로 짧게 */
+  body: string;
+  /** 저장소 주소 — 세 언어가 같아야 한다 */
+  repo: string;
+  /** 제품 사이트가 따로 있으면 */
+  homepage?: string;
+};
+
+/** 직접 만든 영상 하나 — 역할 화면의 「만든 영상」 행. 영상·포스터는 R2(/media/…)에 둔다. 자동재생하지 않는다 */
+export type Video = {
+  id: string;
+  title: string;
+  body: string;
+  /** mp4·webm — /media/… */
+  src: string;
+  /** 누르기 전에 보이는 대표 장면(jpg) — 첫 장면이 아니라 영상을 대표하는 장면 */
+  poster: string;
+  width: number;
+  height: number;
+  /** 이 영상이 소개하는 프로젝트(큰 프로젝트 id · 그 외 slug) — 있으면 카드에서 상세로 간다 */
+  project?: string;
 };
 
 export type Content = {
@@ -92,6 +123,9 @@ export type Content = {
     items: EarlyWork[];
     devhoon: { name: string; tag: string; body: string; history: { date: string; text: string }[]; shots: Shot[] };
   };
+  /** 선택 칸 — 없으면 행이 안 나온다. 어느 역할에 보일지는 roles 문서의 openSource · videos */
+  openSource?: { items: OpenSourceRepo[] };
+  videos?: { items: Video[] };
   timeline: { title: string; items: { date: string; text: string }[] };
   awards: { title: string; items: { date: string; title: string; org: string; body: string }[] };
   contact: { title: string; body: string; email: string; links: Link[]; closing: string };

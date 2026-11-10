@@ -4,7 +4,7 @@ import { getContent } from './index';
 import type { SiteDocs } from './schema';
 import type { Shot } from './images';
 import type { RoleId } from './roles';
-import type { Project } from './types';
+import type { OpenSourceRepo, Project, Video } from './types';
 
 // 역할 화면(/as/<역할>)과 상세의 「비슷한 작품」이 쓰는 목록 계산. 화면 컴포넌트는 이 결과만 그린다.
 
@@ -19,6 +19,9 @@ export type TitleCard = {
 };
 
 export type ArtifactCard = { artifact: Artifact; projectName?: string; projectSlug?: string };
+
+/** 영상 카드 — 영상이 소개하는 프로젝트가 숨겨지지 않았으면 그 이름·주소를 붙인다 */
+export type VideoCard = { video: Video; projectName?: string; projectSlug?: string };
 
 
 function projectCard(p: Project): TitleCard {
@@ -46,6 +49,10 @@ export type RoleScreen = {
   others: TitleCard[];
   early: TitleCard[];
   artifacts: ArtifactCard[];
+  /** roles 문서의 openSource 가 켜진 역할만 — 본문 openSource 가 없으면 빈 목록 */
+  openSource: OpenSourceRepo[];
+  /** roles 문서의 videos 가 켜진 역할만 */
+  videos: VideoCard[];
 };
 
 export function roleScreen(docs: SiteDocs, locale: Locale, role: RoleId): RoleScreen {
@@ -71,12 +78,20 @@ export function roleScreen(docs: SiteDocs, locale: Locale, role: RoleId): RoleSc
       return pick1 ? [{ artifact: pick1, projectName: p.name, projectSlug: p.slug }] : [];
     }),
   ];
+  const videos: VideoCard[] = def.videos
+    ? (t.videos?.items ?? []).map((video) => {
+        const card = video.project ? cards.find((c) => c.slug === video.project) : undefined;
+        return card ? { video, projectName: card.name, projectSlug: card.slug } : { video };
+      })
+    : [];
   return {
     featured,
     projects,
     others,
     early: def.early ? cards.filter((c) => c.kind === 'early') : [],
     artifacts,
+    openSource: def.openSource ? (t.openSource?.items ?? []) : [],
+    videos,
   };
 }
 

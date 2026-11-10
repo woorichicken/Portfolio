@@ -33,26 +33,33 @@ export type RoleDef = {
   early: boolean;
   /** 결과물 행에 프로젝트에 묶이지 않은 결과물(디자인 아틀라스 등)을 앞에 둘지 */
   standaloneArtifacts: boolean;
+  /** 「오픈소스」 행을 보여 줄지(본문 openSource.items) — 없으면 안 보인다(2026-11-10 추가 · 옛 문서도 그대로 통과) */
+  openSource?: boolean;
+  /** 「만든 영상」 행을 보여 줄지(본문 videos.items) */
+  videos?: boolean;
 };
 
+// 2026-11-10 운영과 맞춤 — 역할 재배치 A안(한 작품은 주 역할 하나 · 겹침은 역할마다 1개까지, 팀장이 운영 API 로 반영)과
+// 새 행(오픈소스: maker · all / 만든 영상: design · all). 운영에서 바꾸면 여기도 같이 바꿔 로컬 시드가 운영 모양을 따라가게 한다.
 export const ROLES: Record<RoleId, RoleDef> = {
   design: {
     name: t('디자인 엔지니어', 'Design engineer', 'Ingeniero de diseño'),
     blurb: t('화면을 코드로 맞추고 검수 도구까지 만듭니다', 'I match screens in code and build the review tools too', 'Ajusto pantallas en código y también hago las herramientas de revisión'),
     rowTitle: t('화면과 검수를 맡은 프로젝트', 'Projects where I owned screens and review', 'Proyectos donde llevé pantallas y revisión'),
     featured: 'kits',
-    projects: ['kits', 'ncdigitec', 'porterx', 'fair', 'cli-manager', 'purple', 'automation'],
-    others: ['design-atlas', 'light-archive', 'bigdatahub-webzine', 'motion-meme', 'lightsoft-web'],
+    projects: ['kits', 'ncdigitec', 'porterx'],
+    others: ['design-atlas', 'bigdatahub-webzine', 'lightsoft-web'],
     early: false,
     standaloneArtifacts: true,
+    videos: true,
   },
   product: {
     name: t('서비스 개발자', 'Product developer', 'Desarrollador de producto'),
     blurb: t('기획부터 운영까지, 서비스 하나를 끝까지 맡습니다', 'I take one service all the way, from planning to operations', 'Llevo un servicio de principio a fin, del plan a la operación'),
     rowTitle: t('처음부터 끝까지 맡은 서비스', 'Services I carried end to end', 'Servicios que llevé de principio a fin'),
     featured: 'fair',
-    projects: ['fair', 'purple', 'porterx', 'kits', 'ncdigitec', 'automation', 'cli-manager'],
-    others: ['dolphin-crm', 'bigdatahub-webzine', 'youtube-manager', 'switch-on', 'light-archive', 'motion-meme'],
+    projects: ['fair', 'purple', 'porterx'],
+    others: ['dolphin-crm', 'motion-meme'],
     early: true,
     standaloneArtifacts: false,
   },
@@ -61,8 +68,8 @@ export const ROLES: Record<RoleId, RoleDef> = {
     blurb: t('반복되는 일을 AI 에이전트와 도구로 바꿉니다', 'I turn repeated work into AI agents and tools', 'Convierto el trabajo repetido en agentes de IA y herramientas'),
     rowTitle: t('AI로 일하는 방식을 바꾼 프로젝트', 'Projects that changed how work gets done with AI', 'Proyectos que cambiaron el trabajo con IA'),
     featured: 'automation',
-    projects: ['automation', 'fair', 'cli-manager', 'kits', 'ncdigitec', 'purple', 'porterx'],
-    others: ['youtube-manager', 'design-atlas', 'light-archive', 'motion-meme'],
+    projects: ['automation', 'fair'],
+    others: ['youtube-manager', 'light-archive'],
     early: false,
     standaloneArtifacts: false,
   },
@@ -71,10 +78,11 @@ export const ROLES: Record<RoleId, RoleDef> = {
     blurb: t('제가 쓰려고 만든 것을 제품으로 내놓습니다', 'I ship what I first built for myself', 'Lanzo como producto lo que primero hice para mí'),
     rowTitle: t('직접 만들어 내놓은 것', 'Things I built and shipped myself', 'Lo que construí y lancé yo mismo'),
     featured: 'cli-manager',
-    projects: ['cli-manager', 'fair', 'automation', 'kits'],
-    others: ['design-atlas', 'switch-on', 'motion-meme', 'youtube-manager'],
+    projects: ['cli-manager'],
+    others: ['design-atlas', 'switch-on'],
     early: true,
     standaloneArtifacts: true,
+    openSource: true,
   },
   all: {
     name: t('전체', 'Everything', 'Todo'),
@@ -85,6 +93,8 @@ export const ROLES: Record<RoleId, RoleDef> = {
     others: ['design-atlas', 'switch-on', 'dolphin-crm', 'bigdatahub-webzine', 'light-archive', 'motion-meme', 'youtube-manager', 'lightsoft-web'],
     early: true,
     standaloneArtifacts: true,
+    openSource: true,
+    videos: true,
   },
 };
 
@@ -106,6 +116,11 @@ export const SCREEN = {
   moreInfo: t('자세히 보기', 'More info', 'Más información'),
   openSite: t('사이트 열기', 'Open site', 'Abrir sitio'),
   artifactsRow: t('만든 화면과 도구', 'Screens and tools I made', 'Pantallas y herramientas que hice'),
+  openSourceRow: t('오픈소스', 'Open source', 'Código abierto'),
+  videosRow: t('만든 영상', 'Videos I made', 'Videos que hice'),
+  viewCode: t('코드 보기', 'View code', 'Ver código'),
+  visitSite: t('사이트', 'Website', 'Sitio web'),
+  aboutProject: t('프로젝트 보기', 'See the project', 'Ver el proyecto'),
   prevRow: t('이전 항목', 'Previous items', 'Anteriores'),
   nextRow: t('다음 항목', 'Next items', 'Siguientes'),
   tabHome: t('홈', 'Home', 'Inicio'),

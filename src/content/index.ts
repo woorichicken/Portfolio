@@ -11,12 +11,12 @@ export function getContent(docs: SiteDocs, locale: Locale): Content {
 }
 
 /** 상세 페이지 하나에 필요한 것. 「그 외」와 「이전」 항목을 같은 모양으로 맞춘다. */
-export type WorkEntry = { slug: string; name: string; meta: string; body: string; shot: Shot; detail: Detail };
+export type WorkEntry = { slug: string; name: string; meta: string; body: string; shot: Shot; detail: Detail; repo?: string };
 
 export function getWorkEntries(docs: SiteDocs, locale: Locale): WorkEntry[] {
   const t = getContent(docs, locale);
   return [
-    ...t.others.items.map((o) => ({ slug: o.slug, name: o.name, meta: o.period, body: o.body, shot: o.shot, detail: o.detail })),
+    ...t.others.items.map((o) => ({ slug: o.slug, name: o.name, meta: o.period, body: o.body, shot: o.shot, detail: o.detail, repo: o.repo })),
     ...t.early.items.map((e) => ({ slug: e.slug, name: e.name, meta: e.tag, body: e.body, shot: e.shot, detail: e.detail })),
   ];
 }

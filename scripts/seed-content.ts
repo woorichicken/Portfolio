@@ -3,17 +3,25 @@
 //   pnpm db:seed:local                 # 비어 있는 문서만 넣는다(이미 있으면 그대로 — 어드민·API 로 고친 것을 덮지 않는다)
 //   pnpm db:seed:local --force         # TS 파일과 다른 문서를 TS 파일 값으로 덮는다(덮기 전 값은 이력에 남아 되돌릴 수 있다)
 //   pnpm db:seed:local --dry-run       # SQL 만 만들고 실행하지 않는다
+//   pnpm db:seed:local --force --from <폴더>   # TS 파일 대신 폴더의 ko·en·es·roles·hidden.json 을 넣는다 — 운영 문서로 로컬을 맞출 때
+//                                      #   (폴더 만들기: for d in ko en es roles hidden; do pnpm -s content get --doc $d --target prod > <폴더>/$d.json; done)
 //
 // 원격(운영) D1 은 이 스크립트로 넣지 않는다 — 토큰을 받은 뒤 docs/content-api.md 「토큰 받은 뒤 할 일」 순서대로.
 // 넣기 전에 zod 검사(src/content/schema.ts)를 돌려서, 모양이 틀린 본문은 D1 에 들어가지 않는다.
 
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { validateSite } from '../src/content/schema';
+import { validateSite, type SiteDocs } from '../src/content/schema';
 import { STATIC_DOCS } from '../src/content/static-site';
 
-const args = new Set(process.argv.slice(2));
+const argv = process.argv.slice(2);
+const args = new Set(argv);
+const fromDir = args.has('--from') ? argv[argv.indexOf('--from') + 1] : undefined;
+if (args.has('--from') && !fromDir) {
+  console.error('--from 뒤에 폴더를 주세요(ko.json · en.json · es.json · roles.json · hidden.json)');
+  process.exit(2);
+}
 const force = args.has('--force');
 const dryRun = args.has('--dry-run');
 if (args.has('--remote')) {
@@ -21,7 +29,10 @@ if (args.has('--remote')) {
   process.exit(2);
 }
 
-const problems = validateSite(STATIC_DOCS);
+// --from: 운영에서 받은 문서로 — 새 코드가 운영 문서를 그대로 받는지(선택 칸만 더했는지) 로컬에서 볼 때 쓴다
+const read = (name: string) => JSON.parse(readFileSync(join(fromDir!, `${name}.json`), 'utf8'));
+const SOURCE: SiteDocs = fromDir ? { content: { ko: read('ko'), en: read('en'), es: read('es') }, roles: read('roles'), hidden: read('hidden') } : STATIC_DOCS;
+const problems = validateSite(SOURCE);
 if (problems.length) {
   console.error(`검사 실패 ${problems.length}건 — D1 에 넣지 않았습니다`);
   for (const p of problems.slice(0, 20)) console.error(`  ${p.path}: ${p.message}`);
@@ -29,11 +40,11 @@ if (problems.length) {
 }
 
 const docs: Record<string, unknown> = {
-  'content:ko': STATIC_DOCS.content.ko,
-  'content:en': STATIC_DOCS.content.en,
-  'content:es': STATIC_DOCS.content.es,
-  roles: STATIC_DOCS.roles,
-  hidden: STATIC_DOCS.hidden,
+  'content:ko': SOURCE.content.ko,
+  'content:en': SOURCE.content.en,
+  'content:es': SOURCE.content.es,
+  roles: SOURCE.roles,
+  hidden: SOURCE.hidden,
 };
 
 const q = (s: string) => `'${s.replace(/'/g, "''")}'`;
@@ -50,7 +61,7 @@ for (const [key, value] of Object.entries(docs)) {
   // 2) --force — 값이 다를 때만 덮고, 덮기 전 값을 이력에 남긴다
   if (force) {
     lines.push(
-      `INSERT INTO content_history (change_id, key, version, prev_body, body, action, actor, summary, at) SELECT ${q(changeId)}, key, version + 1, body, ${body}, 'seed', 'seed', '저장소 TS 파일로 다시 덮음(--force)', ${q(at)} FROM content_doc WHERE key = ${q(key)} AND body != ${body};`,
+      `INSERT INTO content_history (change_id, key, version, prev_body, body, action, actor, summary, at) SELECT ${q(changeId)}, key, version + 1, body, ${body}, 'seed', 'seed', ${q(fromDir ? `${fromDir} 의 JSON 으로 다시 덮음(--force --from)` : '저장소 TS 파일로 다시 덮음(--force)')}, ${q(at)} FROM content_doc WHERE key = ${q(key)} AND body != ${body};`,
       `UPDATE content_doc SET body = ${body}, version = version + 1, updated_at = ${q(at)}, updated_by = 'seed' WHERE key = ${q(key)} AND body != ${body};`,
     );
   }

@@ -4,8 +4,8 @@ import { screenCopy, type RoleId } from '@/content/roles';
 import type { SiteDocs } from '@/content/schema';
 import { roleScreen } from '@/content/screen-data';
 import { browsePath, projectPath, type Locale } from '@/i18n/config';
-import { ArtifactTileCard, Row, TitleCard } from './Cards';
-import { Avatar, IconExternal, IconInfo } from './icons';
+import { ArtifactTileCard, OpenSourceCard, Row, TitleCard, VideoCard } from './Cards';
+import { Avatar, IconCode, IconExternal, IconInfo } from './icons';
 import { RememberRole } from './RoleClient';
 import Shell from './Shell';
 import { isMediaSrc } from '@/content/images';
@@ -52,6 +52,8 @@ export default function Browse({ site: docs, locale, role }: { site: SiteDocs; l
           <div className="billboard-actions">
             <a className="btn btn-primary btn-lg" href={projectPath(locale, f.id)}><IconInfo />{s.moreInfo}</a>
             {site && <a className="btn btn-ghost btn-lg" href={site.href} target="_blank" rel="noreferrer"><IconExternal />{s.openSite}<span className="visually-hidden"> {s.newTab}</span></a>}
+            {/* 코드 보기 — 본문 repo 칸이 있는 대표작만(2026-11-10 제보 3cea15e9) */}
+            {f.repo && <a className="btn btn-ghost btn-lg" href={f.repo} target="_blank" rel="noreferrer"><IconCode />{s.viewCode}<span className="visually-hidden"> {s.newTab}</span></a>}
           </div>
         </div>
       </section>
@@ -69,6 +71,22 @@ export default function Browse({ site: docs, locale, role }: { site: SiteDocs; l
               <li key={`${item.projectSlug ?? ''}-${item.artifact.title}`}>
                 <ArtifactTileCard item={item} sizes="(max-width: 499px) 50vw, (max-width: 1099px) 30vw, 20vw" openLabel={t.a11y.openImage} />
               </li>
+            ))}
+          </Row>
+        )}
+
+        {data.videos.length > 0 && (
+          <Row id="row-videos" title={s.videosRow} size="md" kind="video" {...arrows}>
+            {data.videos.map((card) => (
+              <li key={card.video.id}><VideoCard card={card} locale={locale} projectLabel={s.aboutProject} /></li>
+            ))}
+          </Row>
+        )}
+
+        {data.openSource.length > 0 && (
+          <Row id="row-opensource" title={s.openSourceRow} size="md" kind="oss" {...arrows}>
+            {data.openSource.map((item) => (
+              <li key={item.id}><OpenSourceCard item={item} codeLabel={s.viewCode} siteLabel={s.visitSite} newTab={s.newTab} /></li>
             ))}
           </Row>
         )}
