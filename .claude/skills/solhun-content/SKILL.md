@@ -1,6 +1,6 @@
 ---
 name: solhun-content
-description: solhun.com 포트폴리오(이 저장소)의 본문을 콘텐츠 API 로 읽고 고친다 — 문구 수정(세 언어) · 프로젝트 추가 · 역할 화면 배치·대표작 · 숨김 · 오픈소스 행 · 만든 영상 행 · 「코드 보기」(repo) · 사진/영상 올리기 · 되돌리기. 저장하면 바로 사이트에 반영된다(D1 + Cloudflare Workers). 사용자가 "포트폴리오 문구 고쳐줘", "solhun.com 에 프로젝트 추가", "이 프로젝트 맨 앞으로", "대표작 바꿔줘", "이거 숨겨줘", "사진 바꿔줘", "방금 거 되돌려", "영어판 문구도", "오픈소스 저장소 추가", "영상 올려줘", "코드 보기 링크", "content API" 라고 하면 — 저장소 코드를 몰라도 — 이 스킬 하나만 읽고 `pnpm content` 로 한다. 본문 파일(src/content/*.ts)을 직접 고치지 않는다.
+description: solhun.com 포트폴리오(이 저장소)의 본문을 콘텐츠 API 로 읽고 고친다 — 문구 수정(세 언어) · 프로젝트 추가 · 역할 화면 배치·대표작 · 숨김 · 오픈소스 행 · 만든 영상 행 · 「코드 보기」(repo) · 사진/영상 올리기 · 되돌리기. 저장하면 바로 사이트에 반영된다(D1 + Cloudflare Workers). 사용자가 "포트폴리오 문구 고쳐줘", "solhun.com 에 프로젝트 추가", "이 프로젝트 맨 앞으로", "대표작 바꿔줘", "이거 숨겨줘", "사진 바꿔줘", "방금 거 되돌려", "영어판 문구도", "오픈소스 저장소 추가", "영상 올려줘", "코드 보기 링크", "content API", "AI 말투 검사" 라고 하면 — 저장소 코드를 몰라도 — 이 스킬 하나만 읽고 `pnpm content` 로 한다. 본문 파일(src/content/*.ts)을 직접 고치지 않는다.
 ---
 
 # solhun-content — 포트폴리오 본문 고치기
@@ -62,6 +62,29 @@ scripts/with-workers.sh pnpm -s content get     # 또는: 띄우고 → 명령 �
 | 결과를 기계로 읽기 | 아무 명령에 `--json` |
 
 종류 — 큰 프로젝트(`project`, id: kits · fair · cli-manager · automation · purple · porterx · ncdigitec), 「그 외」(`other`, design-atlas 등), 「이전」(`early`, debatetimer 등). 역할: `design` · `product` · `ax` · `maker` · `all`.
+
+## 1.0 글을 저장하기 전에 — AI 말투 검사(`copy-lint`)
+
+`set`·`add-project` 로 **글**(문구·본문·제목·alt)을 바꾸면 운영에 바로 나간다. 그래서 저장 전에 새 글을 언어마다 `copy-lint` 로 잰다.
+배치·숨김·사진 주소·repo 처럼 글이 아닌 칸은 건너뛴다.
+
+```bash
+L=~/.claude/skills/copy-lint/scripts
+printf '%s\n' "<새 문구>" | node $L/lint.mjs --stdin --lang ko > /tmp/lint-ko.log 2>&1; echo "exit=$?"   # en · es 도 같은 식(--lang en|es)
+```
+
+| 등급 | 저장 전에 할 일 |
+|---|---|
+| E | 고친 뒤 다시 잰다. **E 0 이어야 저장한다** |
+| C(최상급 · 숫자 없는 성과 · 화살표 숫자) | 문장을 다듬지 말고 근거를 확인한다. 본인이 아는 값이면 깎지 말고 사람에게 묻는다 |
+| W(줄표 · 굵은 글씨 둘 이상 · 화살표 세 개 이상 · 「할 수 있다」 반복) | 걸린 문장만 고친다. 글 전체를 다시 쓰지 않는다 |
+
+- 고객·동료의 말(`quotes`)은 고치지 않는다.
+- 숫자·고유명사·날짜는 바꾸지 않는다. 고치면서 사실을 더하지도 않는다.
+- 영어·스페인어는 한국어를 따라 옮기지 말고 그 언어 문장으로 쓴다. 스페인어의 삽입구 줄표(—…—)는 맞는 문장 부호라서 W 로 걸려도 그대로 둔다.
+- 저장 보고에 검사 결과를 한 줄 남긴다(예: 「copy-lint ko E0·C0·W1(줄표 — 날짜 머리라 둠)」).
+- 본문 전체를 훑을 때는 운영 문서를 받아서 잰다: `node scripts/content-cli.mjs get --doc ko --target prod --json > ko.json`(en·es·roles 도 같은 식) → `node $L/lint.mjs ko.json en.json es.json roles.json`.
+  파일 이름을 `en.json`·`es.json` 으로 두어야 언어가 맞게 잡힌다. 무엇을 내세울지 같은 내용 판단은 `portfolio-copy` 가 맡는다.
 
 ## 1.1 어드민에서 하는 법 — 사람이 직접 고칠 때
 
