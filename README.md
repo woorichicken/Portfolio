@@ -31,7 +31,7 @@ pnpm e2e:workers                              # E2E(Workers · cf:build 뒤) · 
 | `src/content/images.ts` · `artifacts.ts` | 사진 경로·크기(`public/work/`) · 결과물 목록 |
 | `src/app/(ko)/` · `src/app/(intl)/[locale]/` | 한국어 `/` · `/en`·`/es` — 언어마다 루트 레이아웃을 따로 둬서 `<html lang>` 이 정확하다 |
 | `/` → `src/components/screen/RolePicker.tsx` | 첫 화면 「어떤 SOLHUN을 볼까요?」 — 역할 타일 4개(좁으면 2×2) + 「전부 볼게요」 · 「정경훈 소개」 창. 고르면 `/as/<역할>` |
-| `public/og/home-{ko,en,es}.png` ← `scripts/og-image.mjs` | 홈 링크 미리보기 그림(1200×630) — 운영 첫 화면을 찍어 언어 버튼·단추를 숨기고 이름·주소를 얹은 것(제보 5567b8b0). 역할 이름·첫 화면을 바꿨으면 배포 뒤 `node scripts/og-image.mjs` 로 다시 만들어 커밋한다. 상세·역할 화면은 그대로 작품 표지 |
+| `public/og/home-{ko,en,es}.png` ← `scripts/og-image.mjs` | 홈 링크 미리보기 그림(1200×630) — 운영 첫 화면을 찍어 언어 버튼·단추를 숨기고 이름·주소를 얹은 것(제보 5567b8b0). 역할 이름·첫 화면을 바꿨으면 배포 뒤 `node scripts/og-image.mjs` 로 다시 만들어 커밋한다(카카오톡은 같은 주소의 그림을 캐시한다 — 바꾼 뒤 카카오 공유 디버거에서 캐시 지우기). 상세·역할 화면은 그대로 작품 표지 |
 | `/as/<역할>` → `screen/Browse.tsx` | 역할 화면 — 대표작 빌보드 → 가로 행(그 역할의 프로젝트 · 숫자 · 만든 화면과 도구 · 그 외 · 이전) → 연표 → 연락 |
 | `/projects/<slug>` → `screen/TitlePage.tsx` | 작품 상세(큰 프로젝트 · 그 외 · 이전 공통) — 그림 → 이름·칩 → 사이트 열기/메일 · 링크 복사 → 탭(개요 · 바꾼 것 · 화면 · 비슷한 작품 · 자세히, `#tab-<id>`) |
 | `/design` | **없앴다(2026-11-03)** — 옛 주소는 `next.config.ts` 가 `/as/design#row-artifacts`(308)로 보낸다. 결과물은 역할 화면의 「만든 화면과 도구」 행과 상세 「화면」 탭에만 있다 |

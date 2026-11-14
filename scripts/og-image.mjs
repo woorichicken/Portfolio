@@ -10,7 +10,9 @@
 //
 // 역할 이름·첫 화면 디자인을 바꿨으면 배포 뒤 다시 돌려 커밋한다(그림은 빌드가 만들지 않는다 — Workers 에서
 // next/og 를 돌리지 않으려고 정적 파일로 둔다).
-import { mkdirSync, statSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, renameSync, statSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
 
@@ -28,17 +30,22 @@ const baseIndex = args.indexOf('--base');
 const base = (baseIndex >= 0 ? args[baseIndex + 1] : 'https://www.solhun.com').replace(/\/$/, '');
 const outDir = fileURLToPath(new URL('../public/og/', import.meta.url));
 mkdirSync(outDir, { recursive: true });
+// 세 장을 임시 폴더에 다 만든 뒤 한 번에 옮긴다 — 중간에 한 언어가 실패하면 세 장이 서로 다른 판이 된다
+const stageDir = mkdtempSync(join(tmpdir(), 'solhun-og-'));
+const made = [];
 
 // 미리보기에서는 누를 수 없는 것을 숨기고, 화면 높이를 그림 높이에 맞춘다
 const HIDE_CSS = `
-  .lang-switch, .picker-actions, .picker-recent, [data-feedback-gate], .feedback-gate { display: none !important; }
-  .picker { min-height: ${OG_HEIGHT}px !important; height: ${OG_HEIGHT}px !important; }
+  .lang-switch, .picker-actions, .picker-recent { display: none !important; }
+  .picker { position: relative !important; min-height: ${OG_HEIGHT}px !important; height: ${OG_HEIGHT}px !important; }
   .picker-tile { pointer-events: none; }
   /* 카톡 말풍선에서는 그림이 250px 안팎으로 줄어든다 — 화면 그대로면 글자가 5px 가 된다 */
   .picker-top { zoom: ${CONTENT_ZOOM}; }
-  .picker-main { zoom: ${CONTENT_ZOOM}; padding-bottom: 72px; }
-  .og-footer { position: absolute; left: 0; right: 0; bottom: 36px; text-align: center;
-    font: 500 24px/1.4 var(--font-body); color: var(--text); opacity: 0.78; letter-spacing: 0.01em; }
+  .picker-main { zoom: ${CONTENT_ZOOM}; padding-bottom: 80px; }
+  /* 제목은 화면(26px)보다 키운다 — 말풍선 폭에서도 「어떤 SOLHUN」이 읽히는 선 */
+  .picker-title { font-size: 38px !important; margin-bottom: 30px !important; }
+  .og-footer { position: absolute; left: 0; right: 0; bottom: 30px; text-align: center;
+    font: 500 30px/1.4 var(--font-body); color: var(--text); opacity: 0.85; letter-spacing: 0.01em; }
   .og-footer b { font-weight: 700; opacity: 1; }
 `;
 
@@ -76,12 +83,15 @@ try {
       logo: [...document.querySelectorAll('.wordmark img')].every((img) => img.complete && img.naturalWidth > 0),
     }));
     if (ready.tiles !== 4 || !ready.logo) throw new Error(`${locale}: 화면이 덜 그려졌다 ${JSON.stringify(ready)}`);
-    const dest = `${outDir}home-${locale}.png`;
+    const dest = join(stageDir, `home-${locale}.png`);
     await page.screenshot({ path: dest, clip: { x: 0, y: 0, width: OG_WIDTH, height: OG_HEIGHT } });
     const bytes = statSync(dest).size;
     if (bytes > MAX_BYTES) throw new Error(`${locale}: ${bytes}바이트 — 미리보기에 쓰기엔 크다`);
-    console.log(`${locale} → public/og/home-${locale}.png (${bytes} bytes, ${name})`);
+    made.push(locale);
+    console.log(`${locale} → home-${locale}.png (${bytes} bytes, ${name})`);
   }
 } finally {
   await browser.close();
 }
+for (const locale of made) renameSync(join(stageDir, `home-${locale}.png`), `${outDir}home-${locale}.png`);
+console.log(`public/og/ 에 ${made.length}장을 옮겼다`);
