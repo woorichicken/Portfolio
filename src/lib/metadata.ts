@@ -1,14 +1,22 @@
 import type { Metadata, Viewport } from 'next';
 import { plain } from '@/components/Rich';
 import { getContent, getProject, getWorkEntry } from '@/content';
-import type { RoleId } from '@/content/roles';
+import { PICKABLE_ROLES, type RoleId } from '@/content/roles';
 import type { SiteDocs } from '@/content/schema';
 import { LOCALES, OG_LOCALES, SITE_URL, browsePath, localePath, projectPath, type Locale } from '@/i18n/config';
+
+// 링크 미리보기 그림 권장 크기(1.91:1) — 카카오톡·페이스북·X 가 이 비율에서 잘림 없이 크게 보여 준다
+const OG_IMAGE_WIDTH = 1200;
+const OG_IMAGE_HEIGHT = 630;
 
 // 세 언어가 서로를 hreflang 으로 가리키게 한다. 검색엔진이 언어별 페이지를 같은 문서의 번역으로 묶는 근거다.
 export function buildMetadata(docs: SiteDocs, locale: Locale): Metadata {
   const t = getContent(docs, locale);
   const languages = Object.fromEntries(LOCALES.map((l) => [l, localePath(l)]));
+  // 홈 미리보기 그림은 첫 화면(역할 고르기)을 찍은 전용 그림이다 — 대표작 표지(KITS 사진)를 걸면 카카오톡 등에서
+  // 내 사이트가 아니라 그 앱 광고처럼 보였다(제보 5567b8b0). 그림은 scripts/og-image.mjs 로 다시 만든다.
+  const ogImage = `/og/home-${locale}.png`;
+  const ogAlt = `${t.hero.name} (SOLHUN) — ${PICKABLE_ROLES.map((r) => docs.roles[r].name[locale]).join(' · ')}`;
   return {
     metadataBase: new URL(SITE_URL),
     title: t.meta.title,
@@ -26,9 +34,9 @@ export function buildMetadata(docs: SiteDocs, locale: Locale): Metadata {
       siteName: 'SOLHUN',
       locale: OG_LOCALES[locale],
       alternateLocale: LOCALES.filter((l) => l !== locale).map((l) => OG_LOCALES[l]),
-      images: [{ url: '/work/lw_kits-hero-phones.jpg', width: 1400, height: 933 }],
+      images: [{ url: ogImage, width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT, alt: ogAlt }],
     },
-    twitter: { card: 'summary_large_image', title: t.meta.title, description: t.meta.description },
+    twitter: { card: 'summary_large_image', title: t.meta.title, description: t.meta.description, images: [ogImage] },
     robots: { index: true, follow: true },
   };
 }
