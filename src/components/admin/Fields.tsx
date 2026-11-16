@@ -55,6 +55,8 @@ function Field({ spec, path, ctx }: { spec: Spec; path: Path; ctx: Ctx }) {
       );
     case 'shot':
       return <ShotField label={spec.label} path={path} ctx={ctx} />;
+    case 'logo':
+      return <LogoField spec={spec} path={path} ctx={ctx} />;
     case 'group':
       return <GroupField spec={spec} path={path} ctx={ctx} />;
     case 'list':
@@ -187,6 +189,31 @@ function ShotField({ label, path, ctx, onRemove }: { label: string; path: Path; 
       <TextField spec={{ t: 'text', key: 'alt', label: '사진 설명(alt)' }} path={[...path, 'alt']} ctx={ctx} />
       <TextField spec={{ t: 'text', key: 'caption', label: '캡션(선택)', optional: true }} path={[...path, 'caption']} ctx={ctx} />
       <Problems list={[...(ctx.problems[key] ?? []), ...(ctx.problems[`${key}.src`] ?? []), ...(ctx.problems[`${key}.width`] ?? []), ...(ctx.problems[`${key}.height`] ?? [])]} />
+    </div>
+  );
+}
+
+function LogoField({ spec, path, ctx }: { spec: Extract<Spec, { t: 'logo' }>; path: Path; ctx: Ctx }) {
+  const key = keyOf(path);
+  const src = String(getIn(ctx.draft.ko, path) ?? '');
+  return (
+    <div className="admin-field admin-shot admin-logo" data-field={key}>
+      <span className="admin-field-label">{spec.label}<small>세 언어 같음</small></span>
+      <div className="admin-shot-row">
+        <span className="avatar avatar-logo admin-logo-preview" aria-hidden="true">
+          {src ? <Image src={src} unoptimized={isMediaSrc(src)} alt="" width={96} height={96} /> : null}
+        </span>
+        <div className="admin-shot-meta">
+          <code className="admin-readonly" data-shot-src={key}>{src || '(로고 없음 — 역할 아이콘을 씁니다)'}</code>
+          {spec.hint && <span className="admin-hint">{spec.hint}</span>}
+          <span className="admin-row-actions">
+            {/* 업로드는 몇 초 걸린다 — 그 사이 고친 글을 덮지 않게 「지금」 draft 에 로고 칸만 넣는다(사진 칸과 같은 이유) */}
+            <UploadButton label={src ? '로고 바꾸기' : '로고 올리기'} accept="image/jpeg,image/png,image/webp,image/gif" disabled={ctx.disabled} onUploaded={(u) => ctx.set((d) => setAll(d, path, u.src))} />
+            {src && <button type="button" className="btn btn-ghost btn-sm" disabled={ctx.disabled} onClick={() => ctx.set((d) => setAllOptional(d, path, ''))}>로고 빼기</button>}
+          </span>
+        </div>
+      </div>
+      <Problems list={ctx.problems[key]} />
     </div>
   );
 }

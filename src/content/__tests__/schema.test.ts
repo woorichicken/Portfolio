@@ -29,6 +29,20 @@ describe('validateSite — 세 언어 모양 검사', () => {
     expect(validateSite(d).some((p) => p.path.endsWith('cover.src'))).toBe(true);
   });
 
+  it('프로젝트 로고(logo)는 선택 — 세 언어 같은 사진이면 통과, 언어마다 다르거나 사진이 아니면 막는다', () => {
+    const d = copy();
+    for (const l of ['ko', 'en', 'es'] as const) d.content[l].work.projects[0].logo = '/media/image/kits-logo-0123456789.png';
+    expect(validateSite(d)).toEqual([]);
+    d.content.en.work.projects[0].logo = '/media/image/other-0123456789.png';
+    expect(validateSite(d).some((p) => p.path.endsWith('logo'))).toBe(true);
+    for (const l of ['ko', 'en', 'es'] as const) d.content[l].work.projects[0].logo = '/media/video/x.mp4';
+    expect(validateSite(d).some((p) => p.message.includes('로고는'))).toBe(true);
+    for (const bad of ['/work/../../etc/x.png', '/media/a"onerror=x.png', 'javascript:alert(1).png']) {
+      for (const l of ['ko', 'en', 'es'] as const) d.content[l].work.projects[0].logo = bad;
+      expect(validateSite(d).some((p) => p.message.includes('로고는'))).toBe(true);
+    }
+  });
+
   it('모르는 칸(오타)은 zod 가 거절한다', () => {
     const d = copy();
     (d.content.ko.work.projects[0] as unknown as Record<string, unknown>).taglin = '오타';

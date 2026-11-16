@@ -42,6 +42,10 @@ const DetailSchema = z.strictObject({ facts: z.array(FactSchema), paragraphs: z.
 /** 주소에 들어가는 이름 — 소문자·숫자·하이픈 */
 export const SlugSchema = z.string().regex(SLUG_RE, SLUG_MESSAGE);
 
+/** 로고·파비콘 — 사진 파일 경로(/work/… 또는 /media/…). 정사각 칸에 contain 으로 들어가므로 모양은 가리지 않는다.
+ *  `..`·따옴표·꺾쇠는 받지 않는다(리뷰 지적 — 어드민만 쓰지만 경로 밖을 가리키는 값을 남기지 않는다) */
+export const LogoSchema = z.string().regex(/^\/(work|media)\/(?!.*\.\.)[^\s"'<>]+\.(png|jpg|jpeg|webp|gif)$/, '로고는 /work/… 또는 /media/… 의 png·jpg·webp·gif 사진입니다');
+
 export const ProjectSchema = z.strictObject({
   id: SlugSchema,
   context: text,
@@ -58,6 +62,7 @@ export const ProjectSchema = z.strictObject({
   gallery: z.array(ShotSchema).optional(),
   links: z.array(LinkSchema).optional(),
   repo: HttpsUrlSchema.optional(),
+  logo: LogoSchema.optional(),
 });
 
 export const OtherWorkSchema = z.strictObject({ slug: SlugSchema, name: text, period: text, body: text, shot: ShotSchema, detail: DetailSchema, repo: HttpsUrlSchema.optional() });
@@ -177,7 +182,7 @@ export function shapeProblems(content: Record<Locale, Content>): Problem[] {
 }
 
 /** 언어마다 같아야 하는 글자 칸 — 주소·사진·영상 파일·저장소 */
-const SAME_ACROSS_LOCALES = new Set(['id', 'slug', 'src', 'width', 'height', 'repo', 'homepage', 'poster', 'project']);
+const SAME_ACROSS_LOCALES = new Set(['id', 'slug', 'src', 'width', 'height', 'repo', 'homepage', 'poster', 'project', 'logo']);
 
 function compareShape(a: unknown, b: unknown, path: string, la: Locale, lb: Locale, out: Problem[]) {
   const where = path || '(전체)';

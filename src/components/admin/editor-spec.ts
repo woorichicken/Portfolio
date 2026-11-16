@@ -6,6 +6,7 @@ import type { Locale } from '@/i18n/config';
 //   text   — 글자. same 이면 세 언어 같은 값(입력 하나), 아니면 ko·en·es 나란히. long 이면 여러 줄. optional 이면 비우면 칸을 지운다
 //   number — 숫자(늘 세 언어 같음)
 //   shot   — 사진 { src·width·height(세 언어 같음) · alt·caption(언어마다) } + 파일 올리기
+//   logo   — 로고·파비콘 한 장(src 문자열, 세 언어 같음) + 파일 올리기 · 빼기. 없으면 역할 아이콘
 //   list   — 목록. 줄 추가·빼기·순서는 세 언어 같이. item 이 'text' 면 글자 목록(상세 문단), 'shot' 이면 사진 목록(갤러리)
 //   group  — 묶음(배운 점 · 지표). optional 이면 켜고 끄기
 
@@ -13,6 +14,7 @@ export type Spec =
   | { t: 'text'; key: string; label: string; long?: boolean; same?: boolean; optional?: boolean; hint?: string; readOnly?: boolean }
   | { t: 'number'; key: string; label: string }
   | { t: 'shot'; key: string; label: string }
+  | { t: 'logo'; key: string; label: string; hint?: string }
   | { t: 'list'; key: string; label: string; item: Spec[] | 'text' | 'shot'; optional?: boolean; long?: boolean; blank?: (l: Locale) => unknown; rowLabel?: string }
   | { t: 'group'; key: string; label: string; fields: Spec[]; optional?: boolean; blank?: (l: Locale) => unknown };
 
@@ -36,6 +38,7 @@ export const PROJECT_SPEC: Spec[] = [
   { t: 'text', key: 'tagline', label: '한 줄(빌보드)', long: true, hint: BOLD_HINT },
   { t: 'text', key: 'summary', label: '요약(상세 머리)', long: true, hint: BOLD_HINT },
   { t: 'text', key: 'repo', label: 'GitHub 보러가기(repo)', same: true, optional: true, hint: REPO_HINT },
+  { t: 'logo', key: 'logo', label: '로고·파비콘(선택)', hint: '빌보드의 작은 정사각 아이콘 — 없으면 역할 아이콘 · png·jpg·webp·gif 10MB · 정사각이 아니어도 됩니다(안 잘리게 맞춤)' },
   facts,
   { t: 'shot', key: 'cover', label: '표지 사진' },
   { t: 'list', key: 'parts', label: '맡은 일', rowLabel: '맡은 일', optional: true, item: [{ t: 'text', key: 'title', label: '제목' }, { t: 'text', key: 'body', label: '내용', long: true, hint: BOLD_HINT }], blank: () => ({ title: '', body: '' }) },

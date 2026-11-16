@@ -8,9 +8,9 @@ import { PASSWORD, TOKEN, d1Changes, d1Doc } from './d1';
 //   pnpm db:seed:local --force --from <운영 스냅숏 폴더> && pnpm cf:build && scripts/with-workers.sh playwright test e2e/admin-editor.spec.ts --workers=1
 // 중간에 실패해 D1 이 바뀐 채 남으면 같은 seed 명령으로 되돌린다.
 
-type Project = { id: string; summary: string; cover: { src: string }; improvements?: { badge?: string }[] };
+type Project = { id: string; summary: string; logo?: string; cover: { src: string }; improvements?: { badge?: string }[] };
 type Content = { work: { projects: Project[] }; others: { items: { slug: string }[] }; openSource?: { items: { id: string }[] }; videos?: { items: { id: string; src: string }[] } };
-type Roles = Record<string, { others: string[]; openSource?: boolean; videos?: boolean }>;
+type Roles = Record<string, { featured?: string; others: string[]; openSource?: boolean; videos?: boolean }>;
 
 const FIX = join(process.cwd(), 'e2e/fixtures');
 const SHOTS = process.env.E2E_SHOTS_DIR;
@@ -161,6 +161,43 @@ test('사진 — 표지 파일 올리기 → 상세에 새 src → D1 → 되돌
   await undoFromHistory(page, /work\.projects\[kits\] — cover/);
   await page.goto('/projects/kits');
   await expect(page.locator('a.title-hero-media')).toHaveAttribute('href', kits(start.ko).cover.src);
+});
+
+test('프로젝트 로고 — 올리기 → /as/design 빌보드 아이콘에 로고(크기 그대로) → D1 → 되돌리면 역할 아이콘 (제보 c8426e93)', async ({ page }) => {
+  const id = start.roles.design?.featured ?? start.ko.work.projects[0].id;
+  const avatar = page.locator('.billboard-kicker .avatar');
+  // before — 로고가 없으면 역할 아이콘(svg)
+  test.skip(Boolean(start.ko.work.projects.find((p) => p.id === id)?.logo), '이미 로고가 있는 데이터');
+  await page.goto('/as/design');
+  await expect(avatar).toHaveCount(1);
+  await expect(avatar.locator('svg')).toHaveCount(1);
+  await expect(avatar.locator('img')).toHaveCount(0);
+  const box0 = await avatar.boundingBox();
+  await shot(page, 'logo-hero-before');
+
+  const sheet = await openEditor(page, id);
+  await sheet.locator('div[data-field="logo"] input[type="file"]').setInputFiles(join(FIX, 'e2e-logo.png'));
+  const src = sheet.locator('[data-shot-src="logo"]');
+  await expect(src).toHaveText(/^\/media\/image\/e2e-logo-[0-9a-f]{10}\.png$/);
+  const logoSrc = (await src.textContent())!;
+  await shot(page, 'logo-admin-field');
+  await sheet.getByRole('button', { name: '저장', exact: true }).click();
+  await expect(page.locator('[data-editor-status="saved"]')).toContainText('logo');
+
+  // after — 같은 칸에 로고 사진, 크기는 그대로
+  await page.goto('/as/design');
+  await expect(avatar.locator('img')).toHaveAttribute('src', logoSrc);
+  await expect(avatar.locator('svg')).toHaveCount(0);
+  expect(await avatar.boundingBox()).toEqual(box0);
+  expect((await page.request.get(logoSrc)).status()).toBe(200);
+  await shot(page, 'logo-hero-after');
+  for (const l of ['ko', 'en', 'es']) expect(d1Doc<Content>(`content:${l}`).body.work.projects.find((p) => p.id === id)!.logo).toBe(logoSrc);
+
+  // 로고 빼기도 칸 하나로 — 되돌리면 역할 아이콘으로 돌아온다
+  await undoFromHistory(page, /logo/);
+  await page.goto('/as/design');
+  await expect(avatar.locator('svg')).toHaveCount(1);
+  await expect(avatar.locator('img')).toHaveCount(0);
 });
 
 test('오픈소스 행 — 저장소 추가 → 역할 화면에 카드 → D1 → 빼기 → 없어짐', async ({ page }) => {
