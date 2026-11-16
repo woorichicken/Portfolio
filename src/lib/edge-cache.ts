@@ -3,7 +3,7 @@
 // 왜: 2026-11-16 실측(제보 f740e315 「속도 개선」 · d264d5d4 「R2 지역」). 한국 요청은 LAX 엣지에서 처리되는데
 // R2·D1 은 APAC 에 있다. 그래서 같은 사진을 열 때마다 Worker 가 APAC 의 R2 에서 원본을 읽고 다시 변환했다
 // (/_next/image 한 장 1.3~3초 · 캐시 헤더 없음 · cf-cache-status 없음, 6MB 영상 59초). 결과를 엣지에 두면
-// 두 번째부터는 R2·변환을 건너뛴다. 정적 파일(/work/*.jpg)은 이미 assets 가 엣지에서 준다 — 여기서 다루지 않는다.
+// 두 번째부터는 R2·변환을 건너뛴다. Cache API 는 데이터센터마다 따로이고 workers.dev 에서는 아무것도 저장하지 않는다. 정적 파일(/work/*.jpg)은 이미 assets 가 엣지에서 준다 — 여기서 다루지 않는다.
 //
 // Range(영상 넘겨 보기)는 Cache API 가 처리한다: 전체(200)를 넣어 두면 Range 요청에 206 을 알아서 잘라 준다.
 // 그래서 Range 로 처음 들어온 요청은 원본에서 그 구간을 바로 주고, 전체 파일은 뒤에서(waitUntil) 채운다.
@@ -24,7 +24,8 @@ export function isEdgeCacheable(request: Request): boolean {
 }
 
 /**
- * 캐시 키. 사진 최적화는 Accept 에 따라 형식(avif·webp·원본)이 달라지므로 그 형식을 키에 넣는다.
+ * 캐시 키. 사진 최적화는 Accept 에 따라 형식이 달라지므로 그 형식을 키에 넣는다(지금 next.config 기본값은 webp 뿐 —
+ * avif 를 켜도 키가 갈리도록 미리 둔다).
  * 키 주소는 밖으로 나가지 않는다 — Cache API 안에서만 쓰는 이름이다.
  */
 export function edgeCacheKey(request: Request): string {
@@ -44,6 +45,8 @@ function storable(request: Request, response: Response): Response {
     copy.headers.set('cache-control', `public, max-age=${IMAGE_EDGE_TTL_SECONDS}`);
   }
   copy.headers.delete(EDGE_CACHE_HEADER);
+  // Set-Cookie 가 있으면 Cache API 가 넣기를 거절한다(조용히 캐시가 안 되는 일을 막는다)
+  copy.headers.delete('set-cookie');
   return copy;
 }
 
@@ -75,7 +78,7 @@ export async function serveWithEdgeCache(request: Request, origin: Origin, cache
     return withHeader(response, 'MISS');
   }
 
-  if (response.status !== 200) return response;
+  if (response.status !== 200) return withHeader(response, 'MISS');
   const [forClient, forCache] = teeResponse(response);
   waitUntil(cache.put(key, storable(request, forCache)).catch(() => undefined));
   return withHeader(forClient, 'MISS');

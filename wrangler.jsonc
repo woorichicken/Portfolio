@@ -39,9 +39,6 @@
   // next/image 최적화. 없으면 원본을 그대로 내보낸다(OpenNext images.js)
   "images": { "binding": "IMAGES" },
   "observability": { "enabled": true },
-  // 한국 요청은 LAX 엣지로 들어오는데 D1·R2 는 APAC 다(2026-11-16 실측). Smart Placement 가 Worker 를 데이터 가까이 옮겨
-  // 페이지 한 번에 여러 번 오가는 LAX↔APAC 왕복을 한 번으로 줄인다. 정적 파일(assets)은 영향 없다.
-  "placement": { "mode": "smart" },
   // 2026-11-09 Vercel → Workers 전환. 도메인은 API 로 먼저 붙였고(배치 cutover.sh), 다음 배포가 떼지 않게 여기에도 적는다.
   // routes 를 적으면 Wrangler 가 workers.dev 를 기본으로 끄므로 명시해서 유지한다(검증·비상용 주소)
   "workers_dev": true,
