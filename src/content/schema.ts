@@ -42,8 +42,9 @@ const DetailSchema = z.strictObject({ facts: z.array(FactSchema), paragraphs: z.
 /** 주소에 들어가는 이름 — 소문자·숫자·하이픈 */
 export const SlugSchema = z.string().regex(SLUG_RE, SLUG_MESSAGE);
 
-/** 로고·파비콘 — 사진 파일 경로(/work/… 또는 /media/…). 정사각 칸에 contain 으로 들어가므로 모양은 가리지 않는다 */
-export const LogoSchema = z.string().regex(/^\/(work|media)\/[^\s]+\.(png|jpg|jpeg|webp|gif)$/, '로고는 /work/… 또는 /media/… 의 png·jpg·webp·gif 사진입니다');
+/** 로고·파비콘 — 사진 파일 경로(/work/… 또는 /media/…). 정사각 칸에 contain 으로 들어가므로 모양은 가리지 않는다.
+ *  `..`·따옴표·꺾쇠는 받지 않는다(리뷰 지적 — 어드민만 쓰지만 경로 밖을 가리키는 값을 남기지 않는다) */
+export const LogoSchema = z.string().regex(/^\/(work|media)\/(?!.*\.\.)[^\s"'<>]+\.(png|jpg|jpeg|webp|gif)$/, '로고는 /work/… 또는 /media/… 의 png·jpg·webp·gif 사진입니다');
 
 export const ProjectSchema = z.strictObject({
   id: SlugSchema,

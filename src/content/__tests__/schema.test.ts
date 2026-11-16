@@ -37,6 +37,10 @@ describe('validateSite — 세 언어 모양 검사', () => {
     expect(validateSite(d).some((p) => p.path.endsWith('logo'))).toBe(true);
     for (const l of ['ko', 'en', 'es'] as const) d.content[l].work.projects[0].logo = '/media/video/x.mp4';
     expect(validateSite(d).some((p) => p.message.includes('로고는'))).toBe(true);
+    for (const bad of ['/work/../../etc/x.png', '/media/a"onerror=x.png', 'javascript:alert(1).png']) {
+      for (const l of ['ko', 'en', 'es'] as const) d.content[l].work.projects[0].logo = bad;
+      expect(validateSite(d).some((p) => p.message.includes('로고는'))).toBe(true);
+    }
   });
 
   it('모르는 칸(오타)은 zod 가 거절한다', () => {
