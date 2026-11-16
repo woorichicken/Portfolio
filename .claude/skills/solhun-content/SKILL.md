@@ -58,6 +58,7 @@ scripts/with-workers.sh pnpm -s content get     # 또는: 띄우고 → 명령 �
 | 영상 제목·설명 고치기 | `pnpm content set 'videos.items[fair-update].title' "…" --locale ko` |
 | 영상 추가 | 5.1절 |
 | 「GitHub 보러가기」 단추(빌보드·상세 머리) | `pnpm content set kits.repo --ko <URL> --en <URL> --es <URL>` (세 언어 같은 주소) · 빼기 `set kits.repo --unset` |
+| 프로젝트 로고·파비콘(대표작 빌보드 머리의 작은 정사각 아이콘 — 없으면 역할 아이콘) | `pnpm content media ./logo.png --name kits-logo` 로 올린 뒤 `pnpm content set kits.logo --ko /media/image/<올린 키> --en … --es …`(세 언어 같은 주소 · png·jpg·webp·gif) · 빼기 `set kits.logo --unset` |
 | 운영에 하기 | 같은 명령 끝에 `--target prod` (0절 상태 확인) |
 | 결과를 기계로 읽기 | 아무 명령에 `--json` |
 
@@ -116,7 +117,7 @@ printf '%s\n' "<새 문구>" | node $L/lint.mjs --stdin --lang ko > /tmp/lint-ko
 
 - 글자 고치기는 한 언어씩 해도 된다.
 - **없던 칸을 넣거나 지우기, 목록 길이 바꾸기(갤러리 한 장 추가 등), 프로젝트 추가**는 세 언어를 한 번에 해야 통과한다 → `--ko --en --es` 또는 `add-project` 파일에 세 언어.
-- 사진 파일(`src`·`width`·`height`)과 `id`·`slug`, 그리고 `repo`·`homepage`·영상 `poster`·`project` 는 세 언어가 같아야 한다(`alt`·`body`·`title` 은 언어마다).
+- 사진 파일(`src`·`width`·`height`)과 `id`·`slug`, 그리고 `repo`·`logo`·`homepage`·영상 `poster`·`project` 는 세 언어가 같아야 한다(`alt`·`body`·`title` 은 언어마다).
 
 ## 4. 프로젝트 추가 — 순서
 

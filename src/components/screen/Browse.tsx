@@ -42,7 +42,7 @@ export default function Browse({ site: docs, locale, role }: { site: SiteDocs; l
           <Image src={f.cover.src} unoptimized={isMediaSrc(f.cover.src)} alt="" width={f.cover.width} height={f.cover.height} sizes="(max-width: 1000px) 100vw, 1400px" priority />
         </div>
         <div className="billboard-body">
-          <p className="billboard-kicker"><Avatar role={role} />{t.hero.name} · {def.name[locale]} · {s.featured}</p>
+          <p className="billboard-kicker"><Avatar role={role} logo={f.logo} />{t.hero.name} · {def.name[locale]} · {s.featured}</p>
           <h1 className="billboard-title" id="billboard-title">{f.name}</h1>
           <ul className="dot-list billboard-meta">
             {f.facts.slice(0, 2).map((fact) => <li key={fact.label}>{fact.value}</li>)}

@@ -248,6 +248,8 @@ button { font: inherit; color: inherit; }
 [data-role="all"] { --role-c: var(--role-all); }
 .avatar[data-role="maker"] { color: var(--on-role-light); }
 .avatar[data-role="all"] { box-shadow: inset 0 0 0 1px var(--line); }
+.avatar-logo { background: #fff; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.avatar-logo img { width: 100%; height: 100%; object-fit: contain; padding: 8%; box-sizing: border-box; display: block; }
 .avatar svg { width: 46%; height: 46%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ── 역할 고르기 — 넷플릭스 프로필 화면: 검정 바탕 · 32px/700 · 타일 반지름 16 · 그림 128(모바일 96) 반지름 12 ── */
@@ -833,6 +835,7 @@ textarea.admin-input { min-height: 72px; max-height: 360px; resize: vertical; fi
 .admin-shot-row { display: grid; grid-template-columns: 160px 1fr; gap: 12px; align-items: start; }
 .admin-shot-thumb { aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; background: var(--surface-3); }
 .admin-shot-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.admin-logo-preview { width: 64px; flex: none; border-radius: 10px; }
 .admin-shot-meta { display: grid; gap: 6px; min-width: 0; }
 .admin-upload { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .admin-panel { display: grid; gap: 14px; }
