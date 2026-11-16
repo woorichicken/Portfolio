@@ -37,6 +37,11 @@ curl(Bearer) ───┘    (Worker)          └─ 바뀐 페이지만 무효
 | `repo` | `work.projects[]` · `others.items[]` | https 주소 · 세 언어 같은 값 | 빌보드(대표작일 때)·상세 머리에 「GitHub 보러가기」 |
 | `openSource` · `videos` | `roles.<역할>` | boolean(없으면 꺼짐) | 그 역할 화면에 행을 보일지 — 2026-11-10 시드: 오픈소스 maker·all · 영상 design·all |
 
+### 프로젝트 로고 — `logo` (2026-11-16 제보 c8426e93)
+
+`work.projects[].logo`(선택) — `/work/…` 또는 `/media/…` 의 png·jpg·webp·gif 한 장, **세 언어 같은 값**. 대표작 빌보드 머리(「정경훈 · 디자인 엔지니어 · 대표작」 앞)의 작은 정사각 아이콘(`.avatar`)에 들어가고(크기·모양 그대로, `object-fit: contain` · 흰 바탕), 없으면 예전처럼 역할 아이콘이다.
+**DB 마이그레이션 없음** — 본문은 `content_doc` 의 JSON 이라 새 칸은 zod 스키마(`LogoSchema`)만 늘었다. 어드민: 항목 편집 패널 「로고·파비콘」 칸(올리기 · 바꾸기 · 빼기). CLI: `pnpm content set kits.logo --ko … --en … --es …`.
+
 - 행 제목·단추 글(「오픈소스」·「만든 영상」·「GitHub 보러가기」·「사이트」·「프로젝트 보기」)은 본문이 아니라 화면 글 `SCREEN`(src/content/roles.ts)이다.
 - 미디어 키는 `<image|video>/<이름>-<SHA-256 앞 10자>.<확장자>` — 같은 파일은 어디서 몇 번 올려도 같은 주소라 시드(`src/content/*.ts`)에 운영과 같은 `src` 를 적어 둘 수 있다.
 

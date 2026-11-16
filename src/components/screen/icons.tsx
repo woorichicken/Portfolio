@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { RoleId } from '@/content/roles';
 
 // 리브랜딩 화면의 선 아이콘. 굵기·끝 모양은 CSS(.avatar svg · .btn svg)가 정한다 — 여기는 모양만.
@@ -53,10 +54,12 @@ export function RoleIcon({ role }: { role: RoleId }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true">{ROLE_PATHS[role]}</svg>;
 }
 
-export function Avatar({ role, className }: { role: RoleId; className?: string }) {
+/** logo 가 있으면 프로젝트 로고(.avatar-logo — 크기·모양은 그대로, 안 잘리게 contain), 없으면 역할 아이콘 */
+export function Avatar({ role, className, logo }: { role: RoleId; className?: string; logo?: string }) {
+  const classes = `avatar${logo ? ' avatar-logo' : ''}${className ? ` ${className}` : ''}`;
   return (
-    <span className={`avatar${className ? ` ${className}` : ''}`} data-role={role} aria-hidden="true">
-      <RoleIcon role={role} />
+    <span className={classes} data-role={role} data-logo={logo ? '' : undefined} aria-hidden="true">
+      {logo ? <Image src={logo} unoptimized alt="" width={64} height={64} /> : <RoleIcon role={role} />}
     </span>
   );
 }

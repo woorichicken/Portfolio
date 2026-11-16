@@ -42,6 +42,8 @@ export type Project = {
   links?: Link[];
   /** 코드 저장소 주소(GitHub 등) — 있으면 빌보드·상세 머리에 「GitHub 보러가기」 단추. 세 언어가 같아야 한다 */
   repo?: string;
+  /** 프로젝트 로고·파비콘(선택) — 대표작 빌보드의 작은 정사각 아이콘(.avatar)에 들어간다. 없으면 역할 아이콘. 세 언어가 같아야 한다 */
+  logo?: string;
 };
 
 export type OtherWork = {
