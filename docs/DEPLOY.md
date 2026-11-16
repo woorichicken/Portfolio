@@ -205,6 +205,7 @@ node ~/Downloads/geo-tracker/audit.mjs "$P"                                     
 | 배포 명령 | `CLOUDFLARE_API_TOKEN=$PORTFOLIO_CF_TOKEN pnpm exec opennextjs-cloudflare deploy` |
 | 빌드 변수 키 | `NODE_VERSION` · `PNPM_VERSION` · `SKIP_DEPENDENCY_INSTALL` · `CLI_MANAGER_ROUTES` · `CLOUDFLARE_ACCOUNT_ID` · 비밀 `PORTFOLIO_CF_TOKEN` · `NEXT_PUBLIC_DP_FEEDBACK_URL` · `NEXT_PUBLIC_DP_FEEDBACK_KEY` |
 | 피드백 URL 주의 | `NEXT_PUBLIC_DP_FEEDBACK_URL` 은 **`…/dp-agentation-ingest/<소스>`** 다. 옛 `dp-annotation-ingest` 를 넣으면 위젯은 뜨는데 전송만 400(`comment는 1~4,000자`)이고, 위젯이 재시도 불가로 **제보를 버린다**. 2026-11-09 이전 때 옛 주소가 들어가 11-08~11-16 제보가 전부 사라졌다 — 11-16 고침(빌드 527b701e). 바꾼 뒤엔 다시 빌드하고 번들에서 `dp-agentation-ingest` 를 센다 |
+| 진입점·엣지 캐시 | `wrangler.jsonc` `main` = `worker.ts`(OpenNext worker 앞 엣지 캐시: `/_next/image` 하루 · `/media/*` 원본 헤더(1년 — 키에 해시가 있다), 응답 헤더 `x-edge-cache: HIT/MISS`). 이유: 한국 요청은 LAX 엣지, R2·D1 은 APAC(2026-11-16 실측 — 사진 한 장 1.2~1.9초 · 6MB 영상 12~75초). 캐시는 데이터센터마다 따로이고 **workers.dev 에서는 저장되지 않는다**(검증은 www.solhun.com 으로). 같은 이름으로 사진을 바꾸면 최대 하루 옛 것이 나간다. Smart Placement 는 일부러 안 켰다 — 켜면 Worker 와 캐시가 APAC 로 가 LAX 엣지 캐시 효과와 부딪힌다(리뷰 지적). 되돌리기는 `main` 을 `.open-next/worker.js` 로 |
 
 - **왜 `PORTFOLIO_CF_TOKEN` 을 따로 두나**: 빌드가 운영 D1 을 읽고(스냅숏), 배포가 R2 페이지 캐시를 채운다. Workers Builds 기본 빌드 토큰에 그 권한이 있는지 확인하지 않았다 — 권한을 좁힌 우리 토큰을 그 두 명령에만 준다.
 - **비밀값 위치**: 1Password lightsoft 「직원」 — 「solhun.com 포트폴리오 - Cloudflare API 토큰 (D1·R2·Workers 배포)」(토큰 id `52691633…`) · 「… 콘텐츠 API 토큰」 · 「… 어드민 세션 서명 비밀」. 로컬 사본 `~/.config/portfolio/{cf-api-token,content-api-token,admin-session-secret}`(0600).
