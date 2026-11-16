@@ -258,6 +258,27 @@ button { font: inherit; color: inherit; }
   /* 넷플릭스 프로필 화면의 위쪽 빛 — 빨강 대신 이끼색을 아주 옅게 */
   background: radial-gradient(1600px at 50% -54dvh, color-mix(in srgb, var(--role-design) 55%, transparent) 19%, color-mix(in srgb, var(--role-design) 22%, transparent) 60%, transparent 100%), var(--bg-deep);
 }
+/* 뒤 벽 — 실제 프로젝트 화면을 어둡게 깔아 둔 타일 벽(2026-11-16 제보 c3aa7590 「넷플릭스처럼 뒤에 실제 프로젝트 화면」).
+   움직이지 않는 CSS 배경 한 장(WebP 55KB · 모바일 35KB)이라 글·타일 읽기와 첫 화면 속도를 건드리지 않는다.
+   그림은 public/work 의 프로젝트 표지를 240×150 으로 잘라 이은 것. 위에 짙은 그라데이션을 덮어 제목·타일·단추 대비를 지킨다. */
+.picker { position: relative; isolation: isolate; }
+.picker::before, .picker::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.picker::before {
+  background: url('/picker-bg/wall-wide.webp') center / cover no-repeat;
+  opacity: 0.46; filter: saturate(0.75);
+}
+.picker::after {
+  background:
+    radial-gradient(ellipse 70% 62% at 50% 50%, rgb(0 0 0 / 0.78) 0%, rgb(0 0 0 / 0.5) 55%, transparent 100%),
+    linear-gradient(to bottom, rgb(0 0 0 / 0.9) 0%, rgb(0 0 0 / 0.3) 30%, rgb(0 0 0 / 0.55) 72%, #000 100%);
+}
+@media (max-width: 599px) {
+  .picker::before { background-image: url('/picker-bg/wall-tall.webp'); opacity: 0.42; }
+  .picker::after {
+    background:
+      linear-gradient(to bottom, rgb(0 0 0 / 0.8) 0%, rgb(0 0 0 / 0.55) 30%, rgb(0 0 0 / 0.7) 60%, #000 100%);
+  }
+}
 .picker-top { display: flex; align-items: center; justify-content: space-between; height: var(--header-h); padding-inline: var(--gutter); }
 .picker-main { display: grid; place-content: center; text-align: center; padding: 24px var(--gutter) 48px; }
 .picker-title { font-size: 26px; font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; margin: 0 0 28px; }
