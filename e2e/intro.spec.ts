@@ -40,6 +40,28 @@ test('끝난 뒤에는 Tab 이 역할 칸으로 간다(키를 삼키지 않는�
   expect(await page.evaluate(() => document.activeElement?.classList.contains('picker-tile'))).toBe(true);
 });
 
+test('Esc 로 건너뛴다', async ({ page }) => {
+  await page.goto('/');
+  const intro = page.locator(INTRO);
+  await expect(intro).toHaveAttribute('data-play', '1');
+  await page.keyboard.press('Escape');
+  await expect(intro).toHaveAttribute('data-play', 'done');
+  await expect(intro).toBeHidden({ timeout: 1_000 });
+});
+
+test('하이드레이션이 인트로보다 늦어도 끝난 뒤 첫 키를 삼키지 않는다', async ({ page }) => {
+  // 자바스크립트 청크를 2.5초 붙잡아 하이드레이션을 인트로(약 1.5초) 뒤로 민다
+  await page.route('**/_next/static/chunks/**', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 2_500));
+    await route.continue();
+  });
+  await page.goto('/');
+  await expect(page.locator(INTRO)).toBeHidden({ timeout: INTRO_DONE_MS });
+  await expect(page.locator(INTRO)).toHaveAttribute('data-play', 'done', { timeout: 8_000 });
+  await page.keyboard.press('Tab');
+  expect(await page.evaluate(() => document.activeElement !== document.body)).toBe(true);
+});
+
 test.describe('움직임 줄이기', () => {
   test.use({ reducedMotion: 'reduce' });
   test('설정돼 있으면 처음부터 안 나온다', async ({ page }) => {
