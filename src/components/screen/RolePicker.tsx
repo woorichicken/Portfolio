@@ -8,6 +8,7 @@ import FeedbackGate from '../feedback/FeedbackGate';
 import Rich from '../Rich';
 import AboutDialog from './AboutDialog';
 import { Avatar } from './icons';
+import IntroSting from './IntroSting';
 import { PickerMemory } from './RoleClient';
 
 // 첫 화면 — 「어떤 정경훈을 볼까요?」. 계정을 고르는 대신 보고 싶은 역할을 고른다(스탠드업 메모의 방향).
@@ -19,6 +20,7 @@ export default function RolePicker({ site, locale }: { site: SiteDocs; locale: L
   const s = screenCopy(locale);
   return (
     <div className="picker">
+      <IntroSting />
       <div className="picker-top">
         <a className="wordmark" href={localePath(locale)}>
           <Image src="/brand/solhun-sloth-96.png" alt="" width={28} height={28} priority />

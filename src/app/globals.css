@@ -280,6 +280,28 @@ button { font: inherit; color: inherit; }
   }
 }
 .picker-top { display: flex; align-items: center; justify-content: space-between; height: var(--header-h); padding-inline: var(--gutter); }
+/* 첫 방문 인트로(IntroSting.tsx) — 약 1.5초. data-play 가 없으면(재방문·움직임 줄이기·저장소 막힘) 아예 안 그린다 */
+.intro-sting { display: none; }
+.intro-sting[data-play] {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: #000; cursor: pointer;
+}
+.intro-sting[data-play="1"] { animation: intro-out .35s ease-in 1.2s forwards; }
+.intro-sting[data-play="done"] { animation: intro-out .2s ease-in forwards; }
+.intro-mark { display: grid; justify-items: center; gap: 16px; animation: intro-thump .32s cubic-bezier(.3, 1.6, .5, 1) .82s both; }
+.intro-sloth { width: 64px; height: 64px; border-radius: 50%; animation: intro-sloth-in .5s cubic-bezier(.2, .8, .2, 1) .05s both; }
+.intro-word {
+  display: flex; font-family: var(--font-display-stack); font-weight: 800; font-size: clamp(44px, 9vw, 96px);
+  letter-spacing: 0.06em; line-height: 1; color: var(--text);
+}
+.intro-word span { display: inline-block; animation: intro-letter-in .5s cubic-bezier(.2, .8, .2, 1) calc(.12s + var(--i) * 50ms) both; }
+.intro-word span:nth-child(odd) { --from-y: -0.5em; }
+.intro-word span:nth-child(even) { --from-y: 0.5em; }
+.intro-line { display: block; width: 100%; height: 3px; border-radius: 2px; background: var(--accent); transform-origin: center; animation: intro-line-in .35s ease-out .72s both; }
+@keyframes intro-letter-in { from { opacity: 0; transform: translateY(var(--from-y, 0.4em)) scale(1.6); filter: blur(10px); } }
+@keyframes intro-sloth-in { from { opacity: 0; transform: scale(.6); } }
+@keyframes intro-line-in { from { transform: scaleX(0); opacity: 0; } }
+@keyframes intro-thump { 50% { transform: scale(1.07); } }
+@keyframes intro-out { to { opacity: 0; visibility: hidden; } }
 .picker-main { display: grid; place-content: center; text-align: center; padding: 24px var(--gutter) 48px; }
 .picker-title { font-size: 26px; font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; margin: 0 0 28px; }
 /* 네 장이 한 줄(1×4)이거나 두 줄(2×2) — 3+1 로 꺾이지 않게 칸 수를 정해 둔다(2026-11-02 피드백 「줄어들어도 2x2 유지」) */
