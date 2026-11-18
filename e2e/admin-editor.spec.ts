@@ -221,6 +221,13 @@ test('오픈소스 행 — 저장소 추가 → 역할 화면에 카드 → D1 �
   await demo.locator('div[data-field$=".poster"] input[type="file"]').setInputFiles(join(FIX, 'e2e-poster.jpg'));
   await expect(demo.getByRole('button', { name: '데모 빼기' })).toHaveCount(1);
   await shot(page, 'oss-added');
+  if (SHOTS) {
+    // 아래에 붙어 다니는 저장 막대가 칸을 덮지 않게 잠깐 숨기고 데모 칸만 찍는다
+    const foot = panel.locator('.admin-panel-foot');
+    await foot.evaluate((e) => ((e as HTMLElement).style.visibility = 'hidden'));
+    await demo.screenshot({ path: join(SHOTS, 'oss-row-demo.png') });
+    await foot.evaluate((e) => ((e as HTMLElement).style.visibility = ''));
+  }
   await panel.getByRole('button', { name: '오픈소스 저장' }).click();
   await expect(page.locator('[data-rows-status="saved"]')).toContainText('저장했습니다 — 고침 openSource — items (ko·en·es)');
   await expect(panel.locator(`[data-site-link="/as/${role}"]`)).toHaveCount(1);
