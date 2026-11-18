@@ -4,15 +4,16 @@
 //  - 틀지 말지를 칠하기 전에 정해야 역할 고르기 화면이 한 번 보였다가 검은 화면이 덮는 깜빡임이 없다.
 //  - 영상 끝·건너뛰기·소리 켜기가 하이드레이션 시점과 상관없이 돌아야 한다(느린 기기에서 인트로가 끝나도 안 걷히면 화면이 막힌다).
 // 이 함수는 toString() 으로 HTML 에 그대로 박힌다 — 밖의 변수·import 를 쓰면 브라우저에서 깨진다. 필요한 값은 전부 cfg 로 받는다.
+// (아래 import type 은 컴파일 때 지워져 문자열에 안 들어간다.)
+
+import type { IntroVariant } from './introVariants';
 
 export type IntroBootConfig = {
   id: string;
   seenKey: string;
-  /** 영상 1920×1080 위에서 마지막 장면 그림(end 이미지)의 왼쪽 위 · 크기 — 이미지를 영상 마지막 프레임과 대조해 쟀다 */
-  frame: { width: number; height: number };
-  endBox: { x: number; y: number; width: number; height: number };
-  /** end 이미지 안에서 나무늘보 원의 가운데 · 지름 — 날아가서 로고 자리에 맞출 기준 */
-  circle: { cx: number; cy: number; d: number };
+  /** 가로판·세로판 — 화면 방향으로 하나를 고른다(introVariants.ts) */
+  variants: { landscape: IntroVariant; portrait: IntroVariant };
+  portraitQuery: string;
   /** 날아가 앉을 자리(첫 화면 왼쪽 위 로고 그림) */
   targetSelector: string;
   /** 영상이 이 시간 안에 시작 못 하면(느린 회선·자동재생 막힘) 인트로를 접는다 */
@@ -32,10 +33,13 @@ export function introBoot(cfg: IntroBootConfig) {
 
     const intro = root;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // 방향은 시작할 때 한 번만 고른다 — 재생 중에 돌려도 영상을 바꾸지 않는다(끝 그림 위치는 placeEnd 가 그때 화면 크기로 다시 잰다)
+    const v = window.matchMedia(cfg.portraitQuery).matches ? cfg.variants.portrait : cfg.variants.landscape;
     const video = intro.querySelector('video') as HTMLVideoElement;
     const endImg = intro.querySelector('.intro-end') as HTMLImageElement;
     const sound = intro.querySelector('.intro-sound') as HTMLButtonElement;
     const skip = intro.querySelector('.intro-skip') as HTMLButtonElement;
+    endImg.src = v.endSrc;
     let finished = false;
     const timers: number[] = [];
 
@@ -43,15 +47,15 @@ export function introBoot(cfg: IntroBootConfig) {
       // 영상은 화면에 object-fit: contain 으로 들어간다 — 같은 비율로 end 이미지를 영상 속 그 자리에 겹친다
       const w = window.innerWidth;
       const h = window.innerHeight;
-      const s = Math.min(w / cfg.frame.width, h / cfg.frame.height);
-      const left = (w - cfg.frame.width * s) / 2 + cfg.endBox.x * s;
-      const top = (h - cfg.frame.height * s) / 2 + cfg.endBox.y * s;
+      const s = Math.min(w / v.frame.width, h / v.frame.height);
+      const left = (w - v.frame.width * s) / 2 + v.endBox.x * s;
+      const top = (h - v.frame.height * s) / 2 + v.endBox.y * s;
       endImg.style.left = left + 'px';
       endImg.style.top = top + 'px';
-      endImg.style.width = cfg.endBox.width * s + 'px';
-      endImg.style.height = cfg.endBox.height * s + 'px';
-      endImg.style.transformOrigin = cfg.circle.cx * s + 'px ' + cfg.circle.cy * s + 'px';
-      return { s: s, cx: left + cfg.circle.cx * s, cy: top + cfg.circle.cy * s };
+      endImg.style.width = v.endBox.width * s + 'px';
+      endImg.style.height = v.endBox.height * s + 'px';
+      endImg.style.transformOrigin = v.circle.cx * s + 'px ' + v.circle.cy * s + 'px';
+      return { s: s, cx: left + v.circle.cx * s, cy: top + v.circle.cy * s };
     };
 
     const stopListening = function () {
@@ -74,7 +78,7 @@ export function introBoot(cfg: IntroBootConfig) {
       const rect = target ? target.getBoundingClientRect() : null;
       if (!rect || !rect.width || typeof endImg.animate !== 'function') return close();
       const at = placeEnd();
-      const k = rect.width / (cfg.circle.d * at.s);
+      const k = rect.width / (v.circle.d * at.s);
       const dx = rect.left + rect.width / 2 - at.cx;
       const dy = rect.top + rect.height / 2 - at.cy;
       intro.setAttribute('data-play', 'fly');
@@ -136,18 +140,10 @@ export function introBoot(cfg: IntroBootConfig) {
     video.addEventListener('playing', function () {
       clearTimeout(startTimer);
     });
-    // 영상은 첫 방문에만 받는다 — 주소를 data-src 에 두고 여기서 붙인다(재방문·움직임 줄이기에서는 한 바이트도 안 받는다)
-    const sources = intro.querySelectorAll('source[data-src]');
-    for (let i = 0; i < sources.length; i++) {
-      const source = sources[i] as HTMLSourceElement;
-      source.src = source.dataset.src || '';
-    }
-    // <source> 를 쓰면 받기 실패는 video 가 아니라 source 에서 난다 — 마지막 후보까지 실패하면 접는다
-    if (sources.length) {
-      sources[sources.length - 1].addEventListener('error', function () {
-        finish(false);
-      });
-    }
+    // 영상은 첫 방문에만, 고른 방향 하나만 받는다 — 주소를 여기서 붙인다(재방문·움직임 줄이기에서는 한 바이트도 안 받는다).
+    // <source> 여러 개 대신 video.src 를 직접 정한다: 안 고른 방향의 <source> 를 지우면 하이드레이션이 어긋나고,
+    // 주소 없는 <source> 를 남기면 그게 「받기 실패」로 잡혀 인트로가 접힌다
+    video.src = video.canPlayType('video/mp4; codecs="avc1.640028, mp4a.40.2"') ? v.mp4 : v.webm;
     video.muted = true;
     video.load();
     const playing = video.play();

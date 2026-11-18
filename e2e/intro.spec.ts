@@ -1,14 +1,15 @@
 import { expect, test, type Page } from '@playwright/test';
+import { INTRO_VARIANTS, type IntroVariant } from '../src/components/screen/introVariants';
 
 // 첫 화면 인트로(제보 33013e08 → 2026-11-18 시네마틱 스팅 v7 영상).
 // 첫 방문에만 · 소리 없이 자동재생 + 소리 켜기 · 건너뛰기(단추·화면 누르기·Esc) · 끝나면 나무늘보 원이 로고 자리로 날아감 ·
-// 움직임 줄이기면 마지막 장면 한 장 · 재방문엔 영상을 받지도 않는다.
+// 움직임 줄이기면 마지막 장면 한 장 · 재방문엔 영상을 받지도 않는다 · 세로로 긴 화면은 세로판(1080×1920).
 // 테스트마다 새 브라우저 문맥이라 localStorage 가 비어 있다 = 첫 방문.
 const INTRO = '#intro-sting';
 const VIDEO = `${INTRO} video`;
 // 영상 7초 + 날아가기 0.7초 + 걷힘 0.25초에 시작 지연 여유
 const INTRO_DONE_MS = 15_000;
-const INTRO_MEDIA = /\/intro\/solhun-sting-v7\.(mp4|webm)$/;
+const INTRO_MEDIA = /\/intro\/solhun-sting-v7(-portrait)?\.(mp4|webm)$/;
 
 /** data-play 가 거쳐 간 상태를 모은다 — 「날아갔다(fly)」는 0.7초라 기다려서는 놓친다 */
 async function recordPlayStates(page: Page) {
@@ -48,22 +49,20 @@ test('첫 방문에 소리 없이 재생되고, 끝나면 로고 자리로 날�
   expect(mediaRequests).toEqual([]);
 });
 
-test('날아간 나무늘보 원이 왼쪽 위 로고 그림 자리에 앉는다', async ({ page }) => {
-  await page.goto('/');
+/** 날아가기를 마지막 순간에 멈춰 세우고, 원의 가운데가 왼쪽 위 로고 그림 가운데와 2px 안에서 만나는지 잰다 —
+ *  끝나면 바로 걷혀 그림이 사라지므로 시간으로 기다리면 놓친다 */
+async function expectLandsOnLogo(page: Page, variant: IntroVariant) {
   await expect(page.locator(INTRO)).toHaveAttribute('data-play', 'fly', { timeout: INTRO_DONE_MS });
-  // 날아가기를 마지막 순간에 멈춰 세운다(끝나면 바로 걷혀 그림이 사라지므로 시간으로 기다리면 놓친다) —
-  // 그 자리에서 원의 가운데가 로고 그림 가운데와 2px 안에서 만나는지 본다
   await page.locator(`${INTRO} .intro-end`).evaluate((img) => {
     const flight = img.getAnimations()[0];
     flight.pause();
     flight.currentTime = Number(flight.effect!.getTiming().duration);
   });
   const [end, mark] = await Promise.all([
-    page.locator(`${INTRO} .intro-end`).evaluate((img) => {
+    page.locator(`${INTRO} .intro-end`).evaluate((img, { circle, endBox }) => {
       const r = img.getBoundingClientRect();
-      // 원 가운데는 이미지 안 (233, 262) / (466, 492)
-      return { x: r.left + (r.width * 233) / 466, y: r.top + (r.height * 262) / 492 };
-    }),
+      return { x: r.left + (r.width * circle.cx) / endBox.width, y: r.top + (r.height * circle.cy) / endBox.height };
+    }, variant),
     page.locator('.picker-top .wordmark img').evaluate((img) => {
       const r = img.getBoundingClientRect();
       return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
@@ -71,6 +70,24 @@ test('날아간 나무늘보 원이 왼쪽 위 로고 그림 자리에 앉는다
   ]);
   expect(Math.abs(end.x - mark.x)).toBeLessThan(2);
   expect(Math.abs(end.y - mark.y)).toBeLessThan(2);
+}
+
+const videoSrc = (page: Page) => page.locator(VIDEO).evaluate((v: HTMLVideoElement) => new URL(v.currentSrc || v.src).pathname);
+
+test('날아간 나무늘보 원이 왼쪽 위 로고 그림 자리에 앉는다(가로 화면 = 가로판)', async ({ page }) => {
+  await page.goto('/');
+  await expect.poll(() => videoSrc(page)).toMatch(/\/solhun-sting-v7\.(mp4|webm)$/);
+  await expectLandsOnLogo(page, INTRO_VARIANTS.landscape);
+});
+
+test.describe('휴대폰 세로 화면', () => {
+  test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  test('세로판을 틀고, 끝에서 원이 로고 자리에 앉는다', async ({ page }) => {
+    await page.goto('/');
+    await expect.poll(() => videoSrc(page)).toMatch(/\/solhun-sting-v7-portrait\.(mp4|webm)$/);
+    await expect(page.locator(`${INTRO} .intro-end`)).toHaveAttribute('src', INTRO_VARIANTS.portrait.endSrc);
+    await expectLandsOnLogo(page, INTRO_VARIANTS.portrait);
+  });
 });
 
 test('소리 켜기를 누르면 소리가 켜지고 인트로는 계속된다', async ({ page }) => {
