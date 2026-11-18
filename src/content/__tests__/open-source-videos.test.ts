@@ -101,8 +101,8 @@ describe('새 칸의 값 검사', () => {
 describe('역할 화면 — 어느 역할에 보이나는 roles 문서가 정한다', () => {
   it('오픈소스는 maker · all, 영상은 design · all', () => {
     const on = (role: 'design' | 'product' | 'ax' | 'maker' | 'all') => roleScreen(STATIC_DOCS, 'ko', role);
-    expect(on('maker').openSource.map((r) => r.id)).toEqual(['cli-manager', 'artifact-dock', 'nightgate', 'framenote', 'climanager-session']);
-    expect(on('all').openSource).toHaveLength(5);
+    expect(on('maker').openSource.map((r) => r.id)).toEqual(['cli-manager', 'artifact-dock', 'nightgate', 'framenote', 'agent-swap', 'climanager-session', 'kucharski-ux-eye', 'fairsplit']);
+    expect(on('all').openSource).toHaveLength(8);
     expect(on('design').openSource).toEqual([]);
     expect(on('design').videos.map((v) => v.video.id)).toEqual(['climanager-demo', 'fair-update', 'artifact-dock-promo', 'climanager-orchestrator']);
     expect(on('all').videos).toHaveLength(4);
@@ -160,5 +160,32 @@ describe('API 로 넣을 때(apply-prod.sh 와 같은 순서)', () => {
     const paths = affectedPaths(before, after);
     expect(paths).toContain('/projects/cli-manager');
     expect(paths).toContain('/as/maker');
+  });
+});
+
+// 2026-11-18 — 오픈소스 카드의 데모 영상(선택 칸). 운영 D1 의 옛 항목(데모 없음)이 그대로 통과해야 하고, 주소는 세 언어가 같아야 한다
+describe('오픈소스 데모 영상', () => {
+  it('데모가 없는 옛 항목도 통과한다', () => {
+    const d = copy();
+    for (const l of LOCALES) for (const it of d.content[l].openSource!.items) delete it.demo;
+    expect(validateSite(d)).toEqual([]);
+  });
+
+  it('데모 영상 주소는 언어마다 같아야 한다', () => {
+    const d = copy();
+    d.content.en.openSource!.items[0].demo = { ...d.content.en.openSource!.items[0].demo!, src: '/media/video/other.mp4' };
+    expect(validateSite(d).map((p) => p.path)).toContain('openSource.items[cli-manager].demo.src');
+  });
+
+  it('포스터가 빠진 데모는 막는다(영상만 올리고 저장)', () => {
+    const d = copy();
+    for (const l of LOCALES) delete (d.content[l].openSource!.items[0].demo as { poster?: string }).poster;
+    expect(validateSite(d).some((p) => p.path.includes('demo') && p.path.endsWith('poster'))).toBe(true);
+  });
+
+  it('데모는 /media/ 영상만 — 바깥 주소는 막는다', () => {
+    const d = copy();
+    for (const l of LOCALES) d.content[l].openSource!.items[0].demo!.src = 'https://example.com/a.mp4';
+    expect(validateSite(d).length).toBeGreaterThan(0);
   });
 });

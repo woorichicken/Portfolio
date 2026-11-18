@@ -579,11 +579,14 @@ const ko: Content = {
   // 영상·포스터는 R2(/media/…) — 주소의 끝 10자는 파일 내용의 지문이라 로컬·운영이 같다(api/content/media)
   openSource: {
     items: [
-      { id: 'cli-manager', name: 'CLI Manager', body: 'AI 코딩 세션과 터미널을 작업 폴더별로 묶어 한 화면에서 보는 맥 앱', repo: 'https://github.com/woorichicken/CLI_manager', homepage: 'https://climanager.solhun.com' },
-      { id: 'artifact-dock', name: 'Artifact Dock', body: '에이전트가 만든 HTML 보고서를 뒤쪽 탭에 문서당 하나로 열고 옆 패널에 모아 두는 크롬 확장 + CLI', repo: 'https://github.com/woorichicken/artifact-dock', homepage: 'https://artifact-dock.solhun.com' },
-      { id: 'nightgate', name: 'Nightgate', body: '밤새 도는 코딩 에이전트의 질문 중 제가 정할 것만 남기는 도구 — 판단은 로컬 모델이 합니다', repo: 'https://github.com/woorichicken/nightgate', homepage: 'https://nightgate.solhun.com' },
-      { id: 'framenote', name: 'Framenote', body: '렌더된 영상에 프레임 단위로 메모를 남기면 코딩 에이전트가 그 메모를 바로 받습니다', repo: 'https://github.com/woorichicken/framenote', homepage: 'https://framenote.solhun.com' },
+      { id: 'cli-manager', name: 'CLI Manager', body: 'AI 코딩 세션과 터미널을 작업 폴더별로 묶어 한 화면에서 보는 맥 앱', repo: 'https://github.com/woorichicken/CLI_manager', homepage: 'https://climanager.solhun.com', demo: { src: '/media/video/climanager-demo-3193c41932.mp4', poster: '/media/image/climanager-demo-poster-71790c6e30.jpg', width: 1920, height: 1080 } },
+      { id: 'artifact-dock', name: 'Artifact Dock', body: '에이전트가 만든 HTML 보고서를 뒤쪽 탭에 문서당 하나로 열고 옆 패널에 모아 두는 크롬 확장 + CLI', repo: 'https://github.com/woorichicken/artifact-dock', homepage: 'https://artifact-dock.solhun.com', demo: { src: '/media/video/artifact-dock-promo-2afd6de51f.mp4', poster: '/media/image/artifact-dock-poster-c71167bdfa.jpg', width: 1920, height: 1080 } },
+      { id: 'nightgate', name: 'Nightgate', body: '밤새 도는 코딩 에이전트의 질문 중 제가 정할 것만 남기는 도구 — 판단은 로컬 모델이 합니다', repo: 'https://github.com/woorichicken/nightgate', homepage: 'https://nightgate.solhun.com', demo: { src: '/media/video/nightgate-demo-770f8d30e5.mp4', poster: '/media/image/nightgate-demo-poster-4c6267678c.jpg', width: 1920, height: 1080 } },
+      { id: 'framenote', name: 'Framenote', body: '렌더된 영상에 프레임 단위로 메모를 남기면 코딩 에이전트가 그 메모를 바로 받습니다', repo: 'https://github.com/woorichicken/framenote', homepage: 'https://framenote.solhun.com', demo: { src: '/media/video/framenote-demo-3b959b2c1b.mp4', poster: '/media/image/framenote-demo-poster-ec85e2327f.jpg', width: 1920, height: 1080 } },
+      { id: 'agent-swap', name: 'agent-swap', body: 'Claude Code 계정을 로그아웃 없이 바꾸고, Codex·Muse 사용량까지 한곳에서 보는 CLI', repo: 'https://github.com/woorichicken/agent-swap', homepage: 'https://agent-swap.solhun.com', demo: { src: '/media/video/agent-swap-demo-4331ab9ff1.mp4', poster: '/media/image/agent-swap-demo-poster-d3654f5e85.jpg', width: 1600, height: 1000 } },
       { id: 'climanager-session', name: 'climanager-session', body: 'CLI Manager 안에 보이는 터미널 세션을 열고 그 안에서 코딩 에이전트를 돌리는 에이전트 스킬', repo: 'https://github.com/woorichicken/climanager-session' },
+      { id: 'kucharski-ux-eye', name: 'kucharski-ux-eye', body: 'AI가 만든 대시보드가 왜 어색한지 숫자와 캡처로 재고, 고친 뒤 나아졌는지 보여 주는 에이전트 스킬', repo: 'https://github.com/woorichicken/kucharski-ux-eye' },
+      { id: 'fairsplit', name: 'FairSplit', body: 'AI가 작업 기록을 근거로 팀 작업 대금 나누기를 제안하고, 모두 동의하면 PayPal로 한 번에 지급합니다(PayPal AI 해커톤 2026)', repo: 'https://github.com/woorichicken/fairsplit', homepage: 'https://fairsplit.solhun.com' },
     ],
   },
   videos: {

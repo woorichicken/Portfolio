@@ -149,7 +149,8 @@ export default function RowsPanel({ which, items, onSaved, active = true, onDirt
               </span>
             </div>
             <FieldList specs={which === 'openSource' ? OSS_ITEM_SPEC : VIDEO_ITEM_SPEC} base={['items', i]} ctx={ctx} />
-            {which === 'videos' && <VideoFiles index={i} row={row} ctx={ctx} items={items} />}
+            {which === 'videos' && <VideoFiles index={i} base={['items', i]} row={row} ctx={ctx} items={items} />}
+            {which === 'openSource' && <OssDemo index={i} row={row} ctx={ctx} />}
             <Problems list={problems.byField[keyOf(['items', i])]} />
           </li>
         ))}
@@ -179,9 +180,25 @@ export default function RowsPanel({ which, items, onSaved, active = true, onDirt
   );
 }
 
-/** 영상 줄 — mp4 올리기(가로·세로는 브라우저가 읽는다) · 포스터 올리기 · 소개하는 프로젝트 */
-function VideoFiles({ index, row, ctx, items }: { index: number; row: Record<string, unknown>; ctx: { draft: Draft; set: DraftUpdate; problems: FieldProblems['byField']; disabled: boolean }; items: ItemOption[] }) {
-  const base = ['items', index];
+type RowCtx = { draft: Draft; set: DraftUpdate; problems: FieldProblems['byField']; disabled: boolean };
+
+/** 오픈소스 줄의 데모 영상(선택) — 올리면 칸이 생기고, 「데모 빼기」로 지운다. 영상·포스터 둘 다 있어야 저장된다(서버 422) */
+function OssDemo({ index, row, ctx }: { index: number; row: Record<string, unknown>; ctx: RowCtx }) {
+  const base = ['items', index, 'demo'];
+  const demo = (row.demo ?? {}) as Record<string, unknown>;
+  return (
+    <div className="admin-oss-demo" data-oss-demo={index}>
+      <div className="admin-row-head">
+        <span>데모 영상(선택) <small>카드 위에 붙습니다 · 「만든 영상」 행과 따로</small></span>
+        {row.demo !== undefined && <button type="button" className="btn btn-ghost btn-sm" disabled={ctx.disabled} onClick={() => ctx.set((d) => setAll(d, base, undefined))}>데모 빼기</button>}
+      </div>
+      <VideoFiles index={index} base={base} row={{ width: 1920, height: 1080, ...demo }} ctx={ctx} />
+    </div>
+  );
+}
+
+/** 영상 파일 칸 — mp4 올리기(가로·세로는 브라우저가 읽는다) · 포스터 올리기 · (영상 행이면) 소개하는 프로젝트. base 는 그 영상 객체의 경로 */
+function VideoFiles({ index, base, row, ctx, items }: { index: number; base: (string | number)[]; row: Record<string, unknown>; ctx: RowCtx; items?: ItemOption[] }) {
   const k = (f: string) => keyOf([...base, f]);
   const poster = String(row.poster ?? '');
   return (
@@ -215,14 +232,14 @@ function VideoFiles({ index, row, ctx, items }: { index: number; row: Record<str
         </div>
         <Problems list={ctx.problems[k('poster')]} />
       </div>
-      <label className="admin-field" data-field={k('project')}>
+      {items && <label className="admin-field" data-field={k('project')}>
         <span className="admin-field-label">소개하는 프로젝트(선택)</span>
         <select className="admin-input" value={String(row.project ?? '')} disabled={ctx.disabled} onChange={(e) => { const v = e.target.value; ctx.set((d) => setAllOptional(d, [...base, 'project'], v)); }} aria-label="소개하는 프로젝트">
           <option value="">없음</option>
           {items.map((it) => <option key={it.slug} value={it.slug}>{it.name}</option>)}
         </select>
         <Problems list={ctx.problems[k('project')]} />
-      </label>
+      </label>}
     </div>
   );
 }

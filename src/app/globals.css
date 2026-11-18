@@ -522,6 +522,8 @@ button { font: inherit; color: inherit; }
 .oss-name { margin: 0; font-size: 17px; font-weight: 700; line-height: 1.3; }
 .oss-body { margin: 0 0 6px; font-size: 13px; line-height: 1.5; color: var(--text-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .oss-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+/* 데모가 있는 카드 — 영상을 카드 테두리 안 위쪽에 붙인다(바깥 여백만큼 당겨 가장자리를 맞춤). 데모 없는 카드와 같은 줄에 서면 글 칸이 아래로 밀리지만 링크 줄은 바닥에 맞는다 */
+.oss-demo { margin: -16px -16px 6px; border-radius: var(--radius-card) var(--radius-card) 0 0; }
 
 /* ── 연표 · 연락 ───────────────────────────────────── */
 .sec { padding-block: 40px; }

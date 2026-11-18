@@ -86,7 +86,7 @@ export default function Browse({ site: docs, locale, role }: { site: SiteDocs; l
         {data.openSource.length > 0 && (
           <Row id="row-opensource" title={s.openSourceRow} size="md" kind="oss" {...arrows}>
             {data.openSource.map((item) => (
-              <li key={item.id}><OpenSourceCard item={item} codeLabel={s.viewCode} siteLabel={s.visitSite} newTab={s.newTab} /></li>
+              <li key={item.id}><OpenSourceCard item={item} codeLabel={s.viewCode} siteLabel={s.visitSite} demoLabel={s.demoVideo} newTab={s.newTab} /></li>
             ))}
           </Row>
         )}

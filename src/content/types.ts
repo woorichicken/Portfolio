@@ -79,7 +79,12 @@ export type OpenSourceRepo = {
   repo: string;
   /** 제품 사이트가 따로 있으면 */
   homepage?: string;
+  /** 카드 위에 붙는 데모 영상(2026-11-18) — 「만든 영상」 행과 따로 둔다(그 행을 늘리지 않으려고). 영상·포스터는 R2(/media/…) */
+  demo?: DemoClip;
 };
+
+/** 영상 한 편의 파일 — 주소·포스터·크기는 세 언어가 같다 */
+export type DemoClip = { src: string; poster: string; width: number; height: number };
 
 /** 직접 만든 영상 하나 — 역할 화면의 「만든 영상」 행. 영상·포스터는 R2(/media/…)에 둔다. 자동재생하지 않는다 */
 export type Video = {

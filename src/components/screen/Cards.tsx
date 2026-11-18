@@ -86,13 +86,22 @@ export function SimilarCard({ card, locale, sizes }: { card: TitleCardData; loca
 }
 
 /**
- * 오픈소스 카드 — 그림 없이 이름 · 한 줄 · 링크. 저장소에는 대표 그림이 없어서 16:9 카드 대신 글 카드로 둔다.
+ * 오픈소스 카드 — 저장소 · 사이트 · 데모 영상을 한 장에. 데모가 없으면 이름 · 한 줄 · 링크만 있는 글 카드다.
  * 카드 전체를 링크 하나로 감싸지 않는다 — 「코드 보기」와 「사이트」 두 곳으로 나가야 해서(링크 안에 링크를 넣을 수 없다).
+ * 데모는 「만든 영상」 카드와 같은 규칙 — 누르기 전에는 포스터만 받고(preload="none") 자동재생하지 않는다.
  */
-export function OpenSourceCard({ item, codeLabel, siteLabel, newTab }: { item: OpenSourceRepo; codeLabel: string; siteLabel: string; newTab: string }) {
+export function OpenSourceCard({ item, codeLabel, siteLabel, demoLabel, newTab }: { item: OpenSourceRepo; codeLabel: string; siteLabel: string; demoLabel: string; newTab: string }) {
   const path = item.repo.replace(/^https:\/\/(www\.)?/, '');
+  const demo = item.demo;
   return (
-    <article className="oss" aria-labelledby={`oss-${item.id}`}>
+    <article className="oss" data-demo={demo ? '' : undefined} aria-labelledby={`oss-${item.id}`}>
+      {demo && (
+        <div className="vid-media oss-demo">
+          <video controls preload="none" playsInline poster={demo.poster} width={demo.width} height={demo.height} aria-label={`${item.name} ${demoLabel}`}>
+            <source src={demo.src} type={demo.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
+          </video>
+        </div>
+      )}
       <p className="oss-path">{path}</p>
       <h3 className="oss-name" id={`oss-${item.id}`}>{item.name}</h3>
       <p className="oss-body">{item.body}</p>
