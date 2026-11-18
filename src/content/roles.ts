@@ -109,6 +109,10 @@ export const SCREEN = {
   pickerRecent: t('최근에 본 역할', 'Last viewed', 'Visto la última vez'),
   aboutMe: t('정경훈 소개', 'About me', 'Sobre mí'),
   close: t('닫기', 'Close', 'Cerrar'),
+  // 첫 방문 인트로 영상의 단추(IntroSting.tsx)
+  introSkip: t('건너뛰기', 'Skip', 'Saltar'),
+  introSoundOn: t('소리 켜기', 'Sound on', 'Activar sonido'),
+  introSoundOff: t('소리 끄기', 'Sound off', 'Silenciar'),
   proof: t('숫자 근거', 'The numbers', 'Las cifras'),
   switchRole: t('역할 바꾸기', 'Switch role', 'Cambiar de rol'),
   viewingAs: t('보는 중', 'Viewing as', 'Viendo como'),

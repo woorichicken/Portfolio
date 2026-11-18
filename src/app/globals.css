@@ -280,27 +280,34 @@ button { font: inherit; color: inherit; }
   }
 }
 .picker-top { display: flex; align-items: center; justify-content: space-between; height: var(--header-h); padding-inline: var(--gutter); }
-/* 첫 방문 인트로(IntroSting.tsx) — 약 1.5초. data-play 가 없으면(재방문·움직임 줄이기·저장소 막힘) 아예 안 그린다 */
+/* 첫 방문 인트로(IntroSting.tsx · introBoot.ts) — 7초 영상. data-play 가 없으면(재방문·저장소 막힘) 아예 안 그린다.
+   1 = 재생 중 · still = 움직임 줄이기(마지막 장면 한 장) · fly = 나무늘보 원이 로고 자리로 날아가는 중 · done = 걷히는 중 */
 .intro-sting { display: none; }
 .intro-sting[data-play] {
-  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: #000; cursor: pointer;
+  position: fixed; inset: 0; z-index: 100; display: block; background: var(--bg); cursor: pointer;
+  /* 바탕은 영상 바탕과 같은 #141414 — 영상이 화면 비율과 달라 위아래·양옆이 비어도 이음매가 안 보인다 */
 }
-.intro-sting[data-play="1"] { animation: intro-out .35s ease-in 1.2s forwards; }
-.intro-sting[data-play="done"] { animation: intro-out .2s ease-in forwards; }
-.intro-mark { display: grid; justify-items: center; gap: 16px; animation: intro-thump .32s cubic-bezier(.3, 1.6, .5, 1) .82s both; }
-.intro-sloth { width: 64px; height: 64px; border-radius: 50%; animation: intro-sloth-in .5s cubic-bezier(.2, .8, .2, 1) .05s both; }
-.intro-word {
-  display: flex; font-family: var(--font-display-stack); font-weight: 800; font-size: clamp(44px, 9vw, 96px);
-  letter-spacing: 0.06em; line-height: 1; color: var(--text);
+.intro-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.intro-end { position: fixed; display: none; max-width: none; pointer-events: none; }
+.intro-sting[data-play="still"] .intro-video { display: none; }
+.intro-sting[data-play="still"] .intro-end,
+.intro-sting[data-play="fly"] .intro-end { display: block; }
+.intro-sting[data-play="fly"] { background: transparent; transition: background-color .45s ease-out; pointer-events: none; }
+.intro-sting[data-play="fly"] .intro-video,
+.intro-sting[data-play="fly"] .intro-controls { visibility: hidden; }
+.intro-sting[data-play="done"] { animation: intro-out .25s ease-in forwards; pointer-events: none; }
+/* 소리 켜기 · 건너뛰기 — 오른쪽 아래. 휴대폰 홈 표시줄·노치를 피한다 */
+.intro-controls {
+  position: absolute; right: max(var(--gutter), env(safe-area-inset-right)); bottom: max(24px, env(safe-area-inset-bottom));
+  display: flex; gap: 8px;
 }
-.intro-word span { display: inline-block; animation: intro-letter-in .5s cubic-bezier(.2, .8, .2, 1) calc(.12s + var(--i) * 50ms) both; }
-.intro-word span:nth-child(odd) { --from-y: -0.5em; }
-.intro-word span:nth-child(even) { --from-y: 0.5em; }
-.intro-line { display: block; width: 100%; height: 3px; border-radius: 2px; background: var(--accent); transform-origin: center; animation: intro-line-in .35s ease-out .72s both; }
-@keyframes intro-letter-in { from { opacity: 0; transform: translateY(var(--from-y, 0.4em)) scale(1.6); filter: blur(10px); } }
-@keyframes intro-sloth-in { from { opacity: 0; transform: scale(.6); } }
-@keyframes intro-line-in { from { transform: scaleX(0); opacity: 0; } }
-@keyframes intro-thump { 50% { transform: scale(1.07); } }
+.intro-controls button {
+  min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid rgb(245 241 236 / .28);
+  background: rgb(20 20 20 / .6); color: var(--text); font-size: 14px; cursor: pointer;
+}
+.intro-controls button:hover { border-color: rgb(245 241 236 / .6); }
+.intro-controls button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.intro-sound[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
 @keyframes intro-out { to { opacity: 0; visibility: hidden; } }
 .picker-main { display: grid; place-content: center; text-align: center; padding: 24px var(--gutter) 48px; }
 .picker-title { font-size: 26px; font-weight: 700; line-height: 1.4; letter-spacing: -0.01em; margin: 0 0 28px; }
