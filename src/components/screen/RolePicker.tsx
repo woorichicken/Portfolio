@@ -20,7 +20,7 @@ export default function RolePicker({ site, locale }: { site: SiteDocs; locale: L
   const s = screenCopy(locale);
   return (
     <div className="picker">
-      <IntroSting />
+      <IntroSting labels={{ skip: s.introSkip, soundOn: s.introSoundOn, soundOff: s.introSoundOff }} />
       <div className="picker-top">
         <a className="wordmark" href={localePath(locale)}>
           <Image src="/brand/solhun-sloth-96.png" alt="" width={28} height={28} priority />
