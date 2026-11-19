@@ -213,7 +213,21 @@ test('오픈소스 행 — 저장소 추가 → 역할 화면에 카드 → D1 �
   for (const [l, v] of [['ko', 'E2E 저장소'], ['en', 'E2E repo'], ['es', 'Repo E2E']]) await row.locator(`input[data-field$=".name"][data-locale="${l}"]`).fill(v);
   for (const [l, v] of [['ko', 'E2E 설명'], ['en', 'E2E body'], ['es', 'Cuerpo E2E']]) await row.locator(`textarea[data-field$=".body"][data-locale="${l}"]`).fill(v);
   await row.locator('input[data-field$=".repo"]').fill('https://github.com/woorichicken/e2e-repo');
+  // 데모 영상(선택, 2026-11-18) — 영상·포스터를 올리면 카드 위에 붙는다
+  const demo = row.locator('[data-oss-demo]');
+  await expect(demo.getByRole('button', { name: '데모 빼기' })).toHaveCount(0);
+  await demo.locator('div[data-field$=".src"] input[type="file"]').setInputFiles(join(FIX, 'e2e-clip.mp4'));
+  await expect(demo.locator('[data-video-src]')).toHaveText(/^\/media\/video\/e2e-clip-[0-9a-f]{10}\.mp4 · 320×180$/);
+  await demo.locator('div[data-field$=".poster"] input[type="file"]').setInputFiles(join(FIX, 'e2e-poster.jpg'));
+  await expect(demo.getByRole('button', { name: '데모 빼기' })).toHaveCount(1);
   await shot(page, 'oss-added');
+  if (SHOTS) {
+    // 아래에 붙어 다니는 저장 막대가 칸을 덮지 않게 잠깐 숨기고 데모 칸만 찍는다
+    const foot = panel.locator('.admin-panel-foot');
+    await foot.evaluate((e) => ((e as HTMLElement).style.visibility = 'hidden'));
+    await demo.screenshot({ path: join(SHOTS, 'oss-row-demo.png') });
+    await foot.evaluate((e) => ((e as HTMLElement).style.visibility = ''));
+  }
   await panel.getByRole('button', { name: '오픈소스 저장' }).click();
   await expect(page.locator('[data-rows-status="saved"]')).toContainText('저장했습니다 — 고침 openSource — items (ko·en·es)');
   await expect(panel.locator(`[data-site-link="/as/${role}"]`)).toHaveCount(1);
@@ -223,11 +237,16 @@ test('오픈소스 행 — 저장소 추가 → 역할 화면에 카드 → D1 �
   await expect(cards).toHaveCount(count0 + 1);
   await expect(cards.last().getByRole('link', { name: /^GitHub 보러가기/ })).toHaveAttribute('href', 'https://github.com/woorichicken/e2e-repo');
   expect(d1Doc<Content>('content:es').body.openSource!.items.at(-1)!.id).toBe('e2e-repo');
+  const demoVideo = cards.last().locator('video');
+  await expect(demoVideo).toHaveAttribute('preload', 'none');
+  await expect(demoVideo.locator('source')).toHaveAttribute('src', /^\/media\/video\/e2e-clip-/);
+  expect((d1Doc<Content>('content:en').body.openSource!.items.at(-1) as unknown as { demo: unknown }).demo).toMatchObject({ width: 320, height: 180 });
 
   // 빼기 → 저장
   await login(page);
   await page.getByRole('tab', { name: '오픈소스' }).click();
-  await panel.locator('.admin-rows > li[data-row="e2e-repo"]').getByRole('button', { name: '빼기' }).click();
+  // 줄 빼기 — 데모가 있으면 「데모 빼기」도 같은 줄에 있어 이름을 정확히 맞춘다
+  await panel.locator('.admin-rows > li[data-row="e2e-repo"]').getByRole('button', { name: '빼기', exact: true }).click();
   await panel.getByRole('button', { name: '오픈소스 저장' }).click();
   await expect(page.locator('[data-rows-status="saved"]')).toContainText('저장했습니다');
   await page.goto(`/as/${role}`);

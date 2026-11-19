@@ -124,6 +124,7 @@ export const SCREEN = {
   videosRow: t('만든 영상', 'Videos I made', 'Videos que hice'),
   viewCode: t('GitHub 보러가기', 'View on GitHub', 'Ver en GitHub'),
   visitSite: t('사이트', 'Website', 'Sitio web'),
+  demoVideo: t('데모 영상', 'demo video', 'video de demostración'),
   aboutProject: t('프로젝트 보기', 'See the project', 'Ver el proyecto'),
   prevRow: t('이전 항목', 'Previous items', 'Anteriores'),
   nextRow: t('다음 항목', 'Next items', 'Siguientes'),

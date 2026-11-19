@@ -67,17 +67,23 @@ export const ProjectSchema = z.strictObject({
 
 export const OtherWorkSchema = z.strictObject({ slug: SlugSchema, name: text, period: text, body: text, shot: ShotSchema, detail: DetailSchema, repo: HttpsUrlSchema.optional() });
 
-export const OpenSourceRepoSchema = z.strictObject({ id: SlugSchema, name: text, body: text, repo: HttpsUrlSchema, homepage: HttpsUrlSchema.optional() });
+// 영상은 R2 에만 둔다 — 저장소(public/)에 넣으면 배포 묶음이 커진다
+const clipFields = {
+  src: z.string().regex(/^\/media\/[^\s]+\.(mp4|webm)$/, '영상 경로는 /media/….mp4 또는 .webm 입니다(pnpm content media 로 올린 주소)'),
+  poster: z.string().regex(/^\/(work|media)\/[^\s]+\.(jpg|jpeg|png|webp)$/, '포스터는 /work/… 또는 /media/… 사진입니다'),
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+};
+
+export const DemoClipSchema = z.strictObject(clipFields);
+
+export const OpenSourceRepoSchema = z.strictObject({ id: SlugSchema, name: text, body: text, repo: HttpsUrlSchema, homepage: HttpsUrlSchema.optional(), demo: DemoClipSchema.optional() });
 
 export const VideoSchema = z.strictObject({
   id: SlugSchema,
   title: text,
   body: text,
-  // 영상은 R2 에만 둔다 — 저장소(public/)에 넣으면 배포 묶음이 커진다
-  src: z.string().regex(/^\/media\/[^\s]+\.(mp4|webm)$/, '영상 경로는 /media/….mp4 또는 .webm 입니다(pnpm content media 로 올린 주소)'),
-  poster: z.string().regex(/^\/(work|media)\/[^\s]+\.(jpg|jpeg|png|webp)$/, '포스터는 /work/… 또는 /media/… 사진입니다'),
-  width: z.number().int().positive(),
-  height: z.number().int().positive(),
+  ...clipFields,
   project: SlugSchema.optional(),
 });
 

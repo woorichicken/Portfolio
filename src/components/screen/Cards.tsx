@@ -4,7 +4,7 @@ import type { ArtifactCard, TitleCard as TitleCardData, VideoCard as VideoCardDa
 import type { OpenSourceRepo } from '@/content/types';
 import { projectPath, type Locale } from '@/i18n/config';
 import RowTrack from './RowTrack';
-import { IconCode, IconExternal } from './icons';
+import { IconExternal, IconGithub } from './icons';
 import { isMediaSrc } from '@/content/images';
 
 // 행 하나와 그 안의 카드들. 서버에서 다 그리고, 넘기는 화살표만 클라이언트(RowTrack)다.
@@ -86,19 +86,29 @@ export function SimilarCard({ card, locale, sizes }: { card: TitleCardData; loca
 }
 
 /**
- * 오픈소스 카드 — 그림 없이 이름 · 한 줄 · 링크. 저장소에는 대표 그림이 없어서 16:9 카드 대신 글 카드로 둔다.
+ * 오픈소스 카드 — 저장소 · 사이트 · 데모 영상을 한 장에. 데모가 없으면 이름 · 한 줄 · 링크만 있는 글 카드다.
  * 카드 전체를 링크 하나로 감싸지 않는다 — 「코드 보기」와 「사이트」 두 곳으로 나가야 해서(링크 안에 링크를 넣을 수 없다).
+ * 링크는 GitHub 마크 · 사이트 아이콘. 좁은 화면(<800px)에서는 글자를 숨기고 아이콘만 둔다 — 글자는 화면 읽기용으로 남아 링크 이름은 그대로다(2026-11-19 리뷰).
+ * 데모는 「만든 영상」 카드와 같은 규칙 — 누르기 전에는 포스터만 받고(preload="none") 자동재생하지 않는다.
  */
-export function OpenSourceCard({ item, codeLabel, siteLabel, newTab }: { item: OpenSourceRepo; codeLabel: string; siteLabel: string; newTab: string }) {
+export function OpenSourceCard({ item, codeLabel, siteLabel, demoLabel, newTab }: { item: OpenSourceRepo; codeLabel: string; siteLabel: string; demoLabel: string; newTab: string }) {
   const path = item.repo.replace(/^https:\/\/(www\.)?/, '');
+  const demo = item.demo;
   return (
-    <article className="oss" aria-labelledby={`oss-${item.id}`}>
+    <article className="oss" data-demo={demo ? '' : undefined} aria-labelledby={`oss-${item.id}`}>
+      {demo && (
+        <div className="vid-media oss-demo">
+          <video controls preload="none" playsInline poster={demo.poster} width={demo.width} height={demo.height} aria-label={`${item.name} ${demoLabel}`}>
+            <source src={demo.src} type={demo.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
+          </video>
+        </div>
+      )}
       <p className="oss-path">{path}</p>
       <h3 className="oss-name" id={`oss-${item.id}`}>{item.name}</h3>
       <p className="oss-body">{item.body}</p>
       <div className="oss-actions">
-        <a className="btn btn-ghost btn-sm" href={item.repo} target="_blank" rel="noreferrer"><IconCode />{codeLabel}<span className="visually-hidden"> — {item.name} {newTab}</span></a>
-        {item.homepage && <a className="btn btn-outline btn-sm" href={item.homepage} target="_blank" rel="noreferrer"><IconExternal />{siteLabel}<span className="visually-hidden"> — {item.name} {newTab}</span></a>}
+        <a className="btn btn-ghost btn-sm oss-link" href={item.repo} target="_blank" rel="noreferrer" title={codeLabel}><IconGithub /><span className="oss-link-label">{codeLabel}</span><span className="visually-hidden"> — {item.name} {newTab}</span></a>
+        {item.homepage && <a className="btn btn-outline btn-sm oss-link" href={item.homepage} target="_blank" rel="noreferrer" title={siteLabel}><IconExternal /><span className="oss-link-label">{siteLabel}</span><span className="visually-hidden"> — {item.name} {newTab}</span></a>}
       </div>
     </article>
   );

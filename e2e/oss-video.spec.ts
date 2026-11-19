@@ -6,13 +6,13 @@ import { expect, test } from '@playwright/test';
 
 const CLI_REPO = 'https://github.com/woorichicken/CLI_manager';
 
-test('/as/maker 오픈소스 행 — 저장소 5개, 카드에서 GitHub 저장소·사이트로 나간다', async ({ page }) => {
+test('/as/maker 오픈소스 행 — 저장소 8개, 카드에서 GitHub 저장소·사이트로 나간다', async ({ page }) => {
   await page.goto('/as/maker');
   const row = page.locator('#row-opensource');
   await expect(row.getByRole('heading', { name: '오픈소스' })).toBeVisible();
   const cards = row.locator('article.oss');
-  await expect(cards).toHaveCount(5);
-  const expected = ['CLI_manager', 'artifact-dock', 'nightgate', 'framenote', 'climanager-session'];
+  await expect(cards).toHaveCount(8);
+  const expected = ['CLI_manager', 'artifact-dock', 'nightgate', 'framenote', 'agent-swap', 'climanager-session', 'kucharski-ux-eye', 'fairsplit'];
   for (const [i, repo] of expected.entries()) {
     const code = cards.nth(i).getByRole('link', { name: /^GitHub 보러가기/ });
     await expect(code).toHaveAttribute('href', `https://github.com/woorichicken/${repo}`);
@@ -20,10 +20,46 @@ test('/as/maker 오픈소스 행 — 저장소 5개, 카드에서 GitHub 저장�
   }
   // 사이트가 있는 저장소만 「사이트」 링크
   await expect(cards.nth(1).getByRole('link', { name: /^사이트/ })).toHaveAttribute('href', 'https://artifact-dock.solhun.com');
-  await expect(cards.nth(4).getByRole('link', { name: /^사이트/ })).toHaveCount(0);
+  await expect(cards.nth(5).getByRole('link', { name: /^사이트/ })).toHaveCount(0);
   // 다른 역할(product)에는 없다 — roles 문서가 정한다
   await page.goto('/as/product');
   await expect(page.locator('#row-opensource')).toHaveCount(0);
+});
+
+test('/as/maker 오픈소스 카드의 데모 영상 — 자동재생 없이 포스터만, 누르기 전엔 영상을 받지 않고, 영상은 Range 206', async ({ page, request }) => {
+  const fetched: string[] = [];
+  page.on('request', (req) => {
+    if (req.url().includes('/media/video/')) fetched.push(req.url());
+  });
+  await page.goto('/as/maker');
+  const cards = page.locator('#row-opensource article.oss');
+  await expect(cards).toHaveCount(8);
+  // 8장 모두 데모가 있다(2026-11-19 리뷰: 글 카드의 빈 아래쪽 → climanager-session · kucharski-ux-eye · FairSplit 에도 데모)
+  const withDemo = page.locator('#row-opensource article.oss[data-demo]');
+  await expect(withDemo).toHaveCount(8);
+  for (let i = 0; i < 8; i += 1) {
+    const v = withDemo.nth(i).locator('video');
+    await expect(v).toHaveAttribute('controls', '');
+    await expect(v).toHaveAttribute('preload', 'none');
+    await expect(v).not.toHaveAttribute('autoplay', /.*/);
+    await expect(v).toHaveAttribute('aria-label', / 데모 영상$/);
+    const poster = (await v.getAttribute('poster'))!;
+    const src = (await v.locator('source').getAttribute('src'))!;
+    const p = await request.get(poster);
+    expect(p.status(), poster).toBe(200);
+    expect(p.headers()['content-type']).toBe('image/jpeg');
+    const r = await request.get(src, { headers: { range: 'bytes=0-1023' } });
+    expect(r.status(), src).toBe(206);
+    expect(r.headers()['content-type']).toBe('video/mp4');
+    expect((await r.body()).subarray(4, 8).toString('latin1')).toBe('ftyp');
+  }
+  await page.waitForTimeout(1000);
+  expect(fetched).toEqual([]);
+  // 카드 위쪽에 영상, 그 아래 이름 — 링크 줄은 그대로 남는다
+  const first = withDemo.first();
+  const [vb, nb] = await Promise.all([first.locator('video').boundingBox(), first.locator('.oss-name').boundingBox()]);
+  expect(vb!.y + vb!.height).toBeLessThanOrEqual(nb!.y);
+  await expect(first.getByRole('link', { name: /^GitHub 보러가기/ })).toBeVisible();
 });
 
 test('코드 보기 — /projects/cli-manager 머리와 /as/maker 빌보드', async ({ page }) => {
