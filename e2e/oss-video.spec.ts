@@ -34,11 +34,10 @@ test('/as/maker 오픈소스 카드의 데모 영상 — 자동재생 없이 포
   await page.goto('/as/maker');
   const cards = page.locator('#row-opensource article.oss');
   await expect(cards).toHaveCount(8);
-  // 데모가 있는 카드 5장(CLI Manager · Artifact Dock · Nightgate · Framenote · agent-swap), 나머지는 글 카드
+  // 8장 모두 데모가 있다(2026-11-19 리뷰: 글 카드의 빈 아래쪽 → climanager-session · kucharski-ux-eye · FairSplit 에도 데모)
   const withDemo = page.locator('#row-opensource article.oss[data-demo]');
-  await expect(withDemo).toHaveCount(5);
-  await expect(cards.nth(5).locator('video')).toHaveCount(0);
-  for (let i = 0; i < 5; i += 1) {
+  await expect(withDemo).toHaveCount(8);
+  for (let i = 0; i < 8; i += 1) {
     const v = withDemo.nth(i).locator('video');
     await expect(v).toHaveAttribute('controls', '');
     await expect(v).toHaveAttribute('preload', 'none');
