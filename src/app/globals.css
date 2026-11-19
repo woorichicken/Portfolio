@@ -526,6 +526,8 @@ button { font: inherit; color: inherit; }
 .oss-demo { margin: -16px -16px 6px; border-radius: var(--radius-card) var(--radius-card) 0 0; }
 /* 링크 — GitHub 마크(채운 도형)와 사이트 아이콘. 좁은 화면에서는 아이콘만 둔 동그란 단추로(2026-11-19 리뷰: 「아이콘만 있어도 · 글자 섹션이 너무 김」) */
 .btn svg.icon-fill { fill: currentColor; stroke: none; }
+/* 숨긴 글자(1px absolute)가 가로 스크롤 줄 밖 문서를 기준으로 서면 폰에서 페이지가 가로로 밀린다(2026-11-19 운영 390폭 scrollWidth 1866) — 단추 안에 가둔다 */
+.oss-link { position: relative; }
 @media (max-width: 799px) {
   .oss-link { width: 44px; padding: 0; }
   .oss-link-label { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
